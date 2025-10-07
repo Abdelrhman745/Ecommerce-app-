@@ -7,10 +7,10 @@ import Gallery from '../../components/Gallery/Gallery'
 export default function HomePage() {
   return (
     <>
-      <About/>
       <Categories/>
       <TextSec/>
       <Gallery/>
+      <About/>
     </>
   )
 }
