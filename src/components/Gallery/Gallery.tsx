@@ -3,12 +3,12 @@ import "../Gallery/gallery.css";
 
 export default function Gallery() {
   const galleryImages: string[] = [
-    "src/assets/images/Ig.png",
+    "src/assets/images/Skin 1004 Centella Soothing Cream.jpg",
     "src/assets/images/Ig (1).png",
-    "src/assets/images/Ig (2).png",
-    "src/assets/images/Ig (3).png",
-    "src/assets/images/Ig (4).png",
-    "src/assets/images/Ig (5).png",
+    "src/assets/images/download.jpg",
+    "src/assets/images/serum.jpg",
+    "src/assets/images/download (1).jpg",
+    "src/assets/images/cleanser.jpg",
   ];
 
   return (
