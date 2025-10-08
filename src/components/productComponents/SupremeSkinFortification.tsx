@@ -3,7 +3,7 @@ import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight } from 'react-bootstrap-icons';
 import ProductCard from './ProductCard';
-import { type Product} from '../../types/custom';
+import { type Product} from '../../types/Product';
 
 const API_URL = 'https://skincare-api-psi.vercel.app/api/data';
 
