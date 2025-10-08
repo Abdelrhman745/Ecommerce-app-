@@ -54,7 +54,7 @@ if (isError) {
         pagination={{ clickable: true, type: "bullets" }}
         navigation={true}
         style={{
-          width: "60%",
+          width: "100%",
           height: "auto",
           position: "relative"
         }}

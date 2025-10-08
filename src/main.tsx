@@ -7,10 +7,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Layout from "./layouts/Mainlayout";
 import HomePage from "./Pages/HomePage/HomePage";
-// import Home from "./pages/Home"; 
-// import About from "./pages/About";
-// import Journal from "./pages/Journal";
-// import Stores from "./pages/Stores";
+import About from "./components/Aboutcomponent/Aboutcomponent";
+import Categories from "./components/Categories/Categories";
 
 const router = createBrowserRouter([
   {
@@ -18,9 +16,9 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <HomePage/> },
-      // { path: "about", element: <About /> },
-      // { path: "journal", element: <Journal /> },
-      // { path: "stores", element: <Stores /> },
+      { path: "about", element: <About /> },
+      { path: "home", element: <HomePage/> },
+      { path: "shop", element: <Categories/> },
     ],
   },
 ]);
