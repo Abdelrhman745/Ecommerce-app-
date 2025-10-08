@@ -3,6 +3,7 @@ import About from '../../components/Aboutcomponent/Aboutcomponent'
 import Categories from '../../components/Categories/Categories'
 import TextSec from '../../components/TextSection/TextSection'
 import Gallery from '../../components/Gallery/Gallery'
+import SupremeSkinFortification from '../../components/productComponents/SupremeSkinFortification'
 
 export default function HomePage() {
   return (
@@ -10,7 +11,6 @@ export default function HomePage() {
       <Categories/>
       <TextSec/>
       <Gallery/>
-      <About/>
     </>
   )
 }
