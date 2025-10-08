@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowRight } from 'react-bootstrap-icons';
 import ProductCard from './ProductCard';
 import { type Product } from '../../types/Product';
+import { Link } from 'react-router-dom';
+
 
 const API_URL = 'https://skincare-api-psi.vercel.app/api/data';
 
@@ -81,9 +83,9 @@ const SupremeSkinFortification: React.FC = () => {
       </div>
 
       <footer className="footer-link-section pt-4 mt-5">
-        <a href="#all-products" className="text-body text-decoration-none d-flex align-items-center">
+        <Link to="/products" className="text-body text-decoration-none d-flex align-items-center">
           All Products <ArrowRight className="ms-2" size={20} />
-        </a>
+        </Link>
       </footer>
 
       <style>{`

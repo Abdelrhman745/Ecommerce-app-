@@ -9,6 +9,7 @@ import Layout from "./layouts/Mainlayout";
 import HomePage from "./Pages/HomePage/HomePage";
 import About from "./components/Aboutcomponent/Aboutcomponent";
 import Categories from "./components/Categories/Categories";
+import ProductListPage from "./Pages/ProductPage/ProductListPage"; 
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       { path: "about", element: <About /> },
       { path: "home", element: <HomePage/> },
       { path: "shop", element: <Categories/> },
+      { path: "products", element: <ProductListPage /> }, 
     ],
   },
 ]);
@@ -26,9 +28,8 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
- <StrictMode>
+  <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>
   </QueryClientProvider>
- 
 );
