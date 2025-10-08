@@ -3,7 +3,7 @@ import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight } from 'react-bootstrap-icons';
 import ProductCard from './ProductCard';
-import { type Product} from '../../types/Product';
+import { type Product } from '../../types/Product';
 
 const API_URL = 'https://skincare-api-psi.vercel.app/api/data';
 
@@ -31,27 +31,24 @@ const SupremeSkinFortification: React.FC = () => {
   });
 
   if (isLoading) {
-    // ⬅️ Replacing the loading text with a Spinner component
     return (
       <Container className="my-5 text-center">
         <Spinner animation="border" role="status" variant="dark">
           <span className="visually-hidden">Loading...</span>
         </Spinner>
-        <p className="mt-2 text-secondary">Loading products...</p> {/* Now in English */}
+        <p className="mt-2 text-secondary">Loading products...</p>
       </Container>
     );
   }
 
-  if (isError) return <p>An error occurred while loading products.</p>; {/* Now in English */}
+  if (isError) return <p>An error occurred while loading products.</p>;
 
   const productList: Product[] = Array.isArray(products) ? products : [];
   
-  // ⬅️ التعديل الرئيسي هنا: الحصول على أول 10 منتجات فقط
   const limitedProducts = productList.slice(0, 10);
 
   return (
     <Container className="my-5 skin-fortification-container">
-      {/* Title and Description */} {/* Now in English */}
       <header
         className="header-section mb-4"
       >
@@ -69,10 +66,8 @@ const SupremeSkinFortification: React.FC = () => {
         </p>
       </header>
 
-      {/* Products with scroll on mobile */} {/* Now in English */}
       <div className="product-scroll-wrapper">
         <Row className="flex-nowrap gx-3">
-          {/* ⬅️ استخدام المصفوفة الجديدة التي تحتوي على 10 منتجات فقط */}
           {limitedProducts.map((product) => ( 
             <Col
               key={product.id}
@@ -85,14 +80,12 @@ const SupremeSkinFortification: React.FC = () => {
         </Row>
       </div>
 
-      {/* All Products Button */} {/* Now in English */}
       <footer className="footer-link-section pt-4 mt-5">
         <a href="#all-products" className="text-body text-decoration-none d-flex align-items-center">
           All Products <ArrowRight className="ms-2" size={20} />
         </a>
       </footer>
 
-      {/* Internal CSS */} {/* Now in English */}
       <style>{`
         .product-scroll-wrapper {
           overflow-x: auto;
