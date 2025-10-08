@@ -10,11 +10,14 @@ import Spinner from 'react-bootstrap/Spinner';
 import "./components/categories.css"
 
 
+
+
 const images: string[] = [
-  "https://cdn.thewirecutter.com/wp-content/media/2024/12/ROUNDUP-KOREAN-SKINCARE-2048px-9736-2x1-1.jpg?auto=webp&quality=75&crop=1.91:1&width=1200",
+  "https://i.pinimg.com/1200x/1f/f5/4d/1ff54da484660f82183ad5285f80cf72.jpg",
   "https://media.glamourmagazine.co.uk/photos/6891f9bcd47bb28da6f8f0f7/16:9/w_2560%2Cc_limit/Best%2520Korean%2520Serums%252005082025%2520main.jpg",
-  "https://publish.purewow.net/wp-content/uploads/sites/2/2024/05/Best-Korean-Skincare-Brands-Round-Lab.jpg?fit=680%2C400"
+  "https://i.pinimg.com/1200x/f7/1e/9a/f71e9a8b43ad5e51d400bb639504ecb7.jpg"
 ];
+
 
 export default function Categories(): JSX.Element {
   const { data, isLoading, isError } = useProductsQuery();
