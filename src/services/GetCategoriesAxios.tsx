@@ -9,13 +9,15 @@ interface Product {
 }
 
 export async function fetchProducts(): Promise<string[]> {
-  const response = await axios.get("https://skincare-api-psi.vercel.app/api/data");
+  const response = await axios.get<{ data: Product[] }>(
+  "https://skincare-api-psi.vercel.app/api/data"
+);
   const allBrands = response.data.data.map((item: Product) => item.category);
 const uniqueBrands = [...new Set(allBrands)];
   return uniqueBrands;
 }
 export function useProductsQuery() {
-  return useQuery({
+  return useQuery<string[]>({
     queryKey: ["categories"],
     queryFn: fetchProducts,
   });

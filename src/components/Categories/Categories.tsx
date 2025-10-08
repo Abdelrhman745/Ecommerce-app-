@@ -17,12 +17,12 @@ const images: string[] = [
 ];
 
 export default function Categories(): JSX.Element {
-  const { data, isLoading, isError } = useProductsQuery<string[]>();
+  const { data, isLoading, isError } = useProductsQuery();
 
   if (isLoading)  
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "80vh" }}>
-        <Spinner animation="border" role="status" size="lg">
+        <Spinner className="spinner-border-lg" animation="border" role="status">
           <span className="visually-hidden">Loading...</span>
         </Spinner>
       </div>
@@ -60,7 +60,7 @@ if (isError) {
         }}
         className="category-slider"
       >
-        {data.map((cat, i) => (
+        {data?.map((cat, i) => (
           <SwiperSlide key={cat}>
             <CardUI title={cat} img={images[i % images.length]} />
           </SwiperSlide>
