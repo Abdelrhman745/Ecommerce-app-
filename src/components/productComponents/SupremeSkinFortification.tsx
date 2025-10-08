@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Container, Row, Col, Spinner } from 'react-bootstrap'; // ⬅️ Spinner import added
+import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight } from 'react-bootstrap-icons';
 import ProductCard from './ProductCard';
@@ -45,6 +45,9 @@ const SupremeSkinFortification: React.FC = () => {
   if (isError) return <p>An error occurred while loading products.</p>; {/* Now in English */}
 
   const productList: Product[] = Array.isArray(products) ? products : [];
+  
+  // ⬅️ التعديل الرئيسي هنا: الحصول على أول 10 منتجات فقط
+  const limitedProducts = productList.slice(0, 10);
 
   return (
     <Container className="my-5 skin-fortification-container">
@@ -69,7 +72,8 @@ const SupremeSkinFortification: React.FC = () => {
       {/* Products with scroll on mobile */} {/* Now in English */}
       <div className="product-scroll-wrapper">
         <Row className="flex-nowrap gx-3">
-          {productList.map((product) => (
+          {/* ⬅️ استخدام المصفوفة الجديدة التي تحتوي على 10 منتجات فقط */}
+          {limitedProducts.map((product) => ( 
             <Col
               key={product.id}
               xs="auto"
