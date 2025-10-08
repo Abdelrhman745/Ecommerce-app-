@@ -8,4 +8,6 @@ export interface Product {
   isNewFormula?: boolean;
   isNightMasque?: boolean;
   imageUrl: string;
+    rating?: number; 
+
 }

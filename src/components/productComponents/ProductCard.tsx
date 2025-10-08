@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Card, Button } from 'react-bootstrap';
 import { Heart } from 'react-bootstrap-icons';
-import { type Product} from '../../types/Product';
+import { type Product } from '../../types/Product';
+import RatingStars from './RatingStars'; 
 
 interface ProductCardProps {
   product: Product;
@@ -28,7 +29,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           transition: 'background-color 0.3s ease, transform 0.3s ease',
         }}
       >
-      
         <div
           className="product-image-area position-relative d-flex justify-content-center pt-4"
           style={{
@@ -69,7 +69,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           />
         </div>
 
-   
         <Card.Body
           className="d-flex flex-column text-center px-2 pb-0 product-body-content"
           style={{
@@ -109,19 +108,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.description}
           </Card.Text>
 
-
           <div
             className="product-price-section"
             style={{
               marginTop: '24px',
-              height: '62px',
+              height: 'auto',
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'flex-end',
               alignItems: 'center',
+              gap: '12px',
             }}
           >
+            {/* Rating */}
+            {typeof product.rating === 'number' && (
+              <RatingStars rating={product.rating} />
+            )}
+
+            {/* Size */}
             <p
               className="product-size small text-secondary mb-1"
               style={{
@@ -133,6 +137,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {product.size}
             </p>
 
+            {/* Price */}
             <p
               className="product-price h5 fw-medium text-dark"
               style={{
@@ -144,7 +149,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </p>
           </div>
         </Card.Body>
-
 
         <Card.Footer
           className={`product-footer p-0 border-0 add-to-cart-container ${
@@ -170,52 +174,49 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </Card.Footer>
       </Card>
 
-
       <style>{`
-
         .hover-card:hover {
           background-color: #F2F3EC;
           transform: scale(1.02);
         }
 
-
         @media (min-width: 577px) {
-            .hover-card:hover .add-to-cart-container {
-                opacity: 1 !important;
-                height: auto !important;
-            }
+          .hover-card:hover .add-to-cart-container {
+            opacity: 1 !important;
+            height: auto !important;
+          }
         }
-        
+
         .add-to-cart-btn {
           border-radius: 0 !important;
         }
 
-        
         @media (max-width: 576px) {
-         
           .product-card {
             width: 159.5px !important;
             height: 411px !important;
             margin: 0 !important;
           }
 
-  
           .product-image-area {
             height: 180px !important;
             padding-top: 8px !important;
             padding-bottom: 0 !important;
           }
+
           .product-price-section {
             margin-top: 12px !important;
-            height: 40px !important; 
+            height: auto !important;
+            gap: 8px !important;
           }
+
           .product-title, .product-price {
             font-size: 0.9rem !important;
           }
+
           .product-description, .product-size {
             font-size: 0.75rem !important;
           }
-
 
           .add-to-cart-container {
             opacity: 1 !important;
@@ -223,7 +224,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             padding-top: 0 !important;
             padding-bottom: 0 !important;
           }
-
 
           .add-to-cart-btn {
             width: 159.5px !important;
@@ -239,16 +239,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             margin: 0 !important;
             border-radius: 0 !important;
           }
-          
 
           .product-card:hover .add-to-cart-btn {
             background-color: black !important;
             color: white !important;
             border-color: black !important;
-          }
-
-
-          .add-to-cart-btn:hover {
           }
         }
       `}</style>
