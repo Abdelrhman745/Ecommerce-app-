@@ -11,6 +11,8 @@ export default function HomePage() {
       <Categories/>
       <TextSec/>
       <Gallery/>
+      <SupremeSkinFortification/>
+      <About/>
     </>
   )
 }
