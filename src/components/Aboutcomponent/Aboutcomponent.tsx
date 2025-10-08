@@ -1,6 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import AboutImage from "../../assets/images/aboutcomponent.jpg";
+import AboutImage from "../../assets/images/aboutcomponent.jpg"
 import { FaArrowRight } from "react-icons/fa"; 
 
 export default class About extends React.Component {
