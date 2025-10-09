@@ -8,8 +8,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Layout from "./layouts/Mainlayout";
 import HomePage from "./Pages/HomePage/HomePage";
 import About from "./components/Aboutcomponent/Aboutcomponent";
-import Categories from "./components/Categories/Categories";
 import ProductListPage from "./Pages/ProductPage/ProductListPage"; 
+import ProducrDetailsSection from "./Pages/ProductDetailsPage/components/ProducrDetailsSection";
 
 const router = createBrowserRouter([
   {
@@ -19,8 +19,10 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage/> },
       { path: "about", element: <About /> },
       { path: "home", element: <HomePage/> },
-      { path: "shop", element: <Categories/> },
-      { path: "products", element: <ProductListPage /> }, 
+      { path: "products", element:<ProductListPage /> , children:[
+      { path:"Productdetails",element:<ProducrDetailsSection/>}   
+    ]},
+      // { path: "products", element: }, 
     ],
   },
 ]);
