@@ -1,5 +1,9 @@
 import React from 'react'
 import "./productdetailstyle.css"
+import shavingIcon from '../../../assets/images/icons8-shaving-50.png';
+import skincareIcon from '../../../assets/images/icons8-skincare-64.png';
+import creamIcon from '../../../assets/images/icons8-cream-bottle-64.png';
+
 export default function SkinRoutine() {
   return (
     <section
@@ -19,7 +23,7 @@ export default function SkinRoutine() {
         <div className="routine-card text-center">
           <div className="routine-number">01</div>
           <img
-            src="src/assets/images/icons8-shaving-50.png"
+            src={shavingIcon}
             alt="Cleansing"
             className="routine-icon"
           />
@@ -31,7 +35,7 @@ export default function SkinRoutine() {
         <div className="routine-card text-center">
           <div className="routine-number">02</div>
           <img
-            src="src/assets/images/icons8-skincare-64.png"
+            src={skincareIcon}
             alt="Toner"
             className="routine-icon"
           />
@@ -43,7 +47,7 @@ export default function SkinRoutine() {
         <div className="routine-card text-center">
           <div className="routine-number">03</div>
           <img
-            src="src/assets/images/icons8-cream-bottle-64.png"
+            src={creamIcon}
             alt="Cream"
             className="routine-icon"
           />

@@ -18,7 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleCardClick = () => {
-    navigate(`/id`); 
+  navigate(`/products/${product.id}`);
   };
 
   return (

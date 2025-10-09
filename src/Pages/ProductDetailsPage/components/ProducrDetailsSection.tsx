@@ -1,43 +1,73 @@
-import React from 'react'
-import { Button, Card, Col, Container, Row } from 'react-bootstrap'
-import MoreDetails from './MoreDetails'
+import React, { useEffect } from "react";
+import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
+import MoreDetails from "./MoreDetails";
+import { useParams } from "react-router-dom";
+import { Product } from "../../../types/Product";
+import { useQuery } from "@tanstack/react-query";
+import { Heart } from "react-bootstrap-icons";
+import { fetchProductDetails } from "../../../services/GetProductDetails";
 
-export default function ProducrDetailsSection() {
+
+interface Props {
+  setProduct: (product: Product | null) => void;
+}
+
+export default function ProductDetailsSection({setProduct}:Props) {
+  
+  const { id } = useParams();
+
+
+  const { data, isLoading, isError } = useQuery<Product>({
+    queryKey: ["productDetails", id],
+    queryFn:()=> fetchProductDetails(id),
+  });
+
+   useEffect(() => {
+    if (data) setProduct(data);
+  }, [data, setProduct]);
+
+  if (isLoading)
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
+        <Spinner animation="border" role="status" />
+      </div>
+    );
+
+  if (isError)
+    return (
+      <div style={{ textAlign: "center", padding: "40px" }}>
+        <h2 style={{ color: "red" }}>An error occurred while fetching data</h2>
+      </div>
+    );
+
   return (
-    
-     <Container className="py-5">
+    <Container className="pb-5">
       <Row className="g-5 align-items-center">
         <Col md={6}>
-          <Card className=" shadow-sm border-0">
-            <Card.Img variant="top" src="https://us.innisfree.com/cdn/shop/files/IF_V-CM_PDP_01_Packshot_2024_1080x1080_cbbd6762-1ece-4aaa-a06b-0fb4290b37c8.jpg?v=1703776282&width=1080"  />
+          <Card className="shadow-sm border-0">
+            <Card.Img variant="top" src={data?.imageUrl} />
           </Card>
         </Col>
 
         <Col md={6}>
-          <h4 className="fw-bold mb-3">Gentel plancing Toner</h4>
-           <h6 className=" text-muted mb-3">SkinCare  .Toner</h6>
-          <p className="text-muted mb-2">
-            Lorem ipsum dolor sit,amet consectetur
-            adipisicing elit. Temporedeserunt eos provident
-              sapiente accusamus,rerum corrupti magnam?
-               Pariatur esse laudantium eum neque </p>
-               <h4>⭐⭐⭐⭐</h4>
-          {/* <div className="mb-3 text-warning fs-5">
-            {"⭐".repeat(Math.round(product.rating))}
-          </div> */}
-                        <h6 className="ps-1"><span style={{fontSize:"18px",color:"gray",fontWeight:"normal"}}>Price : </span>32$</h6>
+          <h3 className="fw-bold mb-3">{data?.name}</h3>
+          <h5 className="text-dark mb-3">{data?.category}</h5>
+          <p className="text-muted mb-2">{data?.description}</p>
+           <div className="mb-3 text-warning fs-5">
+                      {"⭐".repeat(Math.round(data?.rating ?? 0))}
+                    </div> 
+          <h6 className="ps-1">
+            <span style={{ fontSize: "18px", color: "gray", fontWeight: "normal" }}>Price : </span>${data?.price}
+          </h6>
 
-
-          <Button className="p-2 bg-dark w-100">
-            Add to Cart
-          </Button>
-          <h6 className="my-2 fw-lighter"><i className="bi bi-heart"></i> Save To Favorites</h6>
-          <hr style={{borderTop: "3px solid black", border: "none", width: '60%' , marginBottom:"0px"}} />
-                <MoreDetails/>
-
+          <Button className="p-2 bg-dark w-100">Add to Cart</Button>
+          <h6 className="my-4 fw-lighter">
+              <Heart color="black" size={18} className="me-2" /> Save To Favorites
+          </h6>
+          <hr style={{ borderTop: "3px solid black", width: "100%", marginBottom: "0px" }} />
+          <MoreDetails />
         </Col>
       </Row>
-     
-      </Container>
-  )
+    </Container>
+  );
 }
