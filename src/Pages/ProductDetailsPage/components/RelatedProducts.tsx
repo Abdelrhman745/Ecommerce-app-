@@ -44,7 +44,7 @@ const SupremeSkinFortification: React.FC = () => {
 
   const productList: Product[] = Array.isArray(products) ? products : [];
   
-  const limitedProducts = productList.slice(0,3);
+  const limitedProducts = productList.slice(0,4);
 
   return (
   <section className="mt-5 py-4">
@@ -54,32 +54,22 @@ const SupremeSkinFortification: React.FC = () => {
     <p style={{ fontSize: "14px", color: "grey" }}>
       You may also like the following products
     </p>
-{/* 
-    <Row className="justify-content-center gx-2 gy-3">
-      <Col xs={6} sm={6} md={3} lg={3}>
-        <ProductCard product={product}  />
-      </Col>
-      <Col xs={6} sm={6} md={3} lg={3}>
-        <ProductCard />
-      </Col>
-      <Col xs={6} sm={6} md={3} lg={3}>
-        <ProductCard />
-      </Col>
-      <Col xs={6} sm={6} md={3} lg={3}>
-        <ProductCard />
-      </Col>
-    </Row> */}
-            <Row className="flex-nowrap justify-content-center">
-          {limitedProducts.map((product) => ( 
-            <Col
-              key={product.id}
-              xs="auto"
-              style={{ flex: '0 0 auto' }}
-            >
-              <ProductCard product={product} />
-            </Col>
-          ))}
-        </Row>
+            <Row className="justify-content-center">
+  {limitedProducts.map((product) => (
+    <Col
+      key={product.id}
+      xs={6}
+      sm={6}
+      md={4}
+      lg={3}
+      xl={3}
+      className="mb-4"
+    >
+      <ProductCard product={product} />
+    </Col>
+  ))}
+</Row>
+
   </Container>
 </section>
 

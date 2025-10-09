@@ -3,6 +3,7 @@ import { Card, Button } from 'react-bootstrap';
 import { Heart } from 'react-bootstrap-icons';
 import { type Product } from '../../types/Product';
 import RatingStars from './RatingStars'; 
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -10,9 +11,14 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isMasque = product.isNightMasque;
+    const navigate = useNavigate();
 
   const handleAddToCart = () => {
     console.log(`Product ${product.name} added to cart (Redux action here)`);
+  };
+
+  const handleCardClick = () => {
+    navigate(`/id`); 
   };
 
   return (
@@ -28,6 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           borderRadius: 0,
           transition: 'background-color 0.3s ease, transform 0.3s ease',
         }}
+        onClick={handleCardClick}
       >
         <div
           className="product-image-area position-relative d-flex justify-content-center pt-4"

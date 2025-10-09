@@ -9,7 +9,7 @@ import Layout from "./layouts/Mainlayout";
 import HomePage from "./Pages/HomePage/HomePage";
 import About from "./components/Aboutcomponent/Aboutcomponent";
 import ProductListPage from "./Pages/ProductPage/ProductListPage"; 
-import ProducrDetailsSection from "./Pages/ProductDetailsPage/components/ProducrDetailsSection";
+import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
 
 const router = createBrowserRouter([
   {
@@ -19,9 +19,9 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage/> },
       { path: "about", element: <About /> },
       { path: "home", element: <HomePage/> },
-      { path: "products", element:<ProductListPage /> , children:[
-      { path:"Productdetails",element:<ProducrDetailsSection/>}   
-    ]},
+      { path: "products", element:<ProductListPage />},
+      { path:"/id",element:<ProductDetailsPage/>}   
+
       // { path: "products", element: }, 
     ],
   },
