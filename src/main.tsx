@@ -11,11 +11,12 @@ import store from "./Redux/Store";
 import Layout from "./layouts/Mainlayout";
 import HomePage from "./Pages/HomePage/HomePage";
 import About from "./components/Aboutcomponent/Aboutcomponent";
-import Categories from "./components/Categories/Categories";
 import SignUp from "./Pages/Autho/Signup";
 import Login from "./Pages/Autho/Login";
 import ForgetPassword from "./Pages/Autho/Forget";
-
+import ProductListPage from "./Pages/ProductPage/ProductListPage";
+import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
+import 'bootstrap-icons/font/bootstrap-icons.css';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -24,10 +25,12 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "about", element: <About /> },
       { path: "home", element: <HomePage /> },
-      { path: "shop", element: <Categories /> },
+      { path: "products", element: <ProductListPage /> },
       { path: "signup", element: <SignUp /> },
       { path: "login", element: <Login /> },
       { path: "forget", element: <ForgetPassword /> },
+      { path:"/products/:id",element:<ProductDetailsPage/>}   
+      
     ],
   },
 ]);
