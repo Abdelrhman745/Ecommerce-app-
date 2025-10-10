@@ -116,22 +116,10 @@ const Navbar: React.FC = () => {
                   cursor: "pointer",
                 }}
               >
-                <FaShoppingBag size={18} />
-                {cartItems.length > 0 && (
-                  <span
-                    style={{
-                      marginLeft: "6px",
-                      fontSize: "14px",
-                      fontWeight: "bold",
-                      padding: "2px 6px",
-                      borderRadius: "12px",
-                      backgroundColor: "rgba(0,0,0,0.1)",
-                      userSelect: "none",
-                    }}
-                  >
-                    {cartItems.length}
-                  </span>
-                )}
+                  {cartItems.length}
+
+                <FaShoppingBag size={18} style={{marginLeft:"7px"}} />
+        
               </div>
             </div>
           </div>

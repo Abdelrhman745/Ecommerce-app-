@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Store';
 import { addToFavorite, removeFromFavorite } from '../../Redux/FavSlice';
 import toast, { Toaster } from 'react-hot-toast';
+import { addToCart } from "../../Redux/CartSlice";
+
 interface ProductCardProps {
   product: Product;
 }
@@ -21,10 +23,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const favorites = useSelector((state: RootState) => state.favorites.items);
   const isFavorite = favorites.some((item) => item.id === product.id);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  const handleAddToCart = () => {
-    console.log(`Product ${product.name} added to cart (Redux action here)`);
-  };
+  // const handleAddToCart = () => {
+  //   console.log(`Product ${product.name} added to cart (Redux action here)`);
+  // };
 
   const handleCardClick = () => {
 
@@ -51,6 +54,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     }
   };
+   const addProductToCart =(e: React.MouseEvent)=>{
+            e.stopPropagation(); 
+ const isInCart = cartItems.some((item) => item.id === product.id);
+          if (isInCart) {
+    toast.error(`${product.name} is already in your cart`, {
+      duration: 2000,
+      position: "top-center",
+    });
+    return;
+  }
+
+          if (!product) return;
+          dispatch(addToCart({
+            id:product.id,
+            name:product.name,
+            price:product.price,
+            quantity:1,
+            image:product.imageUrl
+          }));
+toast.success(`${product.name} added to cart 🛒`, {
+    duration: 2000,
+    position: "top-center",
+  });  
+    }
 
   return (
     <>
@@ -217,7 +244,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <Button
             variant="dark"
             className="add-to-cart-btn w-100"
-            onClick={handleAddToCart}
+            onClick={addProductToCart}
             style={{
               padding: '0.75rem 0',
             }}

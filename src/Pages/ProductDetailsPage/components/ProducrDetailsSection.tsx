@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import MoreDetails from "./MoreDetails";
-import { useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { Product } from "../../../types/Product";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProductDetails } from "../../../services/GetProductDetails";
@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToFavorite, removeFromFavorite } from "../../../Redux/FavSlice";
 import { RootState } from "../../../Redux/Store";
 import toast, { Toaster } from 'react-hot-toast';
+import { addToCart } from "../../../Redux/CartSlice";
 
 
 interface Props {
@@ -32,7 +33,8 @@ export default function ProductDetailsSection({ setProduct }: Props) {
   }, [data, setProduct]);
  const favorites = useSelector((state: RootState) => state.favorites.items);
   const isFavorite = favorites.some((item) => item.id === data?.id);
- 
+   const cartItems = useSelector((state: RootState) => state.cart.items);
+
 
   if (isLoading)
     return (
@@ -69,6 +71,30 @@ export default function ProductDetailsSection({ setProduct }: Props) {
       toast.success("Added to favorites ❤️");
     }
   };
+  const addProductToCart =()=>{
+        if (!data) return;
+         const isInCart = cartItems.some((item) => item.id === data.id);
+          if (isInCart) {
+    toast.error(`${data.name} is already in your cart`, {
+      duration: 2000,
+      position: "top-center",
+    });
+    return;
+  }
+
+        dispatch(addToCart({
+          id:data.id,
+          name:data.name,
+          price:data.price,
+          quantity:1,
+          image:data.imageUrl
+        }));
+        toast.success(`${data.name} added to cart 🛒`, {
+    duration: 2000,
+    position: "top-center",
+  });
+
+  }
 
 
   return (
@@ -98,7 +124,7 @@ export default function ProductDetailsSection({ setProduct }: Props) {
             ${data?.price}
           </h6>
 
-          <Button className="p-2 bg-dark w-100">Add to Cart</Button>
+          <Button className="p-2 bg-dark w-100" onClick={addProductToCart}>Add to Cart</Button>
       <h6
             className="my-4 fw-lighter d-flex align-items-center"
             style={{ cursor: "pointer", userSelect: "none" }}
