@@ -41,33 +41,33 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ category, currentProd
   if (isError) return <p>An error occurred while loading products.</p>;
 
   const relatedProducts = products
-    ?.filter(
-      (product) =>
-        product.category === category && product.id !== currentProductId
-    )
-    .slice(0, 4);
+  ?.filter(
+    (product) =>
+      product.category === category && product.id !== currentProductId
+  )
+  .sort(() => Math.random() - 0.5)
+  .slice(0, 3);
 
   if (!relatedProducts?.length) {
     return <p className="text-center text-muted">No related products found.</p>;
   }
-
   return (
     <section className="mt-5 py-4">
-      <Container fluid className="px-2 px-sm-4">
-        <h6 style={{ fontWeight: "lighter" }}>Suggested</h6>
-        <h4 style={{ fontWeight: "normal" }}>Combine With</h4>
-        <p style={{ fontSize: "14px", color: "grey" }}>
+      <Container fluid >
+        <h6 style={{ fontWeight: "lighter",marginLeft:'50px'}}>Suggested</h6>
+        <h4 style={{ fontWeight: "normal" ,marginLeft:'50px'}}>Combine With</h4>
+        <p style={{ fontSize: "14px", color: "grey" ,marginLeft:'50px'}}>
           You may also like the following products
         </p>
-        <Row className="justify-content-center">
+        <Row className="justify-content-center ms-4" style={{width:"100%"}}>
           {relatedProducts.map((product) => (
             <Col
               key={product.id}
               xs={6}
               sm={6}
-              md={4}
-              lg={3}
-              xl={3}
+              md={6}
+              lg={4}
+              xl={4}
               className="mb-4"
             >
               <ProductCard product={product} />

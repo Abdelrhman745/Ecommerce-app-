@@ -10,7 +10,7 @@ import HomePage from "./Pages/HomePage/HomePage";
 import About from "./components/Aboutcomponent/Aboutcomponent";
 import ProductListPage from "./Pages/ProductPage/ProductListPage"; 
 import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
-
+import 'bootstrap-icons/font/bootstrap-icons.css';
 const router = createBrowserRouter([
   {
     path: "/",
