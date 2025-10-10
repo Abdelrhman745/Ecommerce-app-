@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./SignUp.css"; // نفس تصميم login/signup
+import "./SignUp.css"; 
 import signupimage from "../../assets/images/signuppage.png";
 import { useFormik } from "formik";
 import axios from "axios";
@@ -17,7 +17,7 @@ export default function ForgetPassword() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Validation Schema
+
   const validationSchema = Yup.object({
     email: Yup.string()
       .email("Email is invalid")
@@ -30,18 +30,18 @@ export default function ForgetPassword() {
       .required("New password is required"),
   });
 
-  // 🧠 Function: Reset Password via API
+
   async function handleResetPassword(formValues: FormValues) {
     try {
       setLoading(true);
       setMessage("");
 
-      // 🔗 استبدل اللينك ده لو في الوثيقة عنوان تاني (مثلاً /updatePassword)
+
       const { data } = await axios.put(
         "https://notes-mrp9.onrender.com/resetPassword",
         {
           email: formValues.email,
-          password: formValues.newPassword, // حسب وثيقة الـ API
+          password: formValues.newPassword, 
         }
       );
 
@@ -68,7 +68,7 @@ export default function ForgetPassword() {
     }
   }
 
-  // 🧩 Formik config
+
   const formik = useFormik<FormValues>({
     initialValues: {
       email: "",
@@ -88,7 +88,6 @@ export default function ForgetPassword() {
         <div className="form-content">
           <h3 className="mb-3 fw-light">Reset your password</h3>
 
-          {/* ✅ Alert Message */}
           {message && (
             <div
               className={`alert ${
@@ -104,9 +103,8 @@ export default function ForgetPassword() {
             </div>
           )}
 
-          {/* 🧾 Form */}
           <form onSubmit={formik.handleSubmit}>
-            {/* EMAIL FIELD */}
+
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 Email Address
@@ -128,7 +126,7 @@ export default function ForgetPassword() {
               </div>
             )}
 
-            {/* NEW PASSWORD FIELD */}
+
             <div className="mb-3">
               <label htmlFor="newPassword" className="form-label">
                 New Password
@@ -149,7 +147,7 @@ export default function ForgetPassword() {
               </div>
             )}
 
-            {/* SUBMIT BUTTON */}
+
             <button
               type="submit"
               className="btn btn-dark w-100 mt-2"
