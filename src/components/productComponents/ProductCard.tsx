@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Card, Button } from 'react-bootstrap';
 import { Heart } from 'react-bootstrap-icons';
-import { type Product} from '../../types/Product';
+import { type Product } from '../../types/Product';
+import RatingStars from './RatingStars'; 
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -9,9 +11,14 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isMasque = product.isNightMasque;
+    const navigate = useNavigate();
 
   const handleAddToCart = () => {
     console.log(`Product ${product.name} added to cart (Redux action here)`);
+  };
+
+  const handleCardClick = () => {
+  navigate(`/products/${product.id}`);
   };
 
   return (
@@ -27,8 +34,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           borderRadius: 0,
           transition: 'background-color 0.3s ease, transform 0.3s ease',
         }}
+        onClick={handleCardClick}
       >
-      
+        {/* الصورة + الأيقونة */}
         <div
           className="product-image-area position-relative d-flex justify-content-center pt-4"
           style={{
@@ -69,7 +77,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           />
         </div>
 
-   
+        {/* معلومات المنتج */}
         <Card.Body
           className="d-flex flex-column text-center px-2 pb-0 product-body-content"
           style={{
@@ -109,19 +117,25 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.description}
           </Card.Text>
 
-
+          {/* السعر */}
           <div
             className="product-price-section"
             style={{
               marginTop: '24px',
-              height: '62px',
+              height: 'auto',
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'flex-end',
               alignItems: 'center',
+              gap: '12px',
             }}
           >
+            {/* Rating */}
+            {typeof product.rating === 'number' && (
+              <RatingStars rating={product.rating} />
+            )}
+
+            {/* Size */}
             <p
               className="product-size small text-secondary mb-1"
               style={{
@@ -133,6 +147,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {product.size}
             </p>
 
+            {/* Price */}
             <p
               className="product-price h5 fw-medium text-dark"
               style={{
@@ -145,7 +160,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         </Card.Body>
 
-
+        {/* زر السلة */}
         <Card.Footer
           className={`product-footer p-0 border-0 add-to-cart-container ${
             isMasque ? 'd-block' : ''
@@ -170,53 +185,57 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </Card.Footer>
       </Card>
 
-
+      {/* استايل Hover و Responsive */}
       <style>{`
-
+        /* 1. تأثير التمرير العام على الكارد (للشاشات الكبيرة) */
         .hover-card:hover {
           background-color: #F2F3EC;
           transform: scale(1.02);
         }
 
-
+        /* إظهار الزر عند التمرير على الكارد في الشاشات الكبيرة */
         @media (min-width: 577px) {
-            .hover-card:hover .add-to-cart-container {
-                opacity: 1 !important;
-                height: auto !important;
-            }
+          .hover-card:hover .add-to-cart-container {
+            opacity: 1 !important;
+            height: auto !important;
+          }
         }
-        
+
         .add-to-cart-btn {
           border-radius: 0 !important;
         }
 
-        
+        /* 2. تنسيقات الشاشات الصغيرة (max-width: 576px) */
         @media (max-width: 576px) {
-         
+          /* أبعاد الكارد المطلوبة */
           .product-card {
             width: 159.5px !important;
             height: 411px !important;
             margin: 0 !important;
           }
 
-  
+          /* تعديل محتويات البطاقة الداخلية */
           .product-image-area {
             height: 180px !important;
             padding-top: 8px !important;
             padding-bottom: 0 !important;
           }
+
           .product-price-section {
             margin-top: 12px !important;
-            height: 40px !important; 
+            height: auto !important;
+            gap: 8px !important;
           }
+
           .product-title, .product-price {
             font-size: 0.9rem !important;
           }
+
           .product-description, .product-size {
             font-size: 0.75rem !important;
           }
 
-
+          /* إظهار زر السلة دائمًا في شاشات الموبايل */
           .add-to-cart-container {
             opacity: 1 !important;
             height: auto !important;
@@ -224,7 +243,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             padding-bottom: 0 !important;
           }
 
-
+          /* أبعاد الزر المطلوبة وتنسيقه الأساسي (أبيض بحد أسود) */
           .add-to-cart-btn {
             width: 159.5px !important;
             height: 62px !important;
@@ -240,14 +259,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             border-radius: 0 !important;
           }
           
-
+          /*  التعديل المطلوب: تطبيق تأثير Hover على الزر عند التمرير على الكارد */
           .product-card:hover .add-to-cart-btn {
             background-color: black !important;
             color: white !important;
             border-color: black !important;
           }
 
-
+          /* إلغاء تأثير Hover على الزر نفسه لمنع التعارض */
           .add-to-cart-btn:hover {
           }
         }

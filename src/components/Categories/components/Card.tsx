@@ -30,7 +30,7 @@ export default function CardUI({ title, img }: CardUIProps) {
       <Card.Body
         style={{
           position: "absolute",
-          bottom: "40px",
+          bottom: "20px",
           left: "50%",
           transform: "translateX(-50%)",
           color: "white",

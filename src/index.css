@@ -66,3 +66,19 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.row {
+  margin: 0 !important;
+}

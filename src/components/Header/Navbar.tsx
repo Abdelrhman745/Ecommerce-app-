@@ -49,8 +49,8 @@ const handleLogout = () => {
                 About Us
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/shop">
+              <li className="nav-item">
+              <Link className="nav-link" to="/products">
                 Shop
               </Link>
             </li>

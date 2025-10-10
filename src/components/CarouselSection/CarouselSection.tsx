@@ -6,7 +6,6 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/pagination";
 
-// ✅ Image slides (ensure these images are placed in /public folder)
 const slides = [
   { title: "Elegant Skincare", image: "/1.jpg" },
   { title: "Premium Creams", image: "/2.jpg" },

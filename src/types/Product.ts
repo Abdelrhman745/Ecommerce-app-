@@ -1,6 +1,8 @@
 export interface Product {
   id: number;
   name: string;
+  brand:string;
+  category:string,
   description: string;
   size: string;
   price: number;
@@ -8,4 +10,6 @@ export interface Product {
   isNewFormula?: boolean;
   isNightMasque?: boolean;
   imageUrl: string;
+  rating?: number; 
+
 }
