@@ -1,20 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { FaSearch, FaHeart, FaUser, FaShoppingBag } from "react-icons/fa";
+import { FaUser, FaShoppingBag } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Redux/Authosclice";
 import { RootState } from "../../Redux/Store";
-import CartSection from "../CartSection/CartSection";
 
 const Navbar: React.FC = () => {
-  const [cartCount, setCartCount] = useState(7);
-  const [showCart, setShowCart] = useState(false);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = useSelector((state: RootState) => state.auth.token);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -22,14 +19,18 @@ const Navbar: React.FC = () => {
     navigate("/login");
   };
 
+  const handleCartClick = () => {
+    navigate("/cart");
+  };
+
   return (
     <>
       {/* 🔹 Navbar */}
       <nav className="navbar navbar-expand-lg navbar-light bg-light px-3">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
+          <Link className="navbar-brand" to="/">
             CEIN.
-          </a>
+          </Link>
 
           <button
             className="navbar-toggler"
@@ -83,8 +84,9 @@ const Navbar: React.FC = () => {
 
               <FaUser size={18} />
 
+              {/* 🔹 Cart Icon */}
               <div
-                onClick={() => setShowCart(!showCart)}
+                onClick={handleCartClick}
                 style={{
                   position: "relative",
                   display: "flex",
@@ -93,7 +95,7 @@ const Navbar: React.FC = () => {
                 }}
               >
                 <FaShoppingBag size={18} />
-                {cartCount > 0 && (
+                {cartItems.length > 0 && (
                   <span
                     style={{
                       marginLeft: "6px",
@@ -105,7 +107,7 @@ const Navbar: React.FC = () => {
                       userSelect: "none",
                     }}
                   >
-                    {cartCount}
+                    {cartItems.length}
                   </span>
                 )}
               </div>
@@ -113,32 +115,6 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </nav>
-
-      {showCart && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            right: 0,
-            width: "400px",
-            height: "100vh",
-            backgroundColor: "#fff",
-            boxShadow: "-4px 0 10px rgba(0,0,0,0.1)",
-            zIndex: 1050,
-            padding: "20px",
-            overflowY: "auto",
-            transition: "transform 0.3s ease-in-out",
-          }}
-        >
-          <button
-            onClick={() => setShowCart(false)}
-            className="btn btn-sm btn-outline-dark mb-3"
-          >
-            Close
-          </button>
-          <CartSection />
-        </div>
-      )}
     </>
   );
 };

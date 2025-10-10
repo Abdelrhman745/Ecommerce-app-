@@ -16,21 +16,23 @@ import Login from "./Pages/Autho/Login";
 import ForgetPassword from "./Pages/Autho/Forget";
 import ProductListPage from "./Pages/ProductPage/ProductListPage";
 import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import CartPage from "./Pages/CartPage/CartPage";
+import "bootstrap-icons/font/bootstrap-icons.css";
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />, // ← Layout فيه Navbar + CartSection + Outlet
+    element: <Layout />,
     children: [
       { index: true, element: <HomePage /> },
       { path: "about", element: <About /> },
       { path: "home", element: <HomePage /> },
       { path: "products", element: <ProductListPage /> },
+      { path: "products/:id", element: <ProductDetailsPage /> },
       { path: "signup", element: <SignUp /> },
       { path: "login", element: <Login /> },
       { path: "forget", element: <ForgetPassword /> },
-      { path:"/products/:id",element:<ProductDetailsPage/>}   
-      
+      { path: "cart", element: <CartPage /> },
     ],
   },
 ]);
