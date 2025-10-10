@@ -15,6 +15,7 @@ import Login from "./Pages/Autho/Login";
 import { Provider, useSelector } from "react-redux";
 import store from "./Redux/Store";
 import ForgetPassword from "./Pages/Autho/Forget";
+import Categories from "./components/Categories/Categories";
  
 const router = createBrowserRouter([
   {
