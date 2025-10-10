@@ -1,21 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import MoreDetails from "./MoreDetails";
 import { useParams } from "react-router-dom";
 import { Product } from "../../../types/Product";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProductDetails } from "../../../services/GetProductDetails";
+import { useDispatch, useSelector } from "react-redux";
+import { addToFavorite, removeFromFavorite } from "../../../Redux/FavSlice";
+import { RootState } from "../../../Redux/Store";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 interface Props {
   setProduct: (product: Product | null) => void;
 }
 
 export default function ProductDetailsSection({ setProduct }: Props) {
-  const [isFavorite, setIsFavorite] = useState(false);
-  const handleToggleFavorite = () => {
-    setIsFavorite((fav) => !fav);
-  };
 
+  
+    const dispatch = useDispatch();
+   
   const { id } = useParams();
 
   const { data, isLoading, isError } = useQuery<Product>({
@@ -26,6 +30,9 @@ export default function ProductDetailsSection({ setProduct }: Props) {
   useEffect(() => {
     if (data) setProduct(data);
   }, [data, setProduct]);
+ const favorites = useSelector((state: RootState) => state.favorites.items);
+  const isFavorite = favorites.some((item) => item.id === data?.id);
+ 
 
   if (isLoading)
     return (
@@ -44,7 +51,29 @@ export default function ProductDetailsSection({ setProduct }: Props) {
       </div>
     );
 
+      const handleFavoriteClick = () => {
+    if (!data) return;
+
+    if (isFavorite) {
+      dispatch(removeFromFavorite(data.id));
+      toast.error("Removed from favorites 💔");
+    } else {
+      dispatch(
+        addToFavorite({
+          id: data.id,
+          name: data.name,
+          price: data.price,
+          image: data.imageUrl,
+        })
+      );
+      toast.success("Added to favorites ❤️");
+    }
+  };
+
+
   return (
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
     <Container className="pb-5">
       <Row className="g-5 align-items-center">
         <Col md={6}>
@@ -73,7 +102,7 @@ export default function ProductDetailsSection({ setProduct }: Props) {
       <h6
             className="my-4 fw-lighter d-flex align-items-center"
             style={{ cursor: "pointer", userSelect: "none" }}
-            onClick={handleToggleFavorite}
+            onClick={handleFavoriteClick}
           >
             <span
               style={{
@@ -105,5 +134,6 @@ export default function ProductDetailsSection({ setProduct }: Props) {
         </Col>
       </Row>
     </Container>
+    </>
   );
 }

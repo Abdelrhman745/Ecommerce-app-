@@ -1,17 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { FaUser, FaShoppingBag } from "react-icons/fa";
+import { FaUser, FaShoppingBag, FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Redux/Authosclice";
 import { RootState } from "../../Redux/Store";
+import FavoritesModal from "../FavoriteModal/FavoriteModal";
+
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = useSelector((state: RootState) => state.auth.token);
   const cartItems = useSelector((state: RootState) => state.cart.items);
+    const [showFav, setShowFav] = useState(false);
+ const favorites = useSelector((state: RootState) => state.favorites?.items || []);
+
 
   const handleLogout = () => {
     dispatch(logout());
@@ -83,6 +88,23 @@ const Navbar: React.FC = () => {
               )}
 
               <FaUser size={18} />
+              <div
+  onClick={() => setShowFav(true)}
+  style={{
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
+  }}
+>
+  {favorites.length}
+  
+  <FaHeart
+    size={18}
+    style={{marginLeft:"7px"}}
+  />
+
+</div>
 
               {/* 🔹 Cart Icon */}
               <div
@@ -115,6 +137,8 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </nav>
+          <FavoritesModal show={showFav} onHide={() => setShowFav(false)} />
+
     </>
   );
 };

@@ -1,28 +1,60 @@
 import * as React from 'react';
 import { Card, Button } from 'react-bootstrap';
-import { Heart } from 'react-bootstrap-icons';
+import { Heart , HeartFill} from 'react-bootstrap-icons';
 import { type Product } from '../../types/Product';
 import RatingStars from './RatingStars'; 
 import { useNavigate } from 'react-router-dom';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Store';
+import { addToFavorite, removeFromFavorite } from '../../Redux/FavSlice';
+import toast, { Toaster } from 'react-hot-toast';
 interface ProductCardProps {
   product: Product;
 }
 
+
+
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isMasque = product.isNightMasque;
     const navigate = useNavigate();
+      const dispatch = useDispatch();
+
+  const favorites = useSelector((state: RootState) => state.favorites.items);
+  const isFavorite = favorites.some((item) => item.id === product.id);
 
   const handleAddToCart = () => {
     console.log(`Product ${product.name} added to cart (Redux action here)`);
   };
 
   const handleCardClick = () => {
+
   navigate(`/products/${product.id}`);
+  };
+
+   const handleFavoriteClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); 
+
+    if (isFavorite) {
+      dispatch(removeFromFavorite(product.id));
+      toast.error("Removed from favorites 💔");
+    }else {
+       dispatch(
+        addToFavorite({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.imageUrl,
+        })
+
+      );
+                    toast.success("Added to favorites ❤️");
+
+    }
   };
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Card
         className={`product-card hover-card ${isMasque ? 'masque-card' : ''}`}
         style={{
@@ -36,7 +68,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         }}
         onClick={handleCardClick}
       >
-        {/* الصورة + الأيقونة */}
         <div
           className="product-image-area position-relative d-flex justify-content-center pt-4"
           style={{
@@ -70,11 +101,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               }}
             />
           </div>
+{isFavorite ? (
+  <HeartFill
+    className="favorite-icon position-absolute end-0 top-0 mt-3 me-3 text-danger"
+    size={22}
+    onClick={handleFavoriteClick}
+    style={{ cursor: "pointer", transition: "color 0.3s ease" }}
+  />
+) : (
+  <Heart
+    className="favorite-icon position-absolute end-0 top-0 mt-3 me-3 text-secondary"
+    size={22}
+    onClick={handleFavoriteClick}
+    style={{ cursor: "pointer", transition: "color 0.3s ease" }}
+  />
+)}
 
-          <Heart
-            className="favorite-icon position-absolute end-0 top-0 mt-3 me-3 text-secondary"
-            size={20}
-          />
         </div>
 
         {/* معلومات المنتج */}
