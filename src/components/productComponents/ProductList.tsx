@@ -48,21 +48,8 @@ const ProductList: React.FC = () => {
   });
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
-
-  if (isLoading) {
-    return (
-      <div className="text-center py-5">
-        <Spinner animation="border" role="status" variant="dark">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-        <p className="mt-2 text-secondary">Loading all products...</p>
-      </div>
-    );
-  }
-
-  if (isError) return <p className="text-danger text-center py-5">An error occurred while loading products.</p>;
-
-  const allProducts: Product[] = Array.isArray(products) ? products : [];
+  
+  const allProducts: Product[] = Array.isArray(products) ? products : []; 
 
   const dynamicCategories: CategoryKey[] = useMemo(() => {
     const categorySet = new Set<CategoryKey>();
@@ -84,6 +71,19 @@ const ProductList: React.FC = () => {
     }
     return allProducts.filter(product => (product as any).category === selectedCategory);
   }, [selectedCategory, allProducts]);
+
+  if (isLoading) {
+    return (
+      <div className="text-center py-5">
+        <Spinner animation="border" role="status" variant="dark">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+        <p className="mt-2 text-secondary">Loading all products...</p>
+      </div>
+    );
+  }
+
+  if (isError) return <p className="text-danger text-center py-5">An error occurred while loading products.</p>;
 
 
   const categoryStripColor = '#F9F7F0';
