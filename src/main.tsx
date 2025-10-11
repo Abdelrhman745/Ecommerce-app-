@@ -10,7 +10,6 @@ import store from "./Redux/Store";
 
 import Layout from "./layouts/Mainlayout";
 import HomePage from "./Pages/HomePage/HomePage";
-import About from "./components/Aboutcomponent/Aboutcomponent";
 import SignUp from "./Pages/Autho/Signup";
 import Login from "./Pages/Autho/Login";
 import ForgetPassword from "./Pages/Autho/Forget";
@@ -19,8 +18,8 @@ import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
 import CartPage from "./Pages/CartPage/CartPage";
 import CheckoutPage from "./Pages/Checkout/CheckoutPage";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { FaUserTimes } from "react-icons/fa";
 import UserProfileEdit from "./components/UserProfileEdit/UserProfileEdit";
+import About from "./Pages/About/About";
 
 const router = createBrowserRouter([
   {

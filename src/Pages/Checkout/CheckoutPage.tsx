@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Redux/Store";
 import { removeFromCart } from "../../Redux/CartSlice";
+import Swal from "sweetalert2";
 
 const CenterContainer = styled.div`
   // min-height: 100vh;
@@ -193,6 +194,16 @@ const handleRemove = (id: number) => {
   dispatch(removeFromCart(id));
 };
 
+
+const submitOrder = () =>{
+       Swal.fire({
+        title: "Order Placed!",
+        text: "Your checkout has been submitted successfully.",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      });
+      
+}
   return (
     <CenterContainer>
       <HeadingBg>
@@ -363,7 +374,8 @@ const handleRemove = (id: number) => {
           type="submit"
           onClick={(e) => {
             e.preventDefault();
-            alert("Checkout submitted!");
+                        submitOrder()
+
 
           }}
         >

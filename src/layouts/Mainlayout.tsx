@@ -10,7 +10,7 @@ export default function Layout() {
       style={{ fontFamily: "Tajawal" }}
     >
     <Navbar />
-      <main className="flex-fill py-4">
+      <main className="flex-fill">
         <Outlet />
       </main>
 
