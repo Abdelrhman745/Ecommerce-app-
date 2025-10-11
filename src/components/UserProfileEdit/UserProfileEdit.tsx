@@ -23,12 +23,12 @@ const ProfileSubtitle = styled.div`
 `;
 const Section = styled.section`
   width: 100vw;
-  min-height: 650px;
+  min-height: 85vh;
   background: linear-gradient(100deg, #f7f8fa 8%, #eef0f3 87%);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 7vw 0 0 0;
+  align-items: center;
+  padding: 0;
 `;
 const EditGrid = styled.div`
   display: flex;
@@ -37,6 +37,7 @@ const EditGrid = styled.div`
   background: #fff;
   box-shadow: 0 8px 36px 0 rgba(188, 196, 210, 0.11);
   border-radius: 24px;
+  min-height: 340px;
   @media (max-width: 850px) {
     flex-direction: column;
     align-items: center;
@@ -49,7 +50,7 @@ const LeftImgBlock = styled.div`
   align-items: center;
   justify-content: center;
   min-width: 330px;
-  height: 390px;
+  height: 340px;
   border-radius: 0;
   padding: 20px;
   background: none;
@@ -88,6 +89,7 @@ const RightPanel = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   @media (max-width: 850px) {
     padding: 36px 18px 32px 18px;
     width: 100%;
@@ -215,13 +217,11 @@ const UserProfileEdit: React.FC = () => {
             onChange={handleImageChange}
           />
         </LeftImgBlock>
-
         <RightPanel>
           <ProfileTitleWrap>
             <ProfileTitle>User Profile</ProfileTitle>
             <ProfileSubtitle>Manage your personal information</ProfileSubtitle>
           </ProfileTitleWrap>
-
           <Form onSubmit={handleSave}>
             {error && <ErrorMsg>{error}</ErrorMsg>}
 
@@ -269,7 +269,6 @@ const UserProfileEdit: React.FC = () => {
 
             <SaveBtn type="submit">Save Changes</SaveBtn>
           </Form>
-
           <DividerText>
             All changes are saved securely. Need help?{" "}
             <a
