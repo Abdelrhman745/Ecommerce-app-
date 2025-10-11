@@ -12,8 +12,6 @@ const slides = [
   { title: "Natural Radiance", image: "/3.jpg" },
 ];
 
-// ---------------------- Styled Components ----------------------
-
 const Section = styled.section`
   position: relative;
   width: 100vw;

@@ -17,6 +17,7 @@ import ForgetPassword from "./Pages/Autho/Forget";
 import ProductListPage from "./Pages/ProductPage/ProductListPage";
 import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
 import CartPage from "./Pages/CartPage/CartPage";
+import CheckoutPage from "./Pages/Checkout/CheckoutPage";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 const router = createBrowserRouter([
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "forget", element: <ForgetPassword /> },
       { path: "cart", element: <CartPage /> },
+      { path: "checkout", element: <CheckoutPage /> },
     ],
   },
 ]);
