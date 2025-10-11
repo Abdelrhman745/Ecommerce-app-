@@ -6,7 +6,6 @@ import creamIcon from "../../../assets/images/icons8-cream-bottle-64.png";
 import { motion } from "framer-motion"; 
 
 export default function SkinRoutine() {
-  // ✨ إعداد الحركات العامة
   const containerVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
@@ -40,11 +39,10 @@ export default function SkinRoutine() {
         overflow: "hidden",
       }}
     >
-      {/* 🧴 العناوين */}
       <motion.h6
         initial={{ opacity: 0, y: -10 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.7 }}
         viewport={{ once: true }}
         style={{ fontSize: "14px", color: "#4c4a4aff" }}
       >
@@ -61,7 +59,6 @@ export default function SkinRoutine() {
         Gentle Care For Delicate Skin
       </motion.h4>
 
-      {/* 🧴 الكروت + الحركات */}
       <motion.div
         className="routine-container"
         variants={containerVariants}
