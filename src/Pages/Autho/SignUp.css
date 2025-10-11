@@ -1,0 +1,41 @@
+.signup-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+
+.signup-image {
+  flex: 1;
+}
+
+.signup-image img {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+}
+
+
+.signup-form {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.form-content {
+  width: 100%;
+  max-width: 400px;
+}
+
+
+@media (max-width: 768px) {
+  .signup-image {
+    display: none;
+  }
+  .signup-form {
+    flex: 1;
+    padding: 20px;
+  }
+}

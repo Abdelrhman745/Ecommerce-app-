@@ -46,8 +46,6 @@ const SupremeSkinFortification: React.FC = () => {
   if (isError) return <p>An error occurred while loading products.</p>;
 
   const productList: Product[] = Array.isArray(products) ? products : [];
-  
-  const limitedProducts = productList.slice(0, 10);
 
   return (
     <Container className="my-5 skin-fortification-container">
@@ -70,7 +68,7 @@ const SupremeSkinFortification: React.FC = () => {
 
       <div className="product-scroll-wrapper">
         <Row className="flex-nowrap gx-3">
-          {limitedProducts.map((product) => ( 
+          {productList.map((product) => (
             <Col
               key={product.id}
               xs="auto"
