@@ -248,7 +248,8 @@ const CartSection: React.FC = () => {
         {cartItems.length === 0 ? (
           <EmptyCart>
             <h3>Your cart is empty.</h3>
-            <Button style={{ marginTop: 14 }}>Continue Shopping</Button>
+            <Button type="button" style={{ marginTop: 14 }}    onClick={() => navigate("/products")}
+>Continue Shopping</Button>
           </EmptyCart>
         ) : (
           <>

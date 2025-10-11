@@ -46,7 +46,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ category, currentProd
       product.category === category && product.id !== currentProductId
   )
   .sort(() => Math.random() - 0.5)
-  .slice(0, 3);
+   .slice(0, 6);
 
   if (!relatedProducts?.length) {
     return <p className="text-center text-muted">No related products found.</p>;
@@ -59,7 +59,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ category, currentProd
         <p style={{ fontSize: "14px", color: "grey" ,marginLeft:'50px'}}>
           You may also like the following products
         </p>
-        <Row className="justify-content-center ms-4" style={{width:"100%"}}>
+        {/* <Row className="justify-content-center ms-4" style={{width:"100%"}}>
           {relatedProducts.map((product) => (
             <Col
               key={product.id}
@@ -68,12 +68,46 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ category, currentProd
               md={6}
               lg={4}
               xl={4}
-              className="mb-4"
+              className="mb-4 "
             >
               <ProductCard product={product} />
             </Col>
           ))}
-        </Row>
+        </Row> */}
+          <div className="product-scroll-wrapper">
+                <Row className="flex-nowrap gx-3">
+                  {relatedProducts.map((product) => (
+                    <Col
+                      key={product.id}
+                      xs="auto"
+                      style={{ flex: '0 0 auto' }}
+                    >
+                      <ProductCard product={product} />
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+                 <style>{`
+        .product-scroll-wrapper {
+          overflow-x: auto;
+          padding-bottom: 1rem;
+        }
+
+        .product-scroll-wrapper::-webkit-scrollbar {
+          height: 4px;
+        }
+
+        .product-scroll-wrapper::-webkit-scrollbar-thumb {
+          background-color: black;
+        }
+
+        @media (max-width: 576px) {
+          .row > .col-auto {
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+          }
+        }
+      `}</style>
       </Container>
     </section>
   );
