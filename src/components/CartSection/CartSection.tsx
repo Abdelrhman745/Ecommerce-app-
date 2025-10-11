@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart, changeCartQuantity } from "../../Redux/CartSlice";
 import { RootState } from "../../Redux/Store";
 
-// const fadeIn = keyframes`
-//   from { opacity: 0; transform: translateY(18px);}
-//   to   { opacity: 1; transform: none; }
-// `;
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(18px);}
+  to   { opacity: 1; transform: none; }
+`;
 
 const CenterContainer = styled.div`
   min-height: 100vh;
