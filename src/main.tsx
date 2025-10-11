@@ -19,6 +19,8 @@ import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
 import CartPage from "./Pages/CartPage/CartPage";
 import CheckoutPage from "./Pages/Checkout/CheckoutPage";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { FaUserTimes } from "react-icons/fa";
+import UserProfileEdit from "./components/UserProfileEdit/UserProfileEdit";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,7 @@ const router = createBrowserRouter([
       { path: "forget", element: <ForgetPassword /> },
       { path: "cart", element: <CartPage /> },
       { path: "checkout", element: <CheckoutPage /> },
+      { path: "profile", element: <UserProfileEdit /> },
     ],
   },
 ]);

@@ -8,15 +8,15 @@ import { logout } from "../../Redux/Authosclice";
 import { RootState } from "../../Redux/Store";
 import FavoritesModal from "../FavoriteModal/FavoriteModal";
 
-
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = useSelector((state: RootState) => state.auth.token);
   const cartItems = useSelector((state: RootState) => state.cart.items);
-    const [showFav, setShowFav] = useState(false);
- const favorites = useSelector((state: RootState) => state.favorites?.items || []);
-
+  const [showFav, setShowFav] = useState(false);
+  const favorites = useSelector(
+    (state: RootState) => state.favorites?.items || []
+  );
 
   const handleLogout = () => {
     dispatch(logout());
@@ -87,24 +87,22 @@ const Navbar: React.FC = () => {
                 </Link>
               )}
 
-              <FaUser size={18} />
-              <div
-  onClick={() => setShowFav(true)}
-  style={{
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
-  }}
->
-  {favorites.length}
-  
-  <FaHeart
-    size={18}
-    style={{marginLeft:"7px"}}
-  />
+              <Link to="/profile" style={{ color: "inherit" }}>
+                <FaUser size={18} style={{ cursor: "pointer" }} />
+              </Link>
 
-</div>
+              <div
+                onClick={() => setShowFav(true)}
+                style={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+              >
+                {favorites.length}
+                <FaHeart size={18} style={{ marginLeft: "7px" }} />
+              </div>
 
               {/* 🔹 Cart Icon */}
               <div
@@ -116,17 +114,15 @@ const Navbar: React.FC = () => {
                   cursor: "pointer",
                 }}
               >
-                  {cartItems.length}
-
-                <FaShoppingBag size={18} style={{marginLeft:"7px"}} />
-        
+                {cartItems.length}
+                <FaShoppingBag size={18} style={{ marginLeft: "7px" }} />
               </div>
             </div>
           </div>
         </div>
       </nav>
-          <FavoritesModal show={showFav} onHide={() => setShowFav(false)} />
 
+      <FavoritesModal show={showFav} onHide={() => setShowFav(false)} />
     </>
   );
 };
