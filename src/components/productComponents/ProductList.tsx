@@ -153,7 +153,7 @@ const ProductList: React.FC = () => {
         setSelectedCategory(eventKey);
         setSearchTerm(''); 
         setPriceRange([0, Math.ceil(maxPrice / 10) * 10]); 
-        setShowFilterPanel(false); // إغلاق لوحة الفلترة عند تغيير الفئة
+        setShowFilterPanel(false); 
     }
   };
 
@@ -322,11 +322,15 @@ const ProductList: React.FC = () => {
                             <Col xs={12} sm={6}>
                                 <label className="form-label small fw-bold text-uppercase text-secondary mb-1">Currency</label>
                                 <p className="mb-0 text-muted small">
-                                    $ USD &bull; 1 USD = 1 USD (Fixed for demo)
+                                    **$ USD** &bull; 1 USD = 1 USD (Fixed for demo)
                                 </p>
                             </Col>
 
-=                            <Col xs={12} sm={6} className="text-end mt-3 mt-sm-0">
+                            <Col 
+                                xs={12} 
+                                sm={6} 
+                                className="mt-3 mt-sm-0 d-flex justify-content-center justify-content-sm-end" 
+                            >
                                 <Button 
                                     variant="dark" 
                                     size="sm" 
@@ -344,7 +348,7 @@ const ProductList: React.FC = () => {
         
         <div className="text-center mb-4"> 
             <p className="small text-muted mb-0">
-                Currently showing {filteredProducts.length} products.
+                Currently showing **{filteredProducts.length}** products.
             </p>
         </div>
 
