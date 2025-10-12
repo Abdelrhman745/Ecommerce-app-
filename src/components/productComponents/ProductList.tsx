@@ -63,7 +63,6 @@ const ProductList: React.FC = () => {
   
   const allProducts: Product[] = Array.isArray(products) ? products : []; 
 
-  // تحديد الحد الأقصى للسعر في جميع المنتجات
   const maxPrice = useMemo(() => {
     return allProducts.reduce((max, product) => {
       const price = (product as any).price || 0; 
@@ -71,7 +70,6 @@ const ProductList: React.FC = () => {
     }, 0);
   }, [allProducts]);
 
-  // تحديث النطاق الأولي عند تحميل المنتجات لأول مرة
   React.useEffect(() => {
     if (maxPrice > 0 && priceRange[1] === 1000) {
         const initialMax = Math.ceil(maxPrice / 10) * 10;
@@ -95,7 +93,6 @@ const ProductList: React.FC = () => {
   const filteredProducts: Product[] = useMemo(() => {
     const [minPrice, maxPriceRange] = priceRange; 
     
-    // 1. تطبيق جميع الفلاتر
     let finalFiltered = allProducts
       .filter(product => selectedCategory === 'all' || (product as any).category === selectedCategory)
       .filter(product => {
@@ -111,7 +108,6 @@ const ProductList: React.FC = () => {
           return productPrice >= minPrice && productPrice <= maxPriceRange;
       });
 
-    // 2. تطبيق الفرز (Sorting)
     const sortedProducts = [...finalFiltered];
 
     sortedProducts.sort((a, b) => {
@@ -155,7 +151,6 @@ const ProductList: React.FC = () => {
   const handleCategorySelect = (eventKey: string | null) => {
     if (eventKey) {
         setSelectedCategory(eventKey);
-        // إعادة ضبط البحث والسعر عند تغيير الفئة (الفرز نتركه)
         setSearchTerm(''); 
         setPriceRange([0, Math.ceil(maxPrice / 10) * 10]); 
         setShowFilterPanel(false); // إغلاق لوحة الفلترة عند تغيير الفئة
@@ -205,7 +200,6 @@ const ProductList: React.FC = () => {
             borderBottomColor: '#e0e0e0',
           } as React.CSSProperties}
         >
-          {/* جزء الفئات على اليسار */}
           <div className="d-flex overflow-auto align-items-center">
             {dynamicCategories.map((key) => (
                 <Nav.Item key={key}>
@@ -224,10 +218,8 @@ const ProductList: React.FC = () => {
             ))}
           </div>
 
-          {/* 🎯 زر Filters وحقل البحث على اليمين */}
           <div className="d-flex align-items-center flex-shrink-0">
              
-            {/* زر Filters لفتح لوحة الفلاتر في الأسفل */}
             <div className="me-3"> 
               <Button 
                 variant="outline-secondary" 
@@ -246,7 +238,6 @@ const ProductList: React.FC = () => {
               </Button>
             </div>
              
-             {/* حقل البحث */}
              <div style={{ width: '180px', marginRight: '15px' }}>
                 <input
                   type="text"
@@ -271,19 +262,15 @@ const ProductList: React.FC = () => {
           </h1>
         </header>
 
-        {/* لوحة الفلاتر التي تظهر/تختفي تحت العنوان */}
         {showFilterPanel && (
             <Row className="mb-5 justify-content-center">
                 <Col xs={12} md={10} lg={8} className="px-4"> 
                     <div className="p-4 rounded border" style={{ backgroundColor: '#f8f9fa' }}>
 
-                        {/* الصف الأول: Price Range و Sort By */}
                         <Row className="g-3 mb-4">
-                            {/* Price Range */}
                             <Col xs={12} sm={6}>
                                 <label className="form-label small fw-bold text-uppercase text-secondary mb-2">Price Range</label>
                                 <div className="d-flex gap-2">
-                                    {/* يمكنك استبدال هذه بـ <select> يحوي "All Prices" إذا أردت تطابق الصورة تماماً */}
                                     <input
                                         type="number"
                                         id="min-price-panel"
@@ -313,7 +300,6 @@ const ProductList: React.FC = () => {
                                 </div>
                             </Col>
                             
-                            {/* Sort By */}
                             <Col xs={12} sm={6}>
                                 <label htmlFor="sort-by-panel" className="form-label small fw-bold text-uppercase text-secondary mb-2">Sort By</label>
                                 <select
@@ -332,18 +318,15 @@ const ProductList: React.FC = () => {
                         
                         <hr />
 
-                        {/* الصف الثاني: العملة و زر الإغلاق/التطبيق */}
                         <Row className="align-items-center">
-                            {/* العملة (مثال فقط - يمكن توسيعه) */}
                             <Col xs={12} sm={6}>
                                 <label className="form-label small fw-bold text-uppercase text-secondary mb-1">Currency</label>
                                 <p className="mb-0 text-muted small">
-                                    **$ USD** &bull; 1 USD = 1 USD (Fixed for demo)
+                                    $ USD &bull; 1 USD = 1 USD (Fixed for demo)
                                 </p>
                             </Col>
 
-                            {/* زر الإغلاق */}
-                            <Col xs={12} sm={6} className="text-end mt-3 mt-sm-0">
+=                            <Col xs={12} sm={6} className="text-end mt-3 mt-sm-0">
                                 <Button 
                                     variant="dark" 
                                     size="sm" 
@@ -359,10 +342,9 @@ const ProductList: React.FC = () => {
             </Row>
         )}
         
-        {/* عرض عدد المنتجات بعد الفلاتر */}
         <div className="text-center mb-4"> 
             <p className="small text-muted mb-0">
-                Currently showing **{filteredProducts.length}** products.
+                Currently showing {filteredProducts.length} products.
             </p>
         </div>
 
