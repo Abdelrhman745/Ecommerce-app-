@@ -13,9 +13,10 @@ import "./components/categories.css"
 
 
 const images: string[] = [
-  "https://i.pinimg.com/1200x/1f/f5/4d/1ff54da484660f82183ad5285f80cf72.jpg",
-  "https://media.glamourmagazine.co.uk/photos/6891f9bcd47bb28da6f8f0f7/16:9/w_2560%2Cc_limit/Best%2520Korean%2520Serums%252005082025%2520main.jpg",
-  "https://i.pinimg.com/1200x/f7/1e/9a/f71e9a8b43ad5e51d400bb639504ecb7.jpg"
+  "https://i.pinimg.com/1200x/70/2b/42/702b429b494edfac66cc49b4c6d03600.jpg",
+  "https://i.pinimg.com/736x/bb/c0/ea/bbc0ea4cd37abf4731a157910dcd023f.jpg",
+  "https://i.pinimg.com/1200x/5f/c1/93/5fc19362442557efc3e529b552e3442b.jpg",
+  "https://i.pinimg.com/1200x/e3/fd/8c/e3fd8ca682c3330377f24129d1daa8b2.jpg"
 ];
 
 
@@ -49,26 +50,32 @@ if (isError) {
         biotechnological plant power, designed to transform your skin and
         provide visible results —naturally.
       </p>
-      <Swiper
-        modules={[Pagination, Navigation, Autoplay]}
-        slidesPerView={1}
-        loop={true}
-        autoplay={{ delay: 5000, disableOnInteraction: false }}
-        pagination={{ clickable: true, type: "bullets" }}
-        navigation={true}
-        style={{
-          width: "100%",
-          height: "auto",
-          position: "relative"
-        }}
-        className="category-slider"
-      >
-        {data?.map((cat, i) => (
-          <SwiperSlide key={cat}>
-            <CardUI title={cat} img={images[i % images.length]} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+    <Swiper
+  modules={[Pagination, Navigation, Autoplay]}
+  loop={true}
+  autoplay={{ delay: 5000, disableOnInteraction: false }}
+  pagination={{ clickable: true, type: "bullets" }}
+  navigation={true}
+  style={{
+    width: "100%",
+    height: "auto",
+    position: "relative",
+  }}
+  className="category-slider"
+  spaceBetween={20}   // 👈 مسافة بين الكروت
+  breakpoints={{
+    0: { slidesPerView: 1 },      // موبايل
+    768: { slidesPerView: 2 },    // تابلت
+    1024: { slidesPerView: 3 }    // لابتوب أو شاشة كبيرة
+  }}
+>
+  {data?.map((cat, i) => (
+    <SwiperSlide key={cat}>
+      <CardUI title={cat} img={images[i % images.length]} />
+    </SwiperSlide>
+  ))}
+</Swiper>
+
     </div>
   );
 }

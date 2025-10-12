@@ -11,8 +11,14 @@
   position: relative;
 }
 
+
+
 .left-image {
   background-image: url("https://i.pinimg.com/1200x/19/e2/f2/19e2f2c3572d9648107c0a07db4876b7.jpg");
+}
+
+.center-image{
+  background-image: url("https://i.pinimg.com/736x/82/ed/a5/82eda56d726991a48ff6b4c7a3119181.jpg");
 }
 
 .right-image {
