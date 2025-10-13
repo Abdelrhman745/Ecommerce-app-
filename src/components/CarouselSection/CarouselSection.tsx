@@ -7,9 +7,9 @@ import "swiper/css/effect-fade";
 import "swiper/css/pagination";
 
 const slides = [
-  { title: "Elegant Skincare", image: "/2.jpg" },
-  { title: "Premium Creams", image: "/1.jpg" },
-  { title: "Natural Radiance", image: "/3.jpg" },
+  { title: "Elegant Skincare", image: "/nnn.jpg" },
+  { title: "Premium Creams", image: "/112.jpg" },
+  { title: "Natural Radiance", image: "/r.jpg" },
 ];
 
 const Section = styled.section`
