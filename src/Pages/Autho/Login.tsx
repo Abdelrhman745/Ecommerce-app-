@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../Redux/Authosclice";
 import toast from "react-hot-toast";
 import { RootState } from "../../Redux/Store";
+import { setFavorites } from "../../Redux/FavSlice";
+import { addToCart } from "../../Redux/CartSlice";
 
 interface FormValues {
   email: string;
@@ -60,6 +62,12 @@ export default function Login() {
       if (foundUser) {
         localStorage.setItem("userToken", foundUser.id);
         dispatch(login(foundUser.id));
+           const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const currentUser = users.find((u: any) => u.id === foundUser.id);
+         if (currentUser) {
+    dispatch(setFavorites(currentUser.favorites || []));
+    currentUser.cart?.forEach((item: any) => dispatch(addToCart(item)));
+  }
         toast.success("✅ Login successful!");
         navigate("/home");
       } else {

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AppDispatch } from "./Store";
 
 interface AuthState {
   token: string | null;
@@ -24,4 +25,21 @@ const authSlice = createSlice({
 });
 
 export const { login, logout } = authSlice.actions;
+export const loginWithData =
+  (email: string) =>
+  (dispatch: AppDispatch) => {
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const user = users.find((u: any) => u.email === email);
+
+    if (user) {
+      dispatch(setCart(user.cart || []));
+      dispatch(setFavorites(user.favorites || []));
+
+      localStorage.setItem("userToken", user.id);
+      dispatch(login(user.id));
+    } else {
+      console.warn("User not found!");
+    }
+  };
+
 export default authSlice.reducer;

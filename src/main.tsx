@@ -1,11 +1,12 @@
-import { StrictMode } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import store from "./Redux/Store";
 
 import Layout from "./layouts/Mainlayout";
@@ -21,6 +22,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import UserProfileEdit from "./components/UserProfileEdit/UserProfileEdit";
 import About from "./Pages/About/About";
 import ProtectedRoute from "./components/Protectedroute/Protectedroute";
+import { login } from "./Redux/Authosclice";
+import { setCart } from "./Redux/CartSlice";
+import { setFavorites } from "./Redux/FavSlice";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -43,11 +47,32 @@ const router = createBrowserRouter([
 
 const queryClient = new QueryClient();
 
+const RootApp = () => {
+  
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      const currentUser = users.find((u: any) => u.id === token);
+      if (currentUser) {
+        dispatch(login(token));
+        dispatch(setCart(currentUser.cart || []));
+        dispatch(setFavorites(currentUser.favorites || []));
+      }
+    }
+  }, [dispatch]);
+
+  return <RouterProvider router={router} />;
+};
+
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <RootApp />
       </QueryClientProvider>
     </Provider>
   </StrictMode>

@@ -18,8 +18,8 @@ interface FormValues {
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  let navigate = useNavigate();
-  let validationSchema = Yup.object({
+  const navigate = useNavigate();
+  const validationSchema = Yup.object({
     name: Yup.string()
       .min(3, "name minlength is 3")
       .max(10, "name maxlength is 10")
@@ -70,6 +70,20 @@ export default function SignUp() {
       const responseWithMessage = { ...data, message: "Done" };
       // console.log("responseWithMessage:", data);
       if (responseWithMessage.message === "Done") {
+              const users = JSON.parse(localStorage.getItem("users") || "[]");
+    
+users.push({ 
+  id: data.id, 
+  email: data.email, 
+  cart: [], 
+  favorites: [], 
+  orders:[],
+  
+  ...data 
+});
+localStorage.setItem("users", JSON.stringify(users));
+
+        localStorage.setItem("users", JSON.stringify(users));
         toast.success("✅ Sign up Done successful!")
         navigate("/login");
       }
