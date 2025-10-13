@@ -9,6 +9,7 @@ import { RootState } from '../../Redux/Store';
 import { addToFavorite, removeFromFavorite } from '../../Redux/FavSlice';
 import toast, { Toaster } from 'react-hot-toast';
 import { addToCart } from "../../Redux/CartSlice";
+import Swal from 'sweetalert2';
 
 interface ProductCardProps {
   product: Product;
@@ -28,36 +29,87 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   // const handleAddToCart = () => {
   //   console.log(`Product ${product.name} added to cart (Redux action here)`);
   // };
+const user = useSelector((state:RootState) => state.auth.token);
 
   const handleCardClick = () => {
-
+    if(!user){
+      Swal.fire({
+      title: "Login Required",
+      text: "Please login to view product details.",
+      icon: "warning",
+      confirmButtonText: "Login",
+      confirmButtonColor: "#b13636ff",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      }).then((result) =>{
+        if(result.isConfirmed){
+                  navigate("/login");
+        }
+      })
+    }else{
   navigate(`/products/${product.id}`);
-  };
-
-   const handleFavoriteClick = (e: React.MouseEvent) => {
-        e.stopPropagation(); 
-
-    if (isFavorite) {
-      dispatch(removeFromFavorite(product.id));
-      toast.error("Removed from favorites 💔");
-    }else {
-       dispatch(
-        addToFavorite({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.imageUrl,
-        })
-
-      );
-                    toast.success("Added to favorites ❤️");
 
     }
   };
-   const addProductToCart =(e: React.MouseEvent)=>{
-            e.stopPropagation(); 
- const isInCart = cartItems.some((item) => item.id === product.id);
-          if (isInCart) {
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+  e.stopPropagation();
+
+  if (!user) {
+    Swal.fire({
+      title: "Login Required",
+      text: "Please login to manage your favorites.",
+      icon: "warning",
+      confirmButtonText: "Login",
+      confirmButtonColor: "#b13636ff",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/login");
+      }
+    });
+    return; 
+  }
+
+  if (isFavorite) {
+    dispatch(removeFromFavorite(product.id));
+    toast.error("Removed from favorites 💔");
+  } else {
+    dispatch(
+      addToFavorite({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.imageUrl,
+      })
+    );
+    toast.success("Added to favorites ❤️");
+  }
+};
+
+const addProductToCart = (e: React.MouseEvent) => {
+  e.stopPropagation();
+
+  if (!user) {
+    Swal.fire({
+      title: "Login Required",
+      text: "Please login to add items to your cart.",
+      icon: "warning",
+      confirmButtonText: "Login",
+      confirmButtonColor: "#b13636ff",
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/login");
+      }
+    });
+    return; 
+  }
+
+  const isInCart = cartItems.some((item) => item.id === product.id);
+  if (isInCart) {
     toast.error(`${product.name} is already in your cart`, {
       duration: 2000,
       position: "top-center",
@@ -65,19 +117,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return;
   }
 
-          if (!product) return;
-          dispatch(addToCart({
-            id:product.id,
-            name:product.name,
-            price:product.price,
-            quantity:1,
-            image:product.imageUrl
-          }));
-toast.success(`${product.name} added to cart 🛒`, {
+  if (!product) return;
+
+  dispatch(
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image: product.imageUrl,
+    })
+  );
+
+  toast.success(`${product.name} added to cart 🛒`, {
     duration: 2000,
     position: "top-center",
-  });  
-    }
+  });
+};
+
 
   return (
     <>
