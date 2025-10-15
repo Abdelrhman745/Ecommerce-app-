@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./SignUp.css";
-import signupimage from "../../assets/images/signuppage.png";
 import { useFormik } from "formik";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,6 +11,7 @@ import toast from "react-hot-toast";
 import { RootState } from "../../Redux/Store";
 import { setFavorites } from "../../Redux/FavSlice";
 import { addToCart } from "../../Redux/CartSlice";
+import { motion } from "framer-motion";
 
 interface FormValues {
   email: string;
@@ -99,12 +99,20 @@ export default function Login() {
 
   return (
     <div className="signup-container">
-      <div className="signup-image d-none d-md-block">
-        <img src={signupimage} alt="Login visual" />
-      </div>
+<motion.div
+        className="signup-image d-none d-md-block"
+        initial={{ x: -200, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >        <img src={"https://i.pinimg.com/1200x/f4/ca/bd/f4cabd9599c9f1b8701053e073616329.jpg"} alt="Login visual" />
+      </motion.div>
 
-      <div className="signup-form">
-        <div className="form-content">
+ <motion.div
+        className="signup-form"
+        initial={{ x: 200, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
+        >        <div className="form-content">
           <h3 className="mb-3 fw-light">Log in to your account</h3>
 
           {errorMessage && (
@@ -183,7 +191,7 @@ export default function Login() {
             </p>
           </form>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

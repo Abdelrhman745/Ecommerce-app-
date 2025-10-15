@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./SignUp.css";
-import signupimage from "../../assets/images/signuppage.png";
 import { Formik, useFormik } from "formik";
 import axios, { Axios } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 interface FormValues {
   name: string;
@@ -114,12 +114,24 @@ localStorage.setItem("users", JSON.stringify(users));
 
   return (
     <div className="signup-container">
-      <div className="signup-image d-none d-md-block">
-        <img src={signupimage} alt="Product" />
-      </div>
-
-      <div className="signup-form">
-        <div className="form-content">
+    <motion.div
+        className="signup-image d-none d-md-block"
+        initial={{ x: -200, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        <img
+          src="https://i.pinimg.com/1200x/f4/ca/bd/f4cabd9599c9f1b8701053e073616329.jpg"
+          alt="Product"
+        />
+      </motion.div>
+    <motion.div
+        className="signup-form"
+        initial={{ x: 200, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
+        >
+                <div className="form-content">
           <h3 className="mb-3 fw-light">Create your account</h3>
           {errorMessage && (
             <div className="alert alert-danger text-center" role="alert">
@@ -238,7 +250,7 @@ localStorage.setItem("users", JSON.stringify(users));
               )}
             </button>
 
-            <p className="text-center mt-3" style={{ fontSize: "14px" }}>
+            <p className="text-center mt-3" style={{ fontSize: "14px"}}>
               Already have an account?{" "}
               <Link to={"/login"} className="text-decoration-none">
                 Log in
@@ -246,7 +258,7 @@ localStorage.setItem("users", JSON.stringify(users));
             </p>
           </form>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
