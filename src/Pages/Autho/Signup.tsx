@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 interface FormValues {
   name: string;
@@ -113,6 +114,11 @@ localStorage.setItem("users", JSON.stringify(users));
   });
 
   return (
+    <>
+    <Helmet>
+        <meta charSet="utf-8" />
+          <title>   Sign Up </title>
+    </Helmet>
     <div className="signup-container">
     <motion.div
         className="signup-image d-none d-md-block"
@@ -260,5 +266,6 @@ localStorage.setItem("users", JSON.stringify(users));
         </div>
       </motion.div>
     </div>
+    </>
   );
 }

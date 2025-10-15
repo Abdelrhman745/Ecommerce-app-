@@ -12,6 +12,7 @@ import { RootState } from "../../Redux/Store";
 import { setFavorites } from "../../Redux/FavSlice";
 import { addToCart } from "../../Redux/CartSlice";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 interface FormValues {
   email: string;
@@ -98,6 +99,12 @@ export default function Login() {
   });
 
   return (
+    <>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title> Login </title>
+    
+        </Helmet>
     <div className="signup-container">
 <motion.div
         className="signup-image d-none d-md-block"
@@ -193,5 +200,6 @@ export default function Login() {
         </div>
       </motion.div>
     </div>
+    </>
   );
 }

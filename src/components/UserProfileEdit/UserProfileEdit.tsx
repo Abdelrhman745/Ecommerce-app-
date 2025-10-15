@@ -4,6 +4,7 @@ import axios from "axios";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 
 const Container = styled.section`
   min-height: 100vh;
@@ -361,6 +362,11 @@ const UserProfileEdit: React.FC = () => {
   };
 
   return (
+    <>
+    <Helmet>
+        <meta charSet="utf-8" />
+          <title> profile </title>
+    </Helmet>
     <Container>
       <Card>
         <LeftPanel>
@@ -487,6 +493,7 @@ const UserProfileEdit: React.FC = () => {
         </RightPanel>
       </Card>
     </Container>
+    </>
   );
 };
 

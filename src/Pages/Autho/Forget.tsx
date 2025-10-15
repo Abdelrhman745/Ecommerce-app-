@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import ResetPasswordForm from "../../components/Resetpassword/Resetpassword"; 
 import {motion}  from "framer-motion"
+import { Helmet } from "react-helmet-async";
 interface EmailFormValues {
   email: string;
 }
@@ -49,7 +50,12 @@ export default function ForgetPassword() {
   });
 
   return (
-    <div className="signup-container">
+    <>
+    <Helmet>
+        <meta charSet="utf-8" />
+          <title> Forget Password </title>
+    </Helmet>
+        <div className="signup-container">
  <motion.div
         className="signup-image d-none d-md-block"
         initial={{ x: -200, opacity: 0 }}
@@ -124,6 +130,7 @@ export default function ForgetPassword() {
         </div>
       </motion.div>
     </div>
+    </>
   );
 }
 

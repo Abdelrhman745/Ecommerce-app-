@@ -9,12 +9,18 @@ import Gallery from "../../components/Gallery/Gallery";
 import CarouselSection from "../../components/CarouselSection/CarouselSection";
 import ProductBlockSection from "../../components/ProductBlockSection/ProductBlockSection";
 import SupremeSkinFortification from "../../components/productComponents/SupremeSkinFortification";
+import {Helmet} from "react-helmet-async";
 
 export default function HomePage() {
   const token = useSelector((state: RootState) => state.auth.token);
 
   return (
     <>
+    <Helmet>
+      <meta charSet="utf-8" />
+      <title> Home </title>
+
+    </Helmet>
       {token && console.log("User token:", token)}
       <CarouselSection />
       <ProductBlockSection />
