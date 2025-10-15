@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
   return (
     <>
       {/* 🔹 Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light px-3">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light px-3 fixed-top">
         <div className="container-fluid">
           <Link className="navbar-brand" to="/">
             CEIN.

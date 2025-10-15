@@ -25,6 +25,8 @@ import ProtectedRoute from "./components/Protectedroute/Protectedroute";
 import { login } from "./Redux/Authosclice";
 import { setCart } from "./Redux/CartSlice";
 import { setFavorites } from "./Redux/FavSlice";
+
+
 const router = createBrowserRouter([
   {
     path: "/",
