@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import ProductCard from './ProductCard';
 import { type Product } from '../../types/Product';
 import 'bootstrap-icons/font/bootstrap-icons.css'; 
+import { useSearchParams } from 'react-router-dom';
 
 
 const API_URL = 'https://skincare-api-psi.vercel.app/api/data';
@@ -55,7 +56,10 @@ const ProductList: React.FC = () => {
     queryFn: fetchProducts,
   });
 
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
+  const [searchParams] = useSearchParams();
+  const initialCategoryFromURL = searchParams.get('category') || 'all';
+
+  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>(initialCategoryFromURL);
   const [searchTerm, setSearchTerm] = useState<string>(''); 
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]); 
   const [sortKey, setSortKey] = useState<SortKey>('popular'); 
@@ -90,6 +94,20 @@ const ProductList: React.FC = () => {
     return Array.from(categorySet);
   }, [allProducts]); 
 
+  React.useEffect(() => {
+    const currentCategory = searchParams.get('category') || 'all';
+    if (dynamicCategories.includes(currentCategory) && currentCategory !== selectedCategory) {
+        setSelectedCategory(currentCategory);
+        // إعادة تعيين باقي الفلاتر عند التغيير عبر الرابط
+        setSearchTerm(''); 
+        setPriceRange([0, Math.ceil(maxPrice / 10) * 10]);
+    } else if (!dynamicCategories.includes(currentCategory) && currentCategory !== 'all') {
+        // في حال كانت الفئة في الرابط غير موجودة، يتم الانتقال إلى "الكل"
+        setSelectedCategory('all');
+    }
+  }, [searchParams, dynamicCategories, maxPrice]);
+
+
   const filteredProducts: Product[] = useMemo(() => {
     const [minPrice, maxPriceRange] = priceRange; 
     
@@ -101,7 +119,7 @@ const ProductList: React.FC = () => {
           const productName = (product as any).name || '';
           const productDescription = (product as any).description || '';
           return productName.toLowerCase().includes(lowerCaseSearchTerm) || 
-                 productDescription.toLowerCase().includes(lowerCaseSearchTerm);
+                       productDescription.toLowerCase().includes(lowerCaseSearchTerm);
       })
       .filter(product => {
           const productPrice = (product as any).price || 0;
@@ -219,7 +237,7 @@ const ProductList: React.FC = () => {
           </div>
 
           <div className="d-flex align-items-center flex-shrink-0">
-             
+            
             <div className="me-3"> 
               <Button 
                 variant="outline-secondary" 
@@ -237,16 +255,16 @@ const ProductList: React.FC = () => {
                 Filters
               </Button>
             </div>
-             
-             <div style={{ width: '180px', marginRight: '15px' }}>
-                <input
-                  type="text"
-                  className="form-control form-control-sm"
-                  placeholder={`Search...`}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ backgroundColor: '#FFF', borderColor: '#CCC' }}
-                />
+            
+            <div style={{ width: '180px', marginRight: '15px' }}>
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                placeholder={`Search...`}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ backgroundColor: '#FFF', borderColor: '#CCC' }}
+              />
             </div>
           </div>
         </Nav>
@@ -356,7 +374,7 @@ const ProductList: React.FC = () => {
         {filteredProducts.length === 0 ? (
             <div className="text-center py-5">
                 <p className="lead text-secondary">
-                  No products found based on your selection criteria.
+                    No products found based on your selection criteria.
                 </p>
             </div>
         ) : (

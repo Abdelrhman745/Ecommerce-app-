@@ -8,8 +8,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Spinner from 'react-bootstrap/Spinner';
 import "./components/categories.css"
-
-
+import { useNavigate } from "react-router-dom";
 
 
 const images: string[] = [
@@ -22,6 +21,12 @@ const images: string[] = [
 
 export default function Categories(): JSX.Element {
   const { data, isLoading, isError } = useProductsQuery();
+  const navigate = useNavigate(); 
+
+  const handleCategoryClick = (category: string) => {
+    navigate(`/products?category=${category}`);
+  };
+
 
   if (isLoading)  
     return (
@@ -62,15 +67,19 @@ if (isError) {
     position: "relative",
   }}
   className="category-slider"
-  spaceBetween={20}   // 👈 مسافة بين الكروت
+  spaceBetween={20}
   breakpoints={{
-    0: { slidesPerView: 1 },      // موبايل
-    768: { slidesPerView: 2 },    // تابلت
-    1024: { slidesPerView: 3 }    // لابتوب أو شاشة كبيرة
+    0: { slidesPerView: 1 },
+    768: { slidesPerView: 2 },
+    1024: { slidesPerView: 3 }
   }}
 >
   {data?.map((cat, i) => (
-    <SwiperSlide key={cat}>
+    <SwiperSlide 
+      key={cat} 
+      onClick={() => handleCategoryClick(cat)}
+      style={{ cursor: 'pointer' }}
+    >
       <CardUI title={cat} img={images[i % images.length]} />
     </SwiperSlide>
   ))}
