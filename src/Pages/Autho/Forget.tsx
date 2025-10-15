@@ -7,7 +7,8 @@ import axios from "axios";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import ResetPasswordForm from "../../components/Resetpassword/Resetpassword"; 
-
+import {motion}  from "framer-motion"
+import { Helmet } from "react-helmet-async";
 interface EmailFormValues {
   email: string;
 }
@@ -49,13 +50,26 @@ export default function ForgetPassword() {
   });
 
   return (
-    <div className="signup-container">
-      <div className="signup-image d-none d-md-block">
-        <img src={signupimage} alt="Reset Password Visual" />
-      </div>
+    <>
+    <Helmet>
+        <meta charSet="utf-8" />
+          <title> Forget Password </title>
+    </Helmet>
+        <div className="signup-container">
+ <motion.div
+        className="signup-image d-none d-md-block"
+        initial={{ x: -200, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >        <img src={"https://i.pinimg.com/1200x/f4/ca/bd/f4cabd9599c9f1b8701053e073616329.jpg"} alt="Reset Password Visual" />
+      </motion.div>
 
-      <div className="signup-form">
-        <div className="form-content">
+ <motion.div
+        className="signup-form"
+        initial={{ x: 200, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
+        >        <div className="form-content">
           <h3 className="mb-3 fw-light">Forget Password</h3>
 
           {message && (
@@ -114,8 +128,9 @@ export default function ForgetPassword() {
             <Link to={"/login"} className="text-decoration-none">Log in here</Link>
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
+    </>
   );
 }
 

@@ -4,10 +4,17 @@ import about1 from "../../assets/images/download.jpg"
 import "./about.css"
 import TextSec from '../../components/TextSection/TextSection'
 import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 export default function About() {
     const navigate =useNavigate();
   return (
+    
     <>
+        <Helmet>
+      <meta charSet="utf-8" />
+      <title> About us </title>
+
+    </Helmet>
 <Container fluid className="p-0 mt-4">
             <Row>
             <Col md={6} className="text-center p-0">

@@ -25,7 +25,7 @@ import ProtectedRoute from "./components/Protectedroute/Protectedroute";
 import { login } from "./Redux/Authosclice";
 import { setCart } from "./Redux/CartSlice";
 import { setFavorites } from "./Redux/FavSlice";
-
+import { HelmetProvider } from "react-helmet-async";
 
 const router = createBrowserRouter([
   {
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
       { path: "signup", element: <SignUp /> },
       { path: "login", element: <Login /> },
       { path: "forget", element: <ForgetPassword /> },
-      { path: "cart", element:<ProtectedRoute><CartPage /></ProtectedRoute>  },
+      { path: "cart", element:<CartPage /> },
       { path: "checkout", element:<ProtectedRoute><CheckoutPage /></ProtectedRoute>  },
       { path: "profile", element:<ProtectedRoute> <UserProfileEdit /></ProtectedRoute> },
     ],
@@ -74,7 +74,10 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
+        <HelmetProvider>
         <RootApp />
+
+        </HelmetProvider>
       </QueryClientProvider>
     </Provider>
   </StrictMode>

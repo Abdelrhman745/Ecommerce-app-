@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Redux/Store";
 import { removeFromCart } from "../../Redux/CartSlice";
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet-async";
 
 const CenterContainer = styled.div`
   // min-height: 100vh;
@@ -205,6 +206,11 @@ const submitOrder = () =>{
       
 }
   return (
+    <>
+    <Helmet>
+        <meta charSet="utf-8" />
+          <title> Checckout </title>
+    </Helmet>
     <CenterContainer>
       <HeadingBg>
         <CheckoutHeading>
@@ -385,6 +391,7 @@ const submitOrder = () =>{
 
 
     </CenterContainer>
+    </>
   );
 };
 

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useState, useMemo, useEffect, useRef } from 'react'; 
-import { Container, Row, Col, Spinner, Nav, Button } from 'react-bootstrap'; 
+import { Container, Row, Col, Spinner, Nav, Button, Pagination } from 'react-bootstrap'; 
 import { useQuery } from '@tanstack/react-query';
 import ProductCard from './ProductCard';
 import { type Product } from '../../types/Product';
 import 'bootstrap-icons/font/bootstrap-icons.css'; 
+import { AnimatePresence , motion } from 'framer-motion';
 
 
 const API_URL = 'https://skincare-api-psi.vercel.app/api/data';
@@ -60,6 +61,8 @@ const ProductList: React.FC = () => {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]); 
   const [sortKey, setSortKey] = useState<SortKey>('popular'); 
   const [showFilterPanel, setShowFilterPanel] = useState(false);
+   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   
   const allProducts: Product[] = Array.isArray(products) ? products : []; 
 
@@ -131,6 +134,21 @@ const ProductList: React.FC = () => {
 
     return sortedProducts;
   }, [selectedCategory, allProducts, searchTerm, priceRange, sortKey]);
+
+
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchTerm, priceRange, sortKey]);
+
+
 
   if (isLoading) {
     return (
@@ -348,7 +366,7 @@ const ProductList: React.FC = () => {
         
         <div className="text-center mb-4"> 
             <p className="small text-muted mb-0">
-                Currently showing **{filteredProducts.length}** products.
+                Currently showing {filteredProducts.length} products.
             </p>
         </div>
 
@@ -361,7 +379,7 @@ const ProductList: React.FC = () => {
             </div>
         ) : (
             <Row xs={2} sm={2} md={4} className="g-5">
-                {filteredProducts.map((product) => (
+                {paginatedProducts.map((product) => (
                     <Col
                       key={product.id}
                       className="product-list-item d-flex justify-content-center"
@@ -371,6 +389,46 @@ const ProductList: React.FC = () => {
                 ))}
             </Row>
         )}
+              {totalPages > 1 && (
+        <div className="d-flex justify-content-center mt-5">
+          <Pagination>
+            <Pagination.Prev
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            />
+
+            <AnimatePresence mode="wait">
+              {[...Array(totalPages)].map((_, index) => (
+                <motion.li
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ listStyle: 'none', display: 'inline-block' }}
+                >
+                  <Pagination.Item
+                    active={currentPage === index + 1}
+                    onClick={() => setCurrentPage(index + 1)}
+                    style={{
+                      color: '#7c6f63',
+                      borderColor: '#7c6f63',
+                    }}
+                  >
+                    {index + 1}
+                  </Pagination.Item>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+
+            <Pagination.Next
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            />
+          </Pagination>
+        </div>
+      )}
+
       </Container>
     </>
   );
