@@ -114,7 +114,7 @@ const ProductBlockSection: React.FC = () => (
   <SectionWrap>
     <Block>
       <ImgWrap>
-        <img src="/1.jpg" alt="Skincare Product" />
+        <img src="/20.jpg" alt="Skincare Product" />
       </ImgWrap>
       <ContentWrap>
         <Label>Skin Care</Label>
