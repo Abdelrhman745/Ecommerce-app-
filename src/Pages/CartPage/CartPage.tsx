@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 
 const CartPage: React.FC = () => {
   return (
-    <div className="container py-5">
+    <div className="container py-3">
       {/* <h2 className="text-center mb-4"></h2> */}
       <Helmet>
           <meta charSet="utf-8" />

@@ -30,8 +30,8 @@ const Navbar: React.FC = () => {
 
   const navLinks = [
     { text: "Home", to: "/" },
-    { text: "About Us", to: "/about" },
     { text: "Shop", to: "/products" },
+    { text: "About Us", to: "/about" },
     { text: "Blog", to: "/blog" },
   ];
 

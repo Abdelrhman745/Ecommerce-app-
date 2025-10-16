@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet-async";
 
 const Container = styled.section`
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4ebf1 100%);
+  background: linear-gradient(135deg, #b8afa6 0%, #b8afa6 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -478,8 +478,9 @@ const UserProfileEdit: React.FC = () => {
 
             <Button
               type="submit"
-              className="btn btn-dark w-100 mt-2"
+              className="btn w-100 mt-2"
               disabled={loading}
+              style={{backgroundColor:"#7c6f63"}}
             >
               {loading ? (
                 <div className="spinner-border" role="status">

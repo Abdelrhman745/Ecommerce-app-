@@ -13,7 +13,7 @@ const fadeIn = keyframes`
 const CenterContainer = styled.div`
   min-height: 100vh;
   width: 100%;
-  background: linear-gradient(110deg, #f7f8fa 12%, #eef0f3 98%);
+  background: linear-gradient(110deg, #fff);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -27,7 +27,7 @@ const HeadingBg = styled.div`
   align-items: center;
   min-width: 340px;
   margin-bottom: 38px;
-  background: linear-gradient(98deg, #f3f4f7 60%, #f9fafb 100%);
+  background: linear-gradient(98deg,#dad3ca);
   box-shadow: 0 6px 34px 0 rgba(180, 183, 189, 0.15);
   border-radius: 24px;
   padding: 24px 58px;
@@ -51,7 +51,7 @@ const CartContainer = styled.div`
   width: 100%;
   max-width: 900px;
   align-self: center;
-  background: #fff;
+  background: #dad3ca;
   border-radius: 26px;
   border: 1.8px solid #e2e4e8;
   box-shadow: 0 8px 45px 0 rgba(177, 180, 189, 0.11);
@@ -234,6 +234,8 @@ const TotalValue = styled.span`
   font-size: 2.2rem;
   color: #323741;
   font-weight: 700;
+  margin-right: 30px;
+
 `;
 
 const EmptyCart = styled.div`
@@ -302,7 +304,7 @@ const CartSection: React.FC = () => {
             {cartItems.map((item, idx) => (
               <CartItem
                 key={item.id}
-                style={{ animationDelay: `${idx * 53}ms` }}
+                style={{ animationDelay: `${idx * 53}ms` , paddingTop:"20px"}}
               >
                 <ImgBox>
                   <img src={item.image} alt={item.name} />

@@ -36,7 +36,7 @@ const PageContainer = styled.div`
   align-items: flex-start;
   padding: 100px 20px 40px 20px; 
   min-height: 100vh;
-  background-color: #f7f8fa;
+  background-color: #b8afa6;
 `;
 
 const CheckoutWrapper = styled.div`
@@ -168,7 +168,7 @@ const PlaceOrderButton = styled.button`
   padding: 15px;
   border: none;
   border-radius: 8px;
-  background-color: #4a80e1; 
+  background-color: #7c6f63; 
   color: white;
   font-size: 1.15rem;
   font-weight: 600;
@@ -177,7 +177,7 @@ const PlaceOrderButton = styled.button`
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #3a6cd2;
+    background-color: #947a62ff;
   }
 `;
 
