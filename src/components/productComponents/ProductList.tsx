@@ -6,7 +6,7 @@ import ProductCard from './ProductCard';
 import { type Product } from '../../types/Product';
 import 'bootstrap-icons/font/bootstrap-icons.css'; 
 import { AnimatePresence , motion } from 'framer-motion';
-
+import { useLocation } from 'react-router-dom';
 
 const API_URL = 'https://skincare-api-psi.vercel.app/api/data';
 
@@ -55,8 +55,10 @@ const ProductList: React.FC = () => {
     queryKey: ['skincareProductsList'],
     queryFn: fetchProducts,
   });
-
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>('all');
+const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialCategory = searchParams.get('category') || 'all';
+  const [selectedCategory, setSelectedCategory] = useState<CategoryKey>(initialCategory);
   const [searchTerm, setSearchTerm] = useState<string>(''); 
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]); 
   const [sortKey, setSortKey] = useState<SortKey>('popular'); 

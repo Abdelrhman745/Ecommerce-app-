@@ -6,7 +6,7 @@ import { removeAllFavorite, removeFromFavorite } from "../../Redux/FavSlice";
 import { addToCart } from "../../Redux/CartSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import "./favoritemodal.css"
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 interface FavoritesModalProps {
   show: boolean;
@@ -16,12 +16,14 @@ interface FavoritesModalProps {
 
 const FavoritesModal: React.FC<FavoritesModalProps> = ({ show, onHide }) => {
   const favorites = useSelector((state: RootState) => state.favorites.items);
+  const cart = useSelector((state:RootState)=> state.cart.items);
   const dispatch = useDispatch();
   
   
 
   return (
     <>
+          <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
     <Modal
       show={show}
       onHide={onHide}
@@ -80,8 +82,14 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ show, onHide }) => {
                       variant="outline-success"
                       size="sm"
                       onClick={() => 
-                        {dispatch(addToCart({ ...item, quantity: 1 }));
+                        { if(cart.some((ele)=> ele.id == item.id)){
+                         toast.error(`${item.name} Already in  cart 🛒`);
+
+                        }else{
+                          dispatch(addToCart({ ...item, quantity: 1 }));
                           toast.success(`${item.name} added to cart 🛒`);
+                        }
+
 
                       }
                       }

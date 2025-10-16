@@ -18,7 +18,7 @@ export default function About() {
 <Container fluid className="p-0 mt-4">
             <Row>
             <Col md={6} className="text-center p-0">
-            <img src={about1} width={"500px"} height={"500px"} />
+            <img src={"https://i.pinimg.com/1200x/7b/8a/b8/7b8ab88c0bd32c6eb6452b5cea140c0e.jpg"} width={"500px"} height={"550px"} />
             </Col>
             <Col md={6} className='m-auto'>
             <h3>Our Story</h3>
@@ -44,11 +44,11 @@ We simply <br /> need to observe and tap into its <br /> inherent brilliance.</h
         
             </Col>
         </Row>
-        <Row >
+        {/* <Row >
           <img src={"https://www.tru-skin.com/getmedia/f997351b-2ea2-46ec-a570-62af1be71c89/Facial-Cleasner-Hero.jpg?width=720&height=400&ext=.jpg"} 
           height={"400px"}
           />
-        </Row>
+        </Row> */}
         <TextSec/>
 <Row className="g-0 mb-0 justify-content-evenly last-section">
           <Col md={4} className="about-image left-image d-flex align-items-center p-0 m-0">
