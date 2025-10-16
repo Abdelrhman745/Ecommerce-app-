@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Redux/Authosclice";
 import { RootState } from "../../Redux/Store";
 import FavoritesModal from "../FavoriteModal/FavoriteModal";
+import { clearCartState } from "../../Redux/CartSlice";
+import { clearFavoritesState } from "../../Redux/FavSlice";
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
@@ -19,9 +21,11 @@ const Navbar: React.FC = () => {
   );
 
   const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("userToken");
-    navigate("/login");
+     dispatch(logout());
+     dispatch(clearCartState());
+     dispatch(clearFavoritesState());
+     localStorage.removeItem("userToken");
+     navigate("/login");
   };
 
   const handleCartClick = () => {
