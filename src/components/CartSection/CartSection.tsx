@@ -63,21 +63,6 @@ const CartContainer = styled.div`
   }
 `;
 
-const CartItem = styled.div`
-  display: grid;
-  grid-template-columns: 96px 1fr 126px 104px;
-  gap: 32px;
-  align-items: center;
-  margin-bottom: 27px;
-  border-bottom: 1.1px solid #e6e8ec;
-  padding-bottom: 24px;
-  background: #fff;
-  animation: ${fadeIn} 0.52s cubic-bezier(0.17, 1, 0.34, 1);
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
 const ImgBox = styled.div`
   display: flex;
   justify-content: center;
@@ -156,6 +141,77 @@ const Button = styled.button`
   }
 `;
 
+const CheckoutButton = styled(Button)`
+  margin-top: 16px;
+  padding: 16px 54px;
+  font-size: 1.17rem;
+  background: linear-gradient(95deg, #e2e6ee 10%, #f2f3f6 90%);
+  color: #3e4150;
+  border-radius: 14px;
+  font-weight: 600;
+  box-shadow: 0 5px 24px #e2e5ef81;
+  transition: background 0.19s, color 0.13s, box-shadow 0.17s;
+  &:hover {
+    background: linear-gradient(95deg, #dfe5f0 0%, #e9ecf3 99%);
+    color: #22232f;
+    box-shadow: 0 14px 54px #e3e6f171;
+  }
+`;
+
+const CartItem = styled.div`
+  display: grid;
+  grid-template-columns: 96px 1fr 126px 104px;
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 27px;
+  border-bottom: 1.1px solid #e6e8ec;
+  padding-bottom: 24px;
+  background: #fff;
+  animation: ${fadeIn} 0.52s cubic-bezier(0.17, 1, 0.34, 1);
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 950px) {
+    grid-template-columns: 70px 1fr 90px 70px;
+    gap: 14px;
+  }
+
+  @media (max-width: 700px) {
+    grid-template-columns: 60px 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 10px 8px;
+    padding-bottom: 16px;
+  }
+
+  @media (max-width: 500px) {
+    grid-template-columns: 44px 1fr;
+    gap: 5px 4px;
+    padding-bottom: 10px;
+    font-size: 0.92em;
+    ${ImgBox} img {
+      width: 33px;
+      height: 33px;
+      border-radius: 7px;
+    }
+    ${Button}, ${CheckoutButton} {
+      font-size: 0.83em;
+      padding: 4.5px 5.5px;
+    }
+    ${QuantitySection} input {
+      width: 24px;
+      font-size: 0.82em;
+      padding: 2px 3px;
+    }
+    ${Details} .name {
+      font-size: 0.98em;
+    }
+    ${Details} .price {
+      font-size: 0.91em;
+    }
+  }
+`;
+
 const TotalSection = styled.div`
   margin-top: 32px;
   padding-top: 36px;
@@ -180,23 +236,6 @@ const TotalValue = styled.span`
   font-weight: 700;
 `;
 
-const CheckoutButton = styled(Button)`
-  margin-top: 16px;
-  padding: 16px 54px;
-  font-size: 1.17rem;
-  background: linear-gradient(95deg, #e2e6ee 10%, #f2f3f6 90%);
-  color: #3e4150;
-  border-radius: 14px;
-  font-weight: 600;
-  box-shadow: 0 5px 24px #e2e5ef81;
-  transition: background 0.19s, color 0.13s, box-shadow 0.17s;
-  &:hover {
-    background: linear-gradient(95deg, #dfe5f0 0%, #e9ecf3 99%);
-    color: #22232f;
-    box-shadow: 0 14px 54px #e3e6f171;
-  }
-`;
-
 const EmptyCart = styled.div`
   min-height: 230px;
   display: flex;
@@ -215,6 +254,7 @@ const EmptyCart = styled.div`
   }
 `;
 
+// ====== Component ======
 const CartSection: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -244,12 +284,18 @@ const CartSection: React.FC = () => {
           </svg>
         </CartHeading>
       </HeadingBg>
+
       <CartContainer>
         {cartItems.length === 0 ? (
           <EmptyCart>
             <h3>Your cart is empty.</h3>
-            <Button type="button" style={{ marginTop: 14 }}    onClick={() => navigate("/products")}
->Continue Shopping</Button>
+            <Button
+              type="button"
+              style={{ marginTop: 14 }}
+              onClick={() => navigate("/products")}
+            >
+              Continue Shopping
+            </Button>
           </EmptyCart>
         ) : (
           <>
