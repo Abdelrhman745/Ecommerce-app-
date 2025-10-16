@@ -1,396 +1,586 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useState, useMemo } from "react";
+import styled, { createGlobalStyle } from "styled-components";
+import * as yup from 'yup';
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../Redux/Store";
-import { removeFromCart } from "../../Redux/CartSlice";
+import { RootState } from "../../Redux/Store"; 
+import { CartItem, clearCartState } from "../../Redux/CartSlice"; 
+
 import Swal from "sweetalert2";
-import { Helmet } from "react-helmet-async";
 
-const CenterContainer = styled.div`
-  // min-height: 100vh;
-  width: 100%;
-  background: linear-gradient(110deg, #f7f8fa 12%, #eef0f3 98%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: auto;
-`;
+const validationSchema = yup.object().shape({
+    firstName: yup.string().required("First Name is required").min(3, "Name too short"),
+    lastName: yup.string().required("Last Name is required").min(3, "Name too short"),
+    email: yup.string().email("Invalid email address").required("Email is required"),
+    phone: yup.string().required("Phone number is required").matches(/^[0-9\-\(\)\s\+]+$/, "Invalid phone number"),
+    mailingAddress: yup.string().required("Address is required").min(5, "Address too short"),
+    city: yup.string().required("City is required"),
+    postCode: yup.string().required("Post code is required").matches(/^[0-9]{5}$|^[0-9]{5}-[0-9]{4}$/, "Invalid postal code (e.g. 12345 or 12345-6789)"),
+    country: yup.string().required("Country is required"),
+});
 
-const HeadingBg = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 340px;
-  margin-top:30px;
-  margin-bottom: 38px;
-  background: linear-gradient(98deg, #f3f4f7 60%, #f9fafb 100%);
-  box-shadow: 0 6px 34px 0 rgba(180, 183, 189, 0.15);
-  border-radius: 24px;
-  padding: 24px 58px;
-  align-self: center;
-`;
-
-const CheckoutHeading = styled.h1`
-  font-family: "Playfair Display", serif;
-  font-size: 2.1rem;
-  font-weight: 600;
-  color: #2e3142;
-  letter-spacing: 0.01em;
-  text-shadow: 0 2px 12px #e9ebf18c;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-const CheckoutCard = styled.div`
-  width: 100%;
-  max-width: 1000px;
-  align-self: center;
-  background: #fff;
-  border-radius: 24px;
-  border: 1.7px solid #e2e4e8;
-  box-shadow: 0 8px 45px 0 rgba(177, 180, 189, 0.11);
-  padding: 48px 48px 38px 48px;
-  display: flex;
-    margin-bottom: 30px;
-
-  flex-direction: column;
-  @media (max-width: 640px) {
-    padding: 28px 6vw;
+const GlobalStyle = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f7f8fa;
   }
 `;
 
-const SectionTitle = styled.h2`
-  font-family: "Playfair Display", serif;
-  font-size: 1.35rem;
-  font-weight: 600;
-  color: #2d3351;
-  margin-bottom: 24px;
-  margin-top: 4px;
-  letter-spacing: 0.01em;
-  text-align: left;
+const PageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 100px 20px 40px 20px; 
+  min-height: 100vh;
+  background-color: #f7f8fa;
 `;
 
-const FormRow = styled.div`
+const CheckoutWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 1100px; 
+  background-color: transparent;
+  gap: 20px;
+  flex-direction: row;
+
+  @media (max-width: 992px) {
+    flex-direction: column; 
+    gap: 40px;
+  }
+`;
+
+const LeftColumn = styled.div`
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const RightColumn = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
+  gap: 20px;
+  min-width: 350px; 
+`;
+
+const Card = styled.div`
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e4e8;
+`;
+
+const ShoppingCartCard = styled(Card)`
+  padding: 25px 25px 30px 25px;
+  flex-grow: 1; 
+  display: flex;
+  flex-direction: column;
+`;
+
+const CartHeader = styled.h3`
+  font-size: 1.25rem;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: 600;
+`;
+
+const CartItemsScrollArea = styled.div`
+  flex-grow: 1;
+`;
+
+const CartItemContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f2f5;
+  &:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+`;
+
+const ItemImage = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 15px;
+  border: 1px solid #eef0f3;
+`;
+
+const ItemDetails = styled.div`
+  flex-grow: 1;
+`;
+
+const ItemName = styled.p`
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+`;
+
+const ItemDescription = styled.p`
+  font-size: 0.85rem;
+  color: #8892a7;
+  margin: 2px 0 0 0;
+`;
+
+const ItemPrice = styled.p`
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+  min-width: 60px;
+  text-align: right;
+`;
+
+const TotalsContainer = styled.div`
+  padding: 20px 0;
+  border-top: 1px solid #eef0f3;
+  margin-top: auto; 
+`;
+
+const TotalRow = styled.div<{ $isTotal?: boolean }>`
   display: flex;
   justify-content: space-between;
-  gap: 32px;
-  margin-bottom: 22px;
+  margin-bottom: 8px;
+  font-size: ${(props) => (props.$isTotal ? "1.15rem" : "1rem")};
+  font-weight: ${(props) => (props.$isTotal ? "700" : "500")};
+  color: ${(props) => (props.$isTotal ? "#2c3e50" : "#5d6d7e")};
+
+  span:last-child {
+    font-weight: ${(props) => (props.$isTotal ? "700" : "600")};
+  }
+`;
+
+const PlaceOrderButton = styled.button`
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4a80e1; 
+  color: white;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #3a6cd2;
+  }
+`;
+
+const PrivacyText = styled.p`
+  font-size: 0.8rem;
+  color: #8892a7;
+  text-align: center;
+  margin-top: 15px;
+
+  a {
+    color: #4a80e1;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const FormSectionCard = styled(Card)`
+  padding: 25px;
+`;
+
+const SectionTitle = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const TitleText = styled.h3`
+  font-size: 1.25rem;
+  color: #2c3e50;
+  margin: 0;
+  font-weight: 600;
+`;
+
+const SectionContent = styled.div<{ $isOpen: boolean }>`
+  max-height: 1000px; 
+  overflow: visible;
+`;
+
+const InputGroup = styled.div`
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+
+  & > div {
+    flex: 1;
+  }
+
   @media (max-width: 600px) {
     flex-direction: column;
-    gap: 7px;
+    gap: 0;
   }
 `;
 
 const Label = styled.label`
-  font-size: 1rem;
-  color: #8892a7;
-  margin-bottom: 7px;
-  font-weight: 500;
   display: block;
+  font-size: 0.9rem;
+  color: #5d6d7e;
+  margin-bottom: 5px;
+  font-weight: 500;
 `;
 
-const Input = styled.input`
+const InputField = styled.input<{ $hasError?: boolean }>`
   width: 100%;
-  padding: 14px 15px;
-  border: 1.3px solid #e2e4e8;
-  border-radius: 9px;
-  font-size: 1.01rem;
-  background: #f8f9fb;
-  color: #3a4159;
-  margin-bottom: 4px;
-  font-family: inherit;
+  padding: 12px 15px;
+  border: 1px solid ${(props) => (props.$hasError ? "#e74c3c" : "#e2e4e8")};
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fcfcfd;
+  box-sizing: border-box;
+
   &:focus {
-  border: 1.6px solid #bdc6db;
-  outline: none;
-  background: #f1f3f8;
+    border-color: ${(props) => (props.$hasError ? "#e74c3c" : "#4a80e1")};
+    outline: none;
+    background-color: white;
   }
 `;
 
-// const OrderSummary = styled.div`
-//   border-top: 1.6px solid #e1e5ec;
-//   margin-top: 42px;
-//   padding-top: 32px;
-// `;
-
-const SummaryRow = styled.div`
-  font-size: 1.07rem;
-  color: #636c7d;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
+const ErrorMessage = styled.p`
+    color: #e74c3c;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    margin-bottom: 0;
+    font-weight: 500;
 `;
 
-const TotalRow = styled.div`
-  font-size: 1.27rem;
-  padding-top: 6px;
-  font-weight: 700;
-  color: #323741;
-  display: flex;
-  justify-content: space-between;
-`;
+const saveOrderAndClearCart = (
+  userId: string,
+  cartItems: CartItem[],
+  total: number
+) => {
+  const users = JSON.parse(localStorage.getItem("users") || "[]");
+  const userIndex = users.findIndex((u: any) => u.id === userId);
 
-const Button = styled.button`
-  background: linear-gradient(90deg, #e2e5ea 15%, #eef0f3 86%, #f7f8fa 100%);
-  color: #525a6b;
-  border: none;
-  padding: 13px 44px;
-  border-radius: 14px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  font-family: inherit;
-  font-weight: 600;
-  box-shadow: 0 2px 12px 0 rgba(210, 214, 221, 0.12);
-  transition: background 0.16s, color 0.13s, box-shadow 0.15s;
-  margin-top: 33px;
-  align-self: center;
-  &:hover {
-    background: linear-gradient(88deg, #d7d9deff 5%, #a9acadff 96%);
-    color: #2c2e39;
-    box-shadow: 0 8px 32px #e8eaf2;
+  if (userIndex >= 0) {
+    const newOrder = {
+      orderId: Date.now().toString(),
+      date: new Date().toISOString(),
+      items: cartItems.map((item) => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      totalAmount: total,
+      status: "Processing",
+    };
+
+    users[userIndex].orders = [...(users[userIndex].orders || []), newOrder];
+    users[userIndex].cart = [];
+    
+    localStorage.setItem("users", JSON.stringify(users));
+
+    return true;
   }
-`;
-const CheckoutLayout = styled.div`
-  display: flex;
-  gap: 48px;
-  justify-content: space-between;
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 28px;
-  }
-`;
-
-const FormSection = styled.div`
-  flex: 1.6;
-`;
-
-const InfoSection = styled.div`
-  flex: 1;
-  border-left: 1.5px solid #e6e9ef;
-  
-  padding-left: 32px;
-  @media (max-width: 768px) {
-    border-left: none;
-    border-top: 1.5px solid #e6e9ef;
-    padding-left: 0;
-    padding-top: 28px;
-  }
-`;
-
-
-const CheckoutPage: React.FC = () => {
-  const cartItems = useSelector((state: RootState) => state.cart.items);
-
-  // Pre-calculate totals
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const shipping = subtotal > 100 ? 0 : 7; // Sample shipping logic
-  const total = subtotal + shipping;
-  const dispatch = useDispatch();
-
-const handleRemove = (id: number) => {
-  dispatch(removeFromCart(id));
+  return false;
 };
 
+const CheckoutPage: React.FC = () => {
+  const dispatch = useDispatch();
+  const cartItems: CartItem[] = useSelector((state: RootState) => state.cart.items); 
+  
+  const currentUserId = localStorage.getItem("userToken") || "guest"; 
+  
+  const BASE_SHIPPING = 10.85; 
 
-const submitOrder = () =>{
-       Swal.fire({
-        title: "Order Placed!",
-        text: "Your checkout has been submitted successfully.",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-      });
+  const [isPersonalDetailsOpen] = useState(true);
+  
+  const [formData, setFormData] = useState({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      mailingAddress: '',
+      city: '',
+      postCode: '',
+      country: '',
+  });
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { id, value } = e.target;
+      setFormData(prev => ({ ...prev, [id]: value }));
       
-}
+      if (errors[id]) {
+        setErrors(prev => {
+            const newErrors = { ...prev };
+            delete newErrors[id];
+            return newErrors;
+        });
+      }
+  };
+
+
+  const totalItems = cartItems.reduce((count, item) => count + item.quantity, 0);
+
+  const { subtotal, shippingCost, totalPayable } = useMemo(() => {
+    const calculatedSubtotal = cartItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    
+    const calculatedShippingCost = BASE_SHIPPING; 
+    
+    const calculatedTotalPayable = calculatedSubtotal + calculatedShippingCost; 
+    
+    return {
+      subtotal: calculatedSubtotal,
+      shippingCost: calculatedShippingCost,
+      totalPayable: calculatedTotalPayable,
+    };
+  }, [cartItems]); 
+
+  const handlePlaceOrder = async () => {
+    
+    if (cartItems.length === 0) {
+       Swal.fire('Cart Empty', 'Please add items to your cart before placing an order.', 'warning');
+       return;
+    }
+    
+    try {
+        await validationSchema.validate(formData, { abortEarly: false });
+        
+        setErrors({}); 
+
+        const orderSaved = saveOrderAndClearCart(
+            currentUserId, 
+            cartItems, 
+            totalPayable
+        );
+
+        if (orderSaved) {
+            dispatch(clearCartState());
+
+            Swal.fire({
+              title: "Order Placed! 🎉",
+              text: `Your order for $${totalPayable.toFixed(
+                2
+              )} has been submitted successfully.`,
+              icon: "success",
+              confirmButtonColor: "#4A80E1",
+            });
+        } else {
+             Swal.fire('Error', 'Could not save the order. Please check your user session.', 'error');
+        }
+        
+    } catch (err) {
+        if (err instanceof yup.ValidationError) {
+            const validationErrors: { [key: string]: string } = {};
+            err.inner.forEach(error => {
+                if (error.path) {
+                    validationErrors[error.path] = error.message;
+                }
+            });
+            setErrors(validationErrors);
+            
+            Swal.fire('Missing Data', 'Please fill in all required fields.', 'error');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+  };
+
+
+  const renderCartItems = () => (
+    <CartItemsScrollArea>
+      {cartItems.map((item) => (
+        <CartItemContainer key={item.id}>
+          <ItemImage src={item.image} alt={item.name} />
+          <ItemDetails>
+            <ItemName>{item.name}</ItemName>
+            <ItemDescription>Quantity: {item.quantity}</ItemDescription>
+          </ItemDetails>
+          <div style={{textAlign:'right'}}>
+              <ItemPrice>${(item.price * item.quantity).toFixed(2)}</ItemPrice>
+          </div>
+        </CartItemContainer>
+      ))}
+    </CartItemsScrollArea>
+  );
+
   return (
     <>
-    <Helmet>
-        <meta charSet="utf-8" />
-          <title> Checckout </title>
-    </Helmet>
-    <CenterContainer>
-      <HeadingBg>
-        <CheckoutHeading>
-          Checkout
-          <svg width="28" height="28" fill="#dde2eb" viewBox="0 0 20 20">
-            <path
-              d="M2.5 3h1.12l.34 1.2 2.7 8.79a2 2 0 0 0 1.9 1.42h6.86a2 2 0 0 0 1.952-1.684l1.02-5.54A1 1 0 0 0 15.56 6H6.21l-.56-2H2.5z 
-              M7 17.5A1.25 1.25 0 1 0 7 15a1.25 1.25 0 0 0 0 2.5zm7 0A1.25 1.25 0 1 0 14 15a1.25 1.25 0 0 0 0 2.5z"
-            />
-          </svg>
-        </CheckoutHeading>
-      </HeadingBg>
-<CheckoutCard>
-  <CheckoutLayout>
-    <FormSection>
-      <SectionTitle>Shipping Information</SectionTitle>
-      <form>
-        <FormRow>
-          <div style={{ flex: 1 }}>
-            <Label htmlFor="name">Full Name</Label>
-            <Input type="text" id="name" name="name" autoComplete="name" required />
-          </div>
-          <div style={{ flex: 1 }}>
-            <Label htmlFor="email">Email Address</Label>
-            <Input type="email" id="email" name="email" autoComplete="email" required />
-          </div>
-        </FormRow>
+      <GlobalStyle />
+      <PageContainer>
+        <CheckoutWrapper>
+          
+          <LeftColumn>
+            <FormSectionCard>
+              <SectionTitle>
+                <TitleText>Your Personal Details & Shipping</TitleText>
+              </SectionTitle>
+              <SectionContent $isOpen={isPersonalDetailsOpen}>
+                
+                <div>
+                <InputGroup>
+                  <div>
+                    <Label htmlFor="firstName">First Name</Label>
+                    <InputField 
+                        id="firstName" 
+                        placeholder="First Name" 
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        $hasError={!!errors.firstName}
+                    />
+                    {errors.firstName && <ErrorMessage>{errors.firstName}</ErrorMessage>}
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <InputField 
+                        id="lastName" 
+                        placeholder="Last Name" 
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        $hasError={!!errors.lastName}
+                    />
+                    {errors.lastName && <ErrorMessage>{errors.lastName}</ErrorMessage>}
+                  </div>
+                </InputGroup>
+                <InputGroup>
+                  <div>
+                    <Label htmlFor="email">Email Address</Label>
+                    <InputField 
+                        id="email" 
+                        placeholder="Email Address" 
+                        type="email" 
+                        value={formData.email}
+                        onChange={handleChange}
+                        $hasError={!!errors.email}
+                    />
+                    {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
+                  </div>
+                  <div>
+                    <Label htmlFor="phone">Phone</Label>
+                    <InputField 
+                        id="phone" 
+                        placeholder="Enter your Phone" 
+                        type="tel" 
+                        value={formData.phone}
+                        onChange={handleChange}
+                        $hasError={!!errors.phone}
+                    />
+                    {errors.phone && <ErrorMessage>{errors.phone}</ErrorMessage>}
+                  </div>
+                </InputGroup>
+                <div style={{ marginBottom: "15px" }}>
+                  <Label htmlFor="mailingAddress">Street Address</Label>
+                  <InputField 
+                      id="mailingAddress" 
+                      placeholder="Mailing/Shipping Address" 
+                      value={formData.mailingAddress}
+                      onChange={handleChange}
+                      $hasError={!!errors.mailingAddress}
+                  />
+                  {errors.mailingAddress && <ErrorMessage>{errors.mailingAddress}</ErrorMessage>}
+                </div>
+                <InputGroup>
+                  <div>
+                    <Label htmlFor="city">City</Label>
+                    <InputField 
+                        id="city" 
+                        placeholder="City" 
+                        value={formData.city}
+                        onChange={handleChange}
+                        $hasError={!!errors.city}
+                    />
+                    {errors.city && <ErrorMessage>{errors.city}</ErrorMessage>}
+                  </div>
+                  <div>
+                    <Label htmlFor="postCode">Post Code</Label>
+                    <InputField 
+                        id="postCode" 
+                        placeholder="Post Code" 
+                        value={formData.postCode}
+                        onChange={handleChange}
+                        $hasError={!!errors.postCode}
+                    />
+                    {errors.postCode && <ErrorMessage>{errors.postCode}</ErrorMessage>}
+                  </div>
+                </InputGroup>
+                <InputGroup>
+                  <div style={{ flex: '0 0 100%' }}>
+                    <Label htmlFor="country">Country</Label>
+                    <InputField 
+                        id="country" 
+                        placeholder="Country" 
+                        value={formData.country}
+                        onChange={handleChange}
+                        $hasError={!!errors.country}
+                    />
+                    {errors.country && <ErrorMessage>{errors.country}</ErrorMessage>}
+                  </div>
+                </InputGroup>
+                </div>
+              </SectionContent>
+            </FormSectionCard>
+          </LeftColumn>
+          
+          <RightColumn>
+            <ShoppingCartCard>
+              <CartHeader>Shopping Cart</CartHeader>
+              <p style={{ fontSize: "0.95rem", color: "#5d6d7e", marginTop: "-10px" }}>
+                You have {totalItems} items in your cart
+              </p>
 
-        <FormRow>
-          <div style={{ flex: 1 }}>
-            <Label htmlFor="address">Street Address</Label>
-            <Input type="text" id="address" name="address" autoComplete="street-address" required />
-          </div>
-          <div style={{ flex: 1 }}>
-            <Label htmlFor="city">City</Label>
-            <Input type="text" id="city" name="city" autoComplete="address-level2" required />
-          </div>
-        </FormRow>
+              <div style={{ padding: "10px 0", flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                 {cartItems.length > 0 ? renderCartItems() : (
+                    <p style={{color: '#8892a7', textAlign: 'center', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Your cart is empty.</p>
+                 )}
+              </div>
 
-        <FormRow>
-          <div style={{ flex: 1 }}>
-            <Label htmlFor="postal">Postal Code</Label>
-            <Input type="text" id="postal" name="postal" autoComplete="postal-code" required />
-          </div>
-          <div style={{ flex: 1 }}>
-            <Label htmlFor="country">Country</Label>
-            <Input type="text" id="country" name="country" autoComplete="country" required />
-          </div>
-        </FormRow>
+              <TotalsContainer>
+                <TotalRow>
+                  <span>Subtotal</span>
+                  <span>${subtotal.toFixed(2)}</span>
+                </TotalRow>
+                <TotalRow>
+                  <span>Shipping Cost (+)</span>
+                  <span>${shippingCost.toFixed(2)}</span>
+                </TotalRow>
+                <TotalRow $isTotal>
+                  <span>Total Payable</span>
+                  <span>${totalPayable.toFixed(2)}</span>
+                </TotalRow>
+              </TotalsContainer>
+              
+              <PlaceOrderButton onClick={handlePlaceOrder}>
+                Place Order
+              </PlaceOrderButton>
 
-       
-      </form>
-    </FormSection>
-
-<InfoSection>
-  <SectionTitle>Order Summary</SectionTitle>
-
-<div>
-  {cartItems.length > 0 ? (
-    cartItems.map((item) => (
-      <div
-        key={item.id}
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          marginBottom: "18px",
-          borderBottom: "1px solid #eceff3",
-          paddingBottom: "14px",
-        }}
-      >
-        <img
-          src={item.image}
-          alt={item.name}
-          style={{
-            width: "60px",
-            height: "60px",
-            objectFit: "cover",
-            borderRadius: "12px",
-            marginRight: "14px",
-          }}
-        />
-
-        <div style={{ flex: 1 }}>
-          <h4
-            style={{
-              fontSize: "1rem",
-              color: "#2e3142",
-              margin: 0,
-              fontWeight: 600,
-            }}
-          >
-            {item.name}
-          </h4>
-          <p
-            style={{
-              fontSize: "0.9rem",
-              color: "#7b8193",
-              marginTop: "4px",
-            }}
-          >
-            Quantity: {item.quantity}
-          </p>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-            marginLeft: "10px",
-          }}
-        >
-          <div
-            style={{
-              fontSize: "1rem",
-              fontWeight: 600,
-              color: "#333743",
-            }}
-          >
-            ${(item.price * item.quantity).toFixed(2)}
-          </div>
-
-          <button
-            style={{
-              marginTop: "6px",
-              background: "none",
-              border: "none",
-              color: "#e63946",
-              fontSize: "0.9rem",
-              cursor: "pointer",
-              textDecoration: "underline",
-              padding: "0",
-            }}
-            onClick={() => handleRemove(item.id)}
-          >
-            Remove
-          </button>
-        </div>
-      </div>
-    ))
-  ) : (
-    <p style={{ color: "#8a8f9e", fontSize: "1rem" }}>Your cart is empty.</p>
-  )}
-</div>
-
-
-  <div style={{ marginTop: "28px" }}>
-    <SummaryRow>
-      <span>Subtotal:</span>
-      <span>${subtotal.toFixed(2)}</span>
-    </SummaryRow>
-    <SummaryRow>
-      <span>Shipping:</span>
-      <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
-    </SummaryRow>
-    <TotalRow>
-      <span>Total:</span>
-      <span>${total.toFixed(2)}</span>
-    </TotalRow>
-  </div>
-
-</InfoSection>
-
-  </CheckoutLayout>
-     <Button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-                        submitOrder()
-
-
-          }}
-        >
-          Place Order
-        </Button>
-</CheckoutCard>
-
-
-    </CenterContainer>
+              <PrivacyText>
+                By placing your order, you agree to our company <br />
+                <a href="/privacy">Privacy Policy</a> and{" "}
+                <a href="/terms">Conditions of Use</a>.
+              </PrivacyText>
+            </ShoppingCartCard>
+          </RightColumn>
+        </CheckoutWrapper>
+      </PageContainer>
     </>
   );
 };
