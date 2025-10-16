@@ -32,18 +32,14 @@ const Navbar: React.FC = () => {
     { text: "Home", to: "/" },
     { text: "About Us", to: "/about" },
     { text: "Shop", to: "/products" },
-    { text: "Blog", to: "/blog" }, // ✅ عدلنا المسار هنا ليكون متناسق مع الراوت
+    { text: "Blog", to: "/blog" },
   ];
 
   return (
     <>
-<<<<<<< HEAD
-      {/* 🔹 Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light px-3 fixed-top">
-=======
-      <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 px-4 sticky-top">
->>>>>>> restore-edits
+      <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 px-4 fixed-top">
         <div className="container-fluid">
+          {/* Brand */}
           <Link
             className="navbar-brand fw-extrabold fs-3 text-theme-primary"
             to="/"
@@ -56,6 +52,7 @@ const Navbar: React.FC = () => {
             GLOWUP.
           </Link>
 
+          {/* Toggle Button */}
           <button
             className="navbar-toggler border-0"
             type="button"
@@ -68,6 +65,7 @@ const Navbar: React.FC = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
 
+          {/* Navbar Links */}
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-3">
               {navLinks.map((item, idx) => (
@@ -84,6 +82,7 @@ const Navbar: React.FC = () => {
               ))}
             </ul>
 
+            {/* Icons and Buttons */}
             <div className="d-flex align-items-center gap-4">
               {token ? (
                 <button
@@ -203,6 +202,10 @@ const Navbar: React.FC = () => {
 
           .cursor-pointer {
             cursor: pointer;
+          }
+
+          body {
+            padding-top: 80px; /* prevent content from hiding behind navbar */
           }
         `}</style>
       </nav>
