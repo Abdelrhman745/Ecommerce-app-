@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
 
 const MYTHS = [
   {
@@ -49,6 +50,11 @@ const BlogPage = () => {
   const [revealed, setRevealed] = useState(null);
 
   return (
+    <>
+    <Helmet>
+              <meta charSet="utf-8" />
+          <title> Blog </title>
+    </Helmet>
     <main className="blog-page py-4 py-md-5">
       <div className="container">
         {/* Myth Buster Gallery */}
@@ -295,6 +301,7 @@ const BlogPage = () => {
         }
       `}</style>
     </main>
+    </>
   );
 };
 

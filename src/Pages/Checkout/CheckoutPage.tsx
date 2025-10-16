@@ -6,6 +6,7 @@ import { RootState } from "../../Redux/Store";
 import { CartItem, clearCartState } from "../../Redux/CartSlice"; 
 
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet-async";
 
 const validationSchema = yup.object().shape({
     firstName: yup.string().required("First Name is required").min(3, "Name too short"),
@@ -425,6 +426,10 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <>
+        <Helmet>
+                  <meta charSet="utf-8" />
+              <title> Checkout </title>
+        </Helmet>
       <GlobalStyle />
       <PageContainer>
         <CheckoutWrapper>
