@@ -9,15 +9,14 @@ interface RelatedProductsProps {
   currentProductId?: number | string;
 }
 
-const API_URL = 'https://skincare-api-psi.vercel.app/api/data';
-
+const API_URL = 'https://68f278b4b36f9750deecbed2.mockapi.io/data/api/products';
 const fetchProducts = async (): Promise<Product[]> => {
   const response = await fetch(API_URL);
   if (!response.ok) {
     throw new Error('Failed to fetch data from the server'); 
   }
   const data = await response.json();
-  if (data && Array.isArray(data.data)) return data.data as Product[];
+  if (data && Array.isArray(data)) return data as Product[];
   return [];
 };
 
