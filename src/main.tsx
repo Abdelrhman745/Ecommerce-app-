@@ -26,6 +26,7 @@ import { setCart } from "./Redux/CartSlice";
 import { setFavorites } from "./Redux/FavSlice";
 import { HelmetProvider } from "react-helmet-async";
 import BlogPage from "./Pages/Blog/BlogPage";
+import SkinCareChatbot from "./components/Chatbot/Chatbot";
 
 const router = createBrowserRouter([
   {
@@ -89,6 +90,7 @@ createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <HelmetProvider>
           <RootApp />
+          <SkinCareChatbot/>
         </HelmetProvider>
       </QueryClientProvider>
     </Provider>
