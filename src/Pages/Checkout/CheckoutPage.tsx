@@ -2,13 +2,13 @@ import React, { useState, useMemo, } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import * as yup from 'yup';
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../Redux/Store"; 
+import { AppDispatch, RootState } from "../../Redux/Store"; 
 import { CartItem, clearCartState } from "../../Redux/CartSlice"; 
 
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
-import { addOrder, addOrderAsync } from "../../Redux/OrderSlice";
+import { addOrderAsync } from "../../Redux/OrderSlice";
 const validationSchema = yup.object().shape({
     firstName: yup.string().required("First Name is required").min(3, "Name too short"),
     lastName: yup.string().required("Last Name is required").min(3, "Name too short"),

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface OrderItem {
-  id: string;  
+  id: string | number;  
   name: string;
   quantity: number;
   price: number;

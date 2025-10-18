@@ -114,32 +114,48 @@ const Button = styled.button`
   }
 `;
 
+// --- THE FIX: pagination dots always centered ---
 const StyledSwiper = styled(Swiper)`
   width: 100%;
   height: 100%;
 
-  .swiper-pagination-bullets {
-    bottom: 38px;
-    left: 50%;
-    transform: translateX(-50%);
+  .swiper-pagination {
+    width: 100% !important;
+    position: absolute !important;
+    bottom: 38px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
     z-index: 10;
+    pointer-events: none;
+  }
 
-    .swiper-pagination-bullet {
-      width: 28px;
-      height: 5px;
-      border-radius: 5px;
-      background: #fff;
-      opacity: 0.44;
-      margin: 0 6px !important;
-      transition: opacity 0.3s;
-    }
+  .swiper-pagination-bullets {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    pointer-events: none;
+  }
 
-    .swiper-pagination-bullet-active {
-      opacity: 1;
-      background: #fff;
-    }
+  .swiper-pagination-bullet {
+    width: 28px;
+    height: 5px;
+    border-radius: 5px;
+    background: #fff;
+    opacity: 0.44;
+    margin: 0 6px !important;
+    transition: opacity 0.3s;
+    pointer-events: auto;
+  }
+
+  .swiper-pagination-bullet-active {
+    opacity: 1;
+    background: #fff;
   }
 `;
+// --- end fix ---
 
 const CarouselSection: React.FC = () => {
   const navigate = useNavigate();
