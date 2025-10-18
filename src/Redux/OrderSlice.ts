@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface OrderItem {
-  id: string;  // تم تغييره من number إلى string
+  id: string;  
   name: string;
   quantity: number;
   price: number;
@@ -54,7 +54,7 @@ export const addOrderAsync = createAsyncThunk(
   async (order: Order, { rejectWithValue }) => {
     try {
       for (const item of order.items) {
-        await updateProductStock(item, false); // خصم الكمية من المخزون
+        await updateProductStock(item, false); 
       }
 
       const response = await axios.post(
