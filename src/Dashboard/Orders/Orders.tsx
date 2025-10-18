@@ -161,7 +161,7 @@ const paginatedOrders = useMemo(() =>{
       <td>{new Date(order.date).toLocaleString()}</td>
       <td>
         {order.items.map(item => (
-          <div key={item.id}>{item.name} x {item.quantity}</div>
+          <div key={item.id}>{item.name.split(" ").slice(0,2).join(" ")} x {item.quantity}</div>
         ))}
       </td>
       <td>${order.total.toFixed(2)}</td>
