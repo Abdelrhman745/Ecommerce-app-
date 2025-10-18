@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, Col, Container, Row } from 'react-bootstrap'
-import about1 from "../../assets/images/download.jpg"
 import "./about.css"
 import TextSec from '../../components/TextSection/TextSection'
 import { useNavigate } from 'react-router-dom'

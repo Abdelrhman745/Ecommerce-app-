@@ -8,6 +8,7 @@ import { CartItem, clearCartState } from "../../Redux/CartSlice";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
+import { addOrder, addOrderAsync } from "../../Redux/OrderSlice";
 const validationSchema = yup.object().shape({
     firstName: yup.string().required("First Name is required").min(3, "Name too short"),
     lastName: yup.string().required("Last Name is required").min(3, "Name too short"),
@@ -269,27 +270,30 @@ const ErrorMessage = styled.p`
 `;
 
 const saveOrderAndClearCart = (
+  dispatch:any,
   userId: string,
   cartItems: CartItem[],
-  total: number
+  total: number,
+  userName:string,
 ) => {
   const users = JSON.parse(localStorage.getItem("users") || "[]");
   const userIndex = users.findIndex((u: any) => u.id === userId);
 
   if (userIndex >= 0) {
     const newOrder = {
-      orderId: Date.now().toString(),
-      date: new Date().toISOString(),
+   id: Date.now().toString(),
+      userId,
+      userName,           
       items: cartItems.map((item) => ({
         id: item.id,
         name: item.name,
         quantity: item.quantity,
         price: item.price,
       })),
-      totalAmount: total,
-      status: "Processing",
+      total,
+      date: new Date().toISOString(),
+      status: "pending",
     };
-
     users[userIndex].orders = [...(users[userIndex].orders || []), newOrder];
     users[userIndex].cart = [];
     
@@ -301,7 +305,7 @@ const saveOrderAndClearCart = (
 };
 
 const CheckoutPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const cartItems: CartItem[] = useSelector((state: RootState) => state.cart.items); 
   const navigate = useNavigate();
 
@@ -357,57 +361,115 @@ const CheckoutPage: React.FC = () => {
     };
   }, [cartItems]); 
 
+  // const handlePlaceOrder = async () => {
+    
+  //   if (cartItems.length === 0) {
+  //      Swal.fire('Cart Empty', 'Please add items to your cart before placing an order.', 'warning');
+  //      return;
+  //   }
+    
+  //   try {
+  //       await validationSchema.validate(formData, { abortEarly: false });
+        
+  //       setErrors({}); 
+
+  //       const orderSaved = saveOrderAndClearCart(
+  //         dispatch,
+  //           currentUserId, 
+  //           cartItems, 
+  //           totalPayable,
+  //           formData.firstName + " " + formData.lastName
+  //       );
+
+  //       if (orderSaved) {
+  //           dispatch(clearCartState());
+
+
+  //           Swal.fire({
+  //             title: "Order Placed! 🎉",
+  //             text: `Your order for $${totalPayable.toFixed(
+  //               2
+  //             )} has been submitted successfully.`,
+  //             icon: "success",
+  //             confirmButtonColor: "#4A80E1",
+  //           });
+  //                 navigate("/home");
+
+  //       } else {
+  //            Swal.fire('Error', 'Could not save the order. Please check your user session.', 'error');
+  //       }
+        
+  //   } catch (err) {
+  //       if (err instanceof yup.ValidationError) {
+  //           const validationErrors: { [key: string]: string } = {};
+  //           err.inner.forEach(error => {
+  //               if (error.path) {
+  //                   validationErrors[error.path] = error.message;
+  //               }
+  //           });
+  //           setErrors(validationErrors);
+            
+  //           Swal.fire('Missing Data', 'Please fill in all required fields.', 'error');
+            
+  //           window.scrollTo({ top: 0, behavior: 'smooth' });
+  //       }
+  //   }
+  // };
+
+
   const handlePlaceOrder = async () => {
-    
     if (cartItems.length === 0) {
-       Swal.fire('Cart Empty', 'Please add items to your cart before placing an order.', 'warning');
-       return;
+      Swal.fire("Cart Empty", "Please add items to your cart.", "warning");
+      return;
     }
-    
+
     try {
-        await validationSchema.validate(formData, { abortEarly: false });
-        
-        setErrors({}); 
+      await validationSchema.validate(formData, { abortEarly: false });
+      setErrors({});
 
-        const orderSaved = saveOrderAndClearCart(
-            currentUserId, 
-            cartItems, 
-            totalPayable
-        );
+      const newOrder = {
+        id: Date.now().toString(),
+        userId: currentUserId,
+        userName: formData.firstName + " " + formData.lastName,
+        items: cartItems.map((item) => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        total: totalPayable,
+        date: new Date().toISOString(),
+        status: "pending",
+      };
 
-        if (orderSaved) {
-            dispatch(clearCartState());
+      const resultAction = await dispatch(addOrderAsync(newOrder));
 
-            Swal.fire({
-              title: "Order Placed! 🎉",
-              text: `Your order for $${totalPayable.toFixed(
-                2
-              )} has been submitted successfully.`,
-              icon: "success",
-              confirmButtonColor: "#4A80E1",
-            });
-                  navigate("/home");
-
-        } else {
-             Swal.fire('Error', 'Could not save the order. Please check your user session.', 'error');
+      if (addOrderAsync.fulfilled.match(resultAction)) {
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const userIndex = users.findIndex((u: any) => u.id === currentUserId);
+        if (userIndex >= 0) {
+          users[userIndex].orders = [...(users[userIndex].orders || []), resultAction.payload];
+          users[userIndex].cart = [];
+          localStorage.setItem("users", JSON.stringify(users));
         }
-        
-    } catch (err) {
-        if (err instanceof yup.ValidationError) {
-            const validationErrors: { [key: string]: string } = {};
-            err.inner.forEach(error => {
-                if (error.path) {
-                    validationErrors[error.path] = error.message;
-                }
-            });
-            setErrors(validationErrors);
-            
-            Swal.fire('Missing Data', 'Please fill in all required fields.', 'error');
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+
+        dispatch(clearCartState());
+
+        Swal.fire("Order Placed!", `Your order for $${totalPayable.toFixed(2)} has been submitted.`, "success");
+        navigate("/home");
+      } else {
+        Swal.fire("Error", "Could not save the order. Please try again.", "error");
+      }
+    } catch (err: any) {
+      if (err.inner) {
+        const validationErrors: { [key: string]: string } = {};
+        err.inner.forEach((e: any) => { if (e.path) validationErrors[e.path] = e.message; });
+        setErrors(validationErrors);
+        Swal.fire("Missing Data", "Please fill in all required fields.", "error");
+      }
     }
   };
+
 
 
   const renderCartItems = () => (
