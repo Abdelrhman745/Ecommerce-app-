@@ -16,6 +16,7 @@ import Users from "./Dashboard/Users/Users";
 import ProtectedRoute from "./components/Protectedroute/Protectedroute";
 import styled, { keyframes } from "styled-components";
 import Orders from "./Dashboard/Orders/Orders";
+import Products from "./Dashboard/Products/Products";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -65,7 +66,6 @@ const LoadingFallback: React.FC<{ message?: string }> = ({ message }) => (
     </span>
   </SpinnerWrapper>
 );
-
 
 const router = createBrowserRouter([
   {
@@ -184,8 +184,9 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      {path:"user",element:<Users/>},
-      {path:"orders" , element :<Orders/>}
+      { path: "user", element: <Users /> },
+      { path: "orders", element: <Orders /> },
+      { path: "dashboard/products", element: <Products /> },
     ],
   },
 ]);
