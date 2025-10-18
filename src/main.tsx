@@ -183,6 +183,7 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {path:"user",element:<Users/>}
     ],
   },
 ]);

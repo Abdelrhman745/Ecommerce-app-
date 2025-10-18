@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Modal, Form, Table, Spinner, Pagination } from "react-bootstrap";
+import {
+  Button,
+  Modal,
+  Form,
+  Table,
+  Spinner,
+  Pagination,
+} from "react-bootstrap";
 import toast from "react-hot-toast";
 
 interface User {
@@ -15,7 +22,14 @@ const Users: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [formValues, setFormValues] = useState({ name: "", email: "", password: "" });
+  const [formValues, setFormValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [showActionsModal, setShowActionsModal] = useState(false);
+  const [selectedUserForActions, setSelectedUserForActions] =
+    useState<User | null>(null);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
@@ -26,7 +40,9 @@ const Users: React.FC = () => {
   async function fetchUsers() {
     try {
       setLoading(true);
-      const { data } = await axios.get("https://68e8fa40f2707e6128cd055c.mockapi.io/user");
+      const { data } = await axios.get(
+        "https://68e8fa40f2707e6128cd055c.mockapi.io/user"
+      );
       setUsers(data);
     } catch (err) {
       toast.error("Failed to fetch users!");
@@ -42,7 +58,9 @@ const Users: React.FC = () => {
   async function handleDelete() {
     if (!userToDelete) return;
     try {
-      await axios.delete(`https://68e8fa40f2707e6128cd055c.mockapi.io/user/${userToDelete.id}`);
+      await axios.delete(
+        `https://68e8fa40f2707e6128cd055c.mockapi.io/user/${userToDelete.id}`
+      );
       setUsers(users.filter((u) => u.id !== userToDelete.id));
       toast.success("User deleted successfully!");
     } catch (err) {
@@ -120,24 +138,16 @@ const Users: React.FC = () => {
                     <td>{user.name}</td>
                     <td>{user.email}</td>
                     <td>{user.password}</td>
-                    <td>
+                    <td className="text-center">
                       <Button
-                        variant="warning"
-                        size="sm"
-                        className="me-2"
-                        onClick={() => handleEdit(user)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="danger"
+                        variant="light"
                         size="sm"
                         onClick={() => {
-                          setUserToDelete(user);
-                          setShowDeleteModal(true);
+                          setSelectedUserForActions(user);
+                          setShowActionsModal(true);
                         }}
                       >
-                        Delete
+                        <i className="bi bi-three-dots-vertical fs-5"></i>
                       </Button>
                     </td>
                   </tr>
@@ -178,7 +188,7 @@ const Users: React.FC = () => {
         </>
       )}
 
-      {/* Edit Modal */}
+
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit User</Modal.Title>
@@ -226,8 +236,12 @@ const Users: React.FC = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+
+      <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
@@ -243,12 +257,63 @@ const Users: React.FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+
+      <Modal
+        show={showActionsModal}
+        onHide={() => setShowActionsModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>User Actions</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body className="text-center">
+          <p>
+            Choose an action for <strong>{selectedUserForActions?.name}</strong>
+          </p>
+
+          <div className="d-flex flex-column gap-2 mt-3">
+            <Button
+              variant="warning"
+              onClick={() => {
+                if (selectedUserForActions) handleEdit(selectedUserForActions);
+                setShowActionsModal(false);
+              }}
+            >
+              Edit User
+            </Button>
+
+            <Button
+              variant="danger"
+              onClick={() => {
+                if (selectedUserForActions) {
+                  setUserToDelete(selectedUserForActions);
+                  setShowDeleteModal(true);
+                }
+                setShowActionsModal(false);
+              }}
+            >
+              Delete User
+            </Button>
+
+            <Button
+              variant="info"
+              onClick={() => {
+                toast(`Viewing orders for ${selectedUserForActions?.name}`);
+                setShowActionsModal(false);
+              }}
+            >
+              View Orders
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
 
 export default Users;
-
 
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
@@ -329,7 +394,6 @@ export default Users;
 //     setFormValues({ ...formValues, [name]: value });
 //   }
 
-
 //   const indexOfLastUser = currentPage * usersPerPage;
 //   const indexOfFirstUser = indexOfLastUser - usersPerPage;
 //   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
@@ -396,7 +460,6 @@ export default Users;
 //             </tbody>
 //           </Table>
 
-
 //           {totalPages > 1 && (
 //             <div className="d-flex justify-content-center">
 //               <Pagination>
@@ -423,7 +486,6 @@ export default Users;
 //         </>
 //       )}
 
- 
 //       <Modal show={showModal} onHide={() => setShowModal(false)}>
 //         <Modal.Header closeButton>
 //           <Modal.Title>Edit User</Modal.Title>
