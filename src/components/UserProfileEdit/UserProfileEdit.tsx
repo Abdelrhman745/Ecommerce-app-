@@ -223,10 +223,12 @@ const MenuContainer = styled.div`
   }
 `;
 
-//Validation 
+//Validation
 const validationSchema = Yup.object({
   name: Yup.string().min(3).max(10).required("Name is required"),
-  email: Yup.string().email("Invalid email format").required("Email is required"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
   oldPassword: Yup.string(),
   newPassword: Yup.string().test(
     "is-valid-new-password",
@@ -235,7 +237,7 @@ const validationSchema = Yup.object({
   ),
 });
 
-//Component 
+//Component
 const UserProfile: React.FC = () => {
   const [mode, setMode] = useState<"menu" | "edit" | "orders">("menu");
   const [orders, setOrders] = useState<any[]>([]);
@@ -254,8 +256,8 @@ const UserProfile: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [requirePassword, setRequirePassword] = useState(false);
-  const defaultUserImage = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
-
+  const defaultUserImage =
+    "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
   useEffect(() => {
     const userId = localStorage.getItem("userToken");
@@ -277,13 +279,11 @@ const UserProfile: React.FC = () => {
       .catch(() => toast.error("Failed to load user data"));
   }, []);
 
-
   useEffect(() => {
     const nameChanged = data.name !== originalData.name;
     const emailChanged = data.email !== originalData.email;
     setRequirePassword(nameChanged || emailChanged);
   }, [data.name, data.email, originalData]);
-
 
   useEffect(() => {
     if (mode === "orders" && data.id) {
@@ -296,7 +296,8 @@ const UserProfile: React.FC = () => {
         .catch(() => toast.error("Failed to load orders"));
     }
   }, [mode, data.id]);
-
+  const [currentPage, setCurrentPage] = useState(1);
+   const itemsPerPage = 5; 
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -316,12 +317,10 @@ const UserProfile: React.FC = () => {
     }
   };
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.name]: e.target.value });
     setError("");
   };
-
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -347,13 +346,16 @@ const UserProfile: React.FC = () => {
 
     setLoading(true);
     try {
-      await axios.put(`https://68e8fa40f2707e6128cd055c.mockapi.io/user/${userId}`, {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        image: data.image,
-        ...(isChangingPassword && { password: data.newPassword }),
-      });
+      await axios.put(
+        `https://68e8fa40f2707e6128cd055c.mockapi.io/user/${userId}`,
+        {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          image: data.image,
+          ...(isChangingPassword && { password: data.newPassword }),
+        }
+      );
       toast.success("✅ Profile updated successfully!");
       setIsChangingPassword(false);
       setMode("menu");
@@ -363,7 +365,6 @@ const UserProfile: React.FC = () => {
       setLoading(false);
     }
   };
-
 
   if (mode === "orders") {
     return (
@@ -379,23 +380,106 @@ const UserProfile: React.FC = () => {
               <Subtitle>Here are your recent orders</Subtitle>
 
               {orders.length > 0 ? (
-                orders.map((order) => (
+                <>
+                  {orders
+                    .slice(
+                      (currentPage - 1) * itemsPerPage,
+                      currentPage * itemsPerPage
+                    )
+                    .map((order) => (
+                      <div
+                        key={order.id}
+                        style={{
+                          background: "#f8f9fc",
+                          borderRadius: "10px",
+                          padding: "15px",
+                          marginBottom: "15px",
+                          boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                        }}
+                      >
+                        <p>
+                          <strong>Order ID:</strong> {order.id}
+                        </p>
+                        <p>
+                          <strong>Order Name:</strong>{" "}
+                          {order.items
+                            .map((item: any) =>
+                              item.name.split(" ").slice(0, 2).join(" ")
+                            )
+                            .join(", ")}
+                        </p>
+
+                        <p>
+                          <strong>Total:</strong> ${order.total}
+                        </p>
+                        <p>
+                          <strong>Status:</strong> {order.status}
+                        </p>
+                        <p>
+                          <strong>Date:</strong>{" "}
+                          {new Date(order.date).toLocaleString()}
+                        </p>
+                      </div>
+                    ))}
+
+                  {/* ===== Pagination Buttons ===== */}
                   <div
-                    key={order.id}
                     style={{
-                      background: "#f8f9fc",
-                      borderRadius: "10px",
-                      padding: "15px",
-                      marginBottom: "15px",
-                      boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: "20px",
+                      gap: "10px",
                     }}
                   >
-                    <p><strong>Order ID:</strong> {order.id}</p>
-                    <p><strong>Total:</strong> ${order.totalAmount}</p>
-                    <p><strong>Status:</strong> {order.status}</p>
-                    <p><strong>Date:</strong> {new Date(order.date).toLocaleString()}</p>
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      disabled={currentPage === 1}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: "8px",
+                        border: "1px solid #ccc",
+                        background: "#fff",
+                        cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                      }}
+                    >
+                      Prev
+                    </button>
+
+                    <span style={{ fontWeight: 600, color: "#555" }}>
+                      Page {currentPage} of{" "}
+                      {Math.ceil(orders.length / itemsPerPage)}
+                    </span>
+
+                    <button
+                      onClick={() =>
+                        setCurrentPage((prev) =>
+                          prev < Math.ceil(orders.length / itemsPerPage)
+                            ? prev + 1
+                            : prev
+                        )
+                      }
+                      disabled={
+                        currentPage === Math.ceil(orders.length / itemsPerPage)
+                      }
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: "8px",
+                        border: "1px solid #ccc",
+                        background: "#fff",
+                        cursor:
+                          currentPage ===
+                          Math.ceil(orders.length / itemsPerPage)
+                            ? "not-allowed"
+                            : "pointer",
+                      }}
+                    >
+                      Next
+                    </button>
                   </div>
-                ))
+                </>
               ) : (
                 <p>No orders found.</p>
               )}
@@ -433,7 +517,12 @@ const UserProfile: React.FC = () => {
           <LeftPanel>
             <img src={data.image || defaultUserImage} alt="User" />
             <label htmlFor="upload">Change Image</label>
-            <input id="upload" type="file" accept="image/*" onChange={handleImageChange} />
+            <input
+              id="upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
           </LeftPanel>
 
           <RightPanel>
@@ -444,10 +533,22 @@ const UserProfile: React.FC = () => {
               {error && <ErrorMsg>{error}</ErrorMsg>}
 
               <Label>Email Address</Label>
-              <Input type="email" name="email" value={data.email} onChange={handleChange} required />
+              <Input
+                type="email"
+                name="email"
+                value={data.email}
+                onChange={handleChange}
+                required
+              />
 
               <Label>Full Name</Label>
-              <Input type="text" name="name" value={data.name} onChange={handleChange} required />
+              <Input
+                type="text"
+                name="name"
+                value={data.name}
+                onChange={handleChange}
+                required
+              />
 
               {requirePassword && (
                 <>
@@ -487,13 +588,21 @@ const UserProfile: React.FC = () => {
 
               <Button
                 type="button"
-                style={{ background: isChangingPassword ? "#d36b6b" : "#58df92ff" }}
+                style={{
+                  background: isChangingPassword ? "#d36b6b" : "#58df92ff",
+                }}
                 onClick={() => setIsChangingPassword(!isChangingPassword)}
               >
-                {isChangingPassword ? "Cancel Password Change" : "Change Password"}
+                {isChangingPassword
+                  ? "Cancel Password Change"
+                  : "Change Password"}
               </Button>
 
-              <Button type="submit" disabled={loading} style={{ backgroundColor: "#7c6f63" }}>
+              <Button
+                type="submit"
+                disabled={loading}
+                style={{ backgroundColor: "#7c6f63" }}
+              >
                 {loading ? "Saving..." : "Save Changes"}
               </Button>
             </Form>
