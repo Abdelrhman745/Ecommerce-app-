@@ -25,7 +25,7 @@ interface OrdersState {
 }
 
 const initialState: OrdersState = {
-  orders: JSON.parse(localStorage.getItem("orders") || "[]"),
+  orders:[],
   loading: false,
   error: null,
 };
@@ -69,7 +69,7 @@ export const addOrderAsync = createAsyncThunk(
   }
 );
 
-export const fetchOrdersAsync = createAsyncThunk<Order[], string>(
+export const fetchOrdersAsync = createAsyncThunk<Order[]>(
   "orders/fetchOrdersAsync",
   async (userId, { rejectWithValue }) => {
     try {

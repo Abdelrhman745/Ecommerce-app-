@@ -8,7 +8,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { AnimatePresence , motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 
-const API_URL = 'https://skincare-api-psi.vercel.app/api/data';
+const API_URL = 'https://68f278b4b36f9750deecbed2.mockapi.io/data/api/products';
 
 const fetchProducts = async (): Promise<Product[]> => {
   const response = await fetch(API_URL);
@@ -25,14 +25,13 @@ const fetchProducts = async (): Promise<Product[]> => {
   }
   return [];
 };
-
 const ArrayOfProducts = (data: any): data is Product[] => {
   return Array.isArray(data) && data.every(item => 
       typeof item === 'object' && item !== null 
-      && 'id' in item && typeof item.id === 'number'
+      && 'id' in item && (typeof item.id === 'number' || typeof item.id === 'string')
       && 'category' in item && typeof item.category === 'string'
       && 'name' in item && typeof item.name === 'string'
-      && 'description' in item && typeof item.description === 'string'
+&& ('description' in item ? typeof item.description === 'string' : true)
       && 'price' in item && typeof item.price === 'number'
   );
 };

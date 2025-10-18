@@ -422,7 +422,7 @@ const UserProfile: React.FC = () => {
                       </div>
                     ))}
 
-                  {/* ===== Pagination Buttons ===== */}
+                  
                   <div
                     style={{
                       display: "flex",

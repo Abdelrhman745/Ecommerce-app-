@@ -458,7 +458,7 @@ const CheckoutPage: React.FC = () => {
         Swal.fire("Order Placed!", `Your order for $${totalPayable.toFixed(2)} has been submitted.`, "success");
         navigate("/home");
       } else {
-        Swal.fire("Error", "Could not save the order. Please try again.", "error");
+        Swal.fire("Error"," No Enough Stock ", "error");
       }
     } catch (err: any) {
       if (err.inner) {
