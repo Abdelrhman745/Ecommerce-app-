@@ -27,6 +27,7 @@ import { setFavorites } from "./Redux/FavSlice";
 import { HelmetProvider } from "react-helmet-async";
 import BlogPage from "./Pages/Blog/BlogPage";
 import SkinCareChatbot from "./components/Chatbot/Chatbot";
+import Users from "./Dashboard/Users/Users";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,7 @@ const router = createBrowserRouter([
         ),
       },
       { path: "blog", element: <BlogPage /> },
+      {path:"user", element:<Users/>}
     ],
   },
 ]);

@@ -145,7 +145,7 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        <style jsx>{`
+        <style>{`
           :root {
             --theme-primary: #7c6f63;
             --theme-muted: #b8afa6;
