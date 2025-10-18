@@ -20,7 +20,7 @@ interface Product {
   price: number;
   category: string;
   stock: number;
-  imageUrl: string; // Fixed property name
+  imageUrl: string;
 }
 
 const Card = styled.div`
