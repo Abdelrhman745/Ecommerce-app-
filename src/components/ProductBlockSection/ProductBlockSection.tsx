@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const SectionWrap = styled.section`
   width: 100vw;
@@ -110,36 +111,43 @@ const Button = styled.button`
   }
 `;
 
-const ProductBlockSection: React.FC = () => (
-  <SectionWrap>
-    <Block>
-      <ImgWrap>
-        <img src="/20.jpg" alt="Skincare Product" />
-      </ImgWrap>
-      <ContentWrap>
-        <Label>Skin Care</Label>
-        <Heading>Potent Solutions for Demanding Skin</Heading>
-        <Description>
-          Discover products tailored for mature skin and urban lifestyles,
-          offering daily hydration and the added advantage of powerful vitamins
-          and antioxidants.
-        </Description>
-        <Button>
-          Learn More
-          <svg
-            width="25"
-            height="25"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
-        </Button>
-      </ContentWrap>
-    </Block>
-  </SectionWrap>
-);
+const ProductBlockSection: React.FC = () => {
+  const navigate = useNavigate();
+  const handleLearnMore = () => {
+    navigate("/products");
+  };
+
+  return (
+    <SectionWrap>
+      <Block>
+        <ImgWrap>
+          <img src="/20.jpg" alt="Skincare Product" />
+        </ImgWrap>
+        <ContentWrap>
+          <Label>Skin Care</Label>
+          <Heading>Potent Solutions for Demanding Skin</Heading>
+          <Description>
+            Discover products tailored for mature skin and urban lifestyles,
+            offering daily hydration and the added advantage of powerful
+            vitamins and antioxidants.
+          </Description>
+          <Button onClick={handleLearnMore}>
+            Learn More
+            <svg
+              width="25"
+              height="25"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </Button>
+        </ContentWrap>
+      </Block>
+    </SectionWrap>
+  );
+};
 
 export default ProductBlockSection;

@@ -1,4 +1,4 @@
-import { StrictMode, useEffect } from "react";
+import React, { StrictMode, useEffect, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -7,60 +7,182 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider, useDispatch } from "react-redux";
 import store from "./Redux/Store";
-
-import Layout from "./layouts/Mainlayout";
-import HomePage from "./Pages/HomePage/HomePage";
-import SignUp from "./Pages/Autho/Signup";
-import Login from "./Pages/Autho/Login";
-import ForgetPassword from "./Pages/Autho/Forget";
-import ProductListPage from "./Pages/ProductPage/ProductListPage";
-import ProductDetailsPage from "./Pages/ProductDetailsPage/ProductDetailsPage";
-import CartPage from "./Pages/CartPage/CartPage";
-import CheckoutPage from "./Pages/Checkout/CheckoutPage";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import UserProfileEdit from "./components/UserProfileEdit/UserProfileEdit";
-import About from "./Pages/About/About";
-import ProtectedRoute from "./components/Protectedroute/Protectedroute";
 import { login } from "./Redux/Authosclice";
 import { setCart } from "./Redux/CartSlice";
 import { setFavorites } from "./Redux/FavSlice";
 import { HelmetProvider } from "react-helmet-async";
-import BlogPage from "./Pages/Blog/BlogPage";
-import SkinCareChatbot from "./components/Chatbot/Chatbot";
 import Users from "./Dashboard/Users/Users";
+import ProtectedRoute from "./components/Protectedroute/Protectedroute";
+import styled, { keyframes } from "styled-components";
+const Layout = lazy(() => import("./layouts/Mainlayout"));
+const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
+const SignUp = lazy(() => import("./Pages/Autho/Signup"));
+const Login = lazy(() => import("./Pages/Autho/Login"));
+const ForgetPassword = lazy(() => import("./Pages/Autho/Forget"));
+const ProductListPage = lazy(
+  () => import("./Pages/ProductPage/ProductListPage")
+);
+const ProductDetailsPage = lazy(
+  () => import("./Pages/ProductDetailsPage/ProductDetailsPage")
+);
+const CartPage = lazy(() => import("./Pages/CartPage/CartPage"));
+const CheckoutPage = lazy(() => import("./Pages/Checkout/CheckoutPage"));
+const UserProfileEdit = lazy(
+  () => import("./components/UserProfileEdit/UserProfileEdit")
+);
+const About = lazy(() => import("./Pages/About/About"));
+const BlogPage = lazy(() => import("./Pages/Blog/BlogPage"));
+const SkinCareChatbot = lazy(() => import("./components/Chatbot/Chatbot"));
+
+const spin = keyframes`
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+`;
+
+const SpinnerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+`;
+
+const Spinner = styled.div`
+  border: 5px solid rgba(255, 255, 255, 0.15);
+  border-top: 5px solid #7c6f63;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: ${spin} 1s linear infinite;
+`;
+
+const LoadingFallback: React.FC<{ message?: string }> = ({ message }) => (
+  <SpinnerWrapper>
+    <Spinner />
+    <span style={{ marginLeft: 12, color: "#7c6f63", fontSize: "1.05rem" }}>
+      {message || "Loading..."}
+    </span>
+  </SpinnerWrapper>
+);
+
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <Suspense fallback={<LoadingFallback message="Loading layout..." />}>
+        <Layout />
+      </Suspense>
+    ),
     children: [
-      { index: true, element: <HomePage /> },
-      { path: "about", element: <About /> },
-      { path: "home", element: <HomePage /> },
-      { path: "products", element: <ProductListPage /> },
-      { path: "products/:id", element: <ProductDetailsPage /> },
-      { path: "signup", element: <SignUp /> },
-      { path: "login", element: <Login /> },
-      { path: "forget", element: <ForgetPassword /> },
-      { path: "cart", element: <CartPage /> },
+      {
+        index: true,
+        element: (
+          <Suspense fallback={<LoadingFallback message="Loading home..." />}>
+            <HomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "about",
+        element: (
+          <Suspense fallback={<LoadingFallback message="Loading about..." />}>
+            <About />
+          </Suspense>
+        ),
+      },
+      {
+        path: "home",
+        element: (
+          <Suspense fallback={<LoadingFallback message="Loading home..." />}>
+            <HomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "products",
+        element: (
+          <Suspense
+            fallback={<LoadingFallback message="Loading products..." />}
+          >
+            <ProductListPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "products/:id",
+        element: (
+          <Suspense
+            fallback={<LoadingFallback message="Loading product details..." />}
+          >
+            <ProductDetailsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "signup",
+        element: (
+          <Suspense fallback={<LoadingFallback message="Loading signup..." />}>
+            <SignUp />
+          </Suspense>
+        ),
+      },
+      {
+        path: "login",
+        element: (
+          <Suspense fallback={<LoadingFallback message="Loading login..." />}>
+            <Login />
+          </Suspense>
+        ),
+      },
+      {
+        path: "forget",
+        element: (
+          <Suspense
+            fallback={<LoadingFallback message="Loading password reset..." />}
+          >
+            <ForgetPassword />
+          </Suspense>
+        ),
+      },
+      {
+        path: "cart",
+        element: (
+          <Suspense fallback={<LoadingFallback message="Loading cart..." />}>
+            <CartPage />
+          </Suspense>
+        ),
+      },
       {
         path: "checkout",
         element: (
-          <ProtectedRoute>
-            <CheckoutPage />
-          </ProtectedRoute>
+          <Suspense
+            fallback={<LoadingFallback message="Loading checkout..." />}
+          >
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
       {
         path: "profile",
         element: (
-          <ProtectedRoute>
-            <UserProfileEdit />
-          </ProtectedRoute>
+          <Suspense fallback={<LoadingFallback message="Loading profile..." />}>
+            <ProtectedRoute>
+              <UserProfileEdit />
+            </ProtectedRoute>
+          </Suspense>
         ),
       },
-      { path: "blog", element: <BlogPage /> },
-      {path:"user", element:<Users/>}
+      {
+        path: "blog",
+        element: (
+          <Suspense fallback={<LoadingFallback message="Loading blog..." />}>
+            <BlogPage />
+          </Suspense>
+        ),
+      },
     ],
   },
 ]);
@@ -92,10 +214,13 @@ createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <HelmetProvider>
           <RootApp />
-          <SkinCareChatbot/>
+          <Suspense fallback={<LoadingFallback message="Loading chatbot..." />}>
+            <SkinCareChatbot />
+          </Suspense>
         </HelmetProvider>
       </QueryClientProvider>
     </Provider>
   </StrictMode>
 );
+
 export default RootApp;

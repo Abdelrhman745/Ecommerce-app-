@@ -7,7 +7,7 @@ import "./chat.css"
 export default function SkinCareChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([
-    { sender: "bot", text: "👋 Hi there! I'm your skincare assistant. Tell me your skin type!" },
+    { sender: "bot", text: "👋 Hi there! I'm your skincare assistant. Tell me your skin type (oily , dry , sensitive , combination ) !" },
   ]);
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState<{ type?: string; concern?: string }>({});
@@ -35,12 +35,15 @@ export default function SkinCareChatbot() {
         setStep(3);
         botReply("✨ Here's your personalized skincare routine:");
         setTimeout(() => botReply(generateRoutine(newAnswers.type || "", newAnswers.concern || "")), 700);
+        setTimeout(() => {
+        botReply("🙏 Thanks for using our skincare assistant! Take care 💖");
+    }, 1500); 
       } else {
         botReply("Type 'restart' to start again 💬");
         if (msg.includes("restart")) {
           setStep(1);
           setAnswers({});
-          botReply("Let's start again 🌸 What’s your skin type?");
+          botReply("Let's start again 🌸 What’s your skin type? (oily , dry , sensitive , combination ) ");
         }
       }
       setLoading(false);
@@ -113,7 +116,7 @@ export default function SkinCareChatbot() {
               bottom: 90,
               right: 20,
               width: 380,
-              height: 450,
+              height: 400,
               display: "flex",
               flexDirection: "column",
               zIndex: 999,

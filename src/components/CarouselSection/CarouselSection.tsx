@@ -5,6 +5,7 @@ import { Autoplay, EffectFade, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/pagination";
+import { useNavigate } from "react-router-dom";
 
 const slides = [
   { title: "Elegant Skincare", image: "/nnn.jpg" },
@@ -140,9 +141,10 @@ const StyledSwiper = styled(Swiper)`
   }
 `;
 
-// ---------------------- Component ----------------------
-
 const CarouselSection: React.FC = () => {
+  const navigate = useNavigate();
+  const handleDiscover = () => navigate("/products");
+
   return (
     <Section>
       <StyledSwiper
@@ -163,7 +165,7 @@ const CarouselSection: React.FC = () => {
                 skin-friendly and rich in effective biotechnological
                 ingredients.
               </Description>
-              <Button>
+              <Button onClick={handleDiscover}>
                 Discover More
                 <svg
                   width="25"

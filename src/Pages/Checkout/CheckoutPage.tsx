@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import * as yup from 'yup';
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +7,7 @@ import { CartItem, clearCartState } from "../../Redux/CartSlice";
 
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
-
+import { useNavigate } from "react-router-dom";
 const validationSchema = yup.object().shape({
     firstName: yup.string().required("First Name is required").min(3, "Name too short"),
     lastName: yup.string().required("Last Name is required").min(3, "Name too short"),
@@ -303,7 +303,8 @@ const saveOrderAndClearCart = (
 const CheckoutPage: React.FC = () => {
   const dispatch = useDispatch();
   const cartItems: CartItem[] = useSelector((state: RootState) => state.cart.items); 
-  
+  const navigate = useNavigate();
+
   const currentUserId = localStorage.getItem("userToken") || "guest"; 
   
   const BASE_SHIPPING = 10.85; 
@@ -385,6 +386,8 @@ const CheckoutPage: React.FC = () => {
               icon: "success",
               confirmButtonColor: "#4A80E1",
             });
+                  navigate("/home");
+
         } else {
              Swal.fire('Error', 'Could not save the order. Please check your user session.', 'error');
         }

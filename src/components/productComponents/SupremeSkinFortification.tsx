@@ -7,7 +7,7 @@ import { type Product } from '../../types/Product';
 import { Link } from 'react-router-dom';
 
 
-const API_URL = 'https://skincare-api-psi.vercel.app/api/data';
+const API_URL = 'https://68f278b4b36f9750deecbed2.mockapi.io/data/api/products';
 
 const fetchProducts = async (): Promise<Product[]> => {
   const response = await fetch(API_URL);
