@@ -31,9 +31,11 @@ const favSlice = createSlice({
     },
     removeAllFavorite(state) {
       state.items = [];
+      saveUserFav([]);
     },
     clearFavoritesState(state) {
       state.items = [];
+      saveUserFav([]);
     },  },
 });
 

@@ -9,6 +9,7 @@ import { RootState } from "../../Redux/Store";
 import FavoritesModal from "../FavoriteModal/FavoriteModal";
 import { clearCartState } from "../../Redux/CartSlice";
 import { clearFavoritesState } from "../../Redux/FavSlice";
+import NotificationBell from "../../Dashboard/Orders/components/notifcation";
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
@@ -141,6 +142,7 @@ const Navbar: React.FC = () => {
                 </span>
                 <FaShoppingBag size={20} className="ms-3" />
               </div>
+              <NotificationBell/>
             </div>
           </div>
         </div>

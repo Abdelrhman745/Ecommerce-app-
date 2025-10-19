@@ -1,66 +1,77 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Badge, Button, Modal, Spinner, Table, Form, Row, Col, Pagination } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../Redux/Store';
-import { deleteOrderAsync, fetchOrdersAsync, Order, updateOrderAsync } from '../../Redux/OrderSlice';
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Badge,
+  Button,
+  Modal,
+  Spinner,
+  Table,
+  Form,
+  Row,
+  Col,
+  Pagination,
+} from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../Redux/Store";
+import {
+  deleteOrderAsync,
+  fetchOrdersAsync,
+  Order,
+  updateOrderAsync,
+} from "../../Redux/OrderSlice";
 import "./orders.css";
-import Swal from 'sweetalert2';
-import { AnimatePresence } from 'framer-motion';
-import {motion} from 'framer-motion'
+import Swal from "sweetalert2";
+import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 export default function Orders() {
   const dispatch = useDispatch<AppDispatch>();
   const { orders, loading, error } = useSelector(
     (state: RootState) => state.orders
   );
   useEffect(() => {
-  dispatch(fetchOrdersAsync());
-}, [dispatch]);
+    dispatch(fetchOrdersAsync());
+  }, [dispatch]);
 
-const [statusFilter, setStatusFilter] = useState("All");
-const [userSearch, setUserSearch] = useState("");
-const [orderIdSearch, setOrderIdSearch] = useState("");
-const [showModal, setShowModal] = useState(false);
-const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-const [newStatus, setNewStatus] = useState("");
-const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 5;
-const handleEditClick = (order: Order) => {
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [userSearch, setUserSearch] = useState("");
+  const [orderIdSearch, setOrderIdSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [newStatus, setNewStatus] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const handleEditClick = (order: Order) => {
     setSelectedOrder(order);
     setNewStatus(order.status);
     setShowModal(true);
   };
 
-const handleDeleteOrder = (order: Order) => {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: `Do you want to delete order #${order.id}?`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Yes, delete it!',
-    cancelButtonText: 'Cancel'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      dispatch(deleteOrderAsync(order.id))
-        .unwrap()
-        .then(() => {
-          Swal.fire(
-            'Deleted!',
-            `Order #${order.id} has been deleted.`,
-            'success'
-          )
-        })
-        .catch((err) => {
-          Swal.fire(
-            'Error!',
-            `${err}`,
-            'error'
-          )
-        });
-    }
-  });
-};
+  const handleDeleteOrder = (order: Order) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to delete order #${order.id}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteOrderAsync(order.id))
+          .unwrap()
+          .then(() => {
+            Swal.fire(
+              "Deleted!",
+              `Order #${order.id} has been deleted.`,
+              "success"
+            );
+          })
+          .catch((err) => {
+            Swal.fire("Error!", `${err}`, "error");
+          });
+      }
+    });
+  };
 
   const handleSave = async () => {
     if (selectedOrder && selectedOrder.status !== newStatus) {
@@ -89,60 +100,77 @@ const handleDeleteOrder = (order: Order) => {
     }
   };
 
- 
-const filteredOrders = orders.filter(order => {
-  const statusMatch = statusFilter.toLowerCase() === "all" || order.status.toLowerCase() === statusFilter.toLowerCase();
-  const userMatch = order.userName.toLowerCase().includes(userSearch.toLowerCase());
-  const orderMatch = order.id.includes(orderIdSearch);
+  const filteredOrders = orders.filter((order) => {
+    const statusMatch =
+      statusFilter.toLowerCase() === "all" ||
+      order.status.toLowerCase() === statusFilter.toLowerCase();
+    const userMatch = order.userName
+      .toLowerCase()
+      .includes(userSearch.toLowerCase());
+    const orderMatch = order.id.includes(orderIdSearch);
 
-  return statusMatch && userMatch && orderMatch;
-});
-const totalPages = Math.ceil(filteredOrders.length/itemsPerPage);
-const paginatedOrders = useMemo(() =>{
-  const startIndex = (currentPage-1)* itemsPerPage;
-  const endIndex = startIndex +itemsPerPage;
-  return filteredOrders.slice(startIndex, endIndex);
-}, [filteredOrders , currentPage]
-)
- if (loading) return <Spinner animation="border" className="m-4" />;
+    return statusMatch && userMatch && orderMatch;
+  });
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const paginatedOrders = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredOrders.slice(startIndex, endIndex);
+  }, [filteredOrders, currentPage]);
+  if (loading) return <Spinner animation="border" className="m-4" />;
   if (error) return <p className="text-danger m-4">{error}</p>;
 
-
   return (
-    <div className="mt-5 text-center">
-<h2 className="my-0">Orders</h2>
-<Row className="my-3 align-items-center justify-content-center">
-  <Col md={3}>
-    <Form.Select name="status" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-      <option value="All" > All</option>
-      <option value="Pending">Pending</option>
-      <option value="Canceled">Canceled</option>
-      <option value="Completed">Completed</option>
-    </Form.Select>
-  </Col>
+    <div className="orders-dashboard container-fluid py-4">
+      {/* Title */}
+      <h2 className="text-center mb-4 fw-bold text-uppercase dashboard-title">
+        Orders
+      </h2>
 
-  <Col md={3}>
-    <Form.Control 
-      type="text" 
-      placeholder="Search by user" 
-      className="w-100"
-      onChange={e => setUserSearch(e.target.value)}
-    />
-  </Col>
+      {/* Filters Row */}
+      <Row className="filter-row justify-content-center mb-4">
+        <Col md={3} sm={12} className="mb-2">
+          <Form.Select
+            name="status"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Canceled">Canceled</option>
+            <option value="Completed">Completed</option>
+          </Form.Select>
+        </Col>
 
-  <Col md={3}>
-    <Form.Control 
-      type="text" 
-      placeholder="Search by Order" 
-      className="w-100"
-      onChange={e => setOrderIdSearch(e.target.value)}
-    />
-  </Col>
-</Row>
+        <Col md={3} sm={12} className="mb-2">
+          <Form.Control
+            type="text"
+            placeholder="🔍 Search by user"
+            className="filter-input"
+            onChange={(e) => setUserSearch(e.target.value)}
+          />
+        </Col>
 
-        <div className="px-3" style={{marginBottom: '100px' }}>
-        <Table bordered responsive>
-          <thead className="text-center">
+        <Col md={3} sm={12}>
+          <Form.Control
+            type="text"
+            placeholder="🔍 Search by Order ID"
+            className="filter-input"
+            onChange={(e) => setOrderIdSearch(e.target.value)}
+          />
+        </Col>
+      </Row>
+
+      {/* Table */}
+      <div className="table-container px-5">
+        <Table
+          responsive
+          bordered
+          hover
+          className="orders-table text-center align-middle"
+        >
+          <thead>
             <tr>
               <th>Order ID</th>
               <th>User</th>
@@ -153,103 +181,131 @@ const paginatedOrders = useMemo(() =>{
               <th>Actions</th>
             </tr>
           </thead>
-      <tbody>
-  {paginatedOrders.map(order => (
-    <tr key={order.id}>
-      <td>{order.id}</td>
-      <td>{order.userName}</td>
-      <td>{new Date(order.date).toLocaleString()}</td>
-      <td>
-        {order.items.map(item => (
-          <div key={item.id}>{item.name.split(" ").slice(0,2).join(" ")} x {item.quantity}</div>
-        ))}
-      </td>
-      <td>${order.total.toFixed(2)}</td>
-      <td className="text-center">
-        <Badge bg={getStatusVariant(order.status)}>
-          {order.status.toUpperCase()}
-        </Badge>
-      </td>
-      <td className="d-flex gap-2 justify-content-center">
-        <i
-          className="bi bi-pencil bg-primary text-white px-2"
-          style={{ cursor: 'pointer', fontSize: '1.2rem', padding: '5px', borderRadius: '4px' }}
-          title="Edit"
-          onClick={() => handleEditClick(order)}
-        ></i>
-        <i
-          className="bi bi-trash bg-danger text-white px-2"
-          style={{ cursor: 'pointer', fontSize: '1.2rem', padding: '5px', borderRadius: '4px' }}
-          title="Delete"
-          onClick={() => handleDeleteOrder(order)}
-        ></i>
-      </td>
-    </tr>
-  ))}
-</tbody>
 
+          <tbody>
+            {paginatedOrders.map((order) => (
+              <tr key={order.id}>
+                <td>{order.id}</td>
+                <td className="fw-semibold">{order.userName}</td>
+                <td>{new Date(order.date).toLocaleString()}</td>
+                <td>
+                  {order.items.map((item) => (
+                    <div key={item.id}>
+                      {item.name.split(" ").slice(0, 2).join(" ")} ×{" "}
+                      {item.quantity}
+                    </div>
+                  ))}
+                </td>
+                <td className="fw-semibold">${order.total.toFixed(2)}</td>
+                <td>
+                  <Badge
+                    bg={getStatusVariant(order.status)}
+                    className="status-badge"
+                  >
+                    {order.status.toUpperCase()}
+                  </Badge>
+                </td>
+
+                <td>
+                  <Button
+                    variant="outline-warning"
+                    size="sm"
+                    style={{ minWidth: 56, marginRight: 7 }}
+                    onClick={() => handleEditClick(order)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    style={{ minWidth: 56 }}
+                    onClick={() => handleDeleteOrder(order)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </Table>
       </div>
 
+      {/* Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Edit Order</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Label>User Name</Form.Label>
-          <Form.Control type="text" value={selectedOrder?.userName} readOnly className="mb-3" />
+          <Form.Control
+            type="text"
+            value={selectedOrder?.userName}
+            readOnly
+            className="mb-3"
+          />
           <Form.Label>Total</Form.Label>
-          <Form.Control type="text" value={selectedOrder?.total} readOnly className="mb-3" />
+          <Form.Control
+            type="text"
+            value={selectedOrder?.total}
+            readOnly
+            className="mb-3"
+          />
           <Form.Label>Status</Form.Label>
-          <Form.Select value={newStatus} onChange={(e) => setNewStatus(e.target.value)}>
+          <Form.Select
+            value={newStatus}
+            onChange={(e) => setNewStatus(e.target.value)}
+          >
             <option value="pending">Pending</option>
             <option value="completed">Completed</option>
             <option value="canceled">Canceled</option>
           </Form.Select>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleSave}>Save</Button>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleSave}>
+            Save
+          </Button>
         </Modal.Footer>
       </Modal>
-      <div className='d-flex justify-content-center mt-0'>
-   <Pagination>
-            <Pagination.Prev
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            />
 
-            <AnimatePresence mode="wait">
-              {[...Array(totalPages)].map((_, index) => (
-                <motion.li
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.3 }}
-                  style={{ listStyle: 'none', display: 'inline-block' }}
+      {/* Pagination */}
+      <div className="d-flex justify-content-center mt-3">
+        <Pagination>
+          <Pagination.Prev
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          />
+
+          <AnimatePresence mode="wait">
+            {[...Array(totalPages)].map((_, index) => (
+              <motion.li
+                key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.3 }}
+                style={{ listStyle: "none", display: "inline-block" }}
+              >
+                <Pagination.Item
+                  active={currentPage === index + 1}
+                  onClick={() => setCurrentPage(index + 1)}
                 >
-                  <Pagination.Item
-                    active={currentPage === index + 1}
-                    onClick={() => setCurrentPage(index + 1)}
-                    style={{
-                      color: '#7c6f63',
-                      borderColor: '#7c6f63',
-                    }}
-                  >
-                    {index + 1}
-                  </Pagination.Item>
-                </motion.li>
-              ))}
-            </AnimatePresence>
+                  {index + 1}
+                </Pagination.Item>
+              </motion.li>
+            ))}
+          </AnimatePresence>
 
-            <Pagination.Next
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            />
-          </Pagination>
+          <Pagination.Next
+            disabled={currentPage === totalPages}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+          />
+        </Pagination>
       </div>
-
     </div>
   );
 }
