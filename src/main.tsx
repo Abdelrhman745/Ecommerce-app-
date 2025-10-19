@@ -15,6 +15,7 @@ import { HelmetProvider } from "react-helmet-async";
 import Users from "./Dashboard/Users/Users";
 import ProtectedRoute from "./components/Protectedroute/Protectedroute";
 import styled, { keyframes } from "styled-components";
+import ChartsAndReports from "./Dashboard/Main/ChartsAndReports";
 import Orders from "./Dashboard/Orders/Orders";
 import Products from "./Dashboard/Products/Products";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
@@ -187,6 +188,8 @@ const router = createBrowserRouter([
       { path: "user", element: <Users /> },
       { path: "orders", element: <Orders /> },
       { path: "dashboard/products", element: <Products /> },
+      { path: "dashboard/charts", element: <ChartsAndReports /> },
+
     ],
   },
 ]);
