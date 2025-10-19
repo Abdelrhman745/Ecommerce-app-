@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   InputGroup,
+  Pagination,
 } from "react-bootstrap";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -75,6 +76,9 @@ const Products: React.FC = () => {
     imageUrl: "",
   });
   const [saving, setSaving] = useState(false);
+
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const API = "https://68f278b4b36f9750deecbed2.mockapi.io/data/api/products";
 
@@ -181,9 +185,66 @@ const Products: React.FC = () => {
       await axios.delete(`${API}/${id}`);
       setProducts(products.filter((p) => p.id !== id));
       toast.success("Product deleted.");
+      // Adjust current page if needed
+      if ((currentPage - 1) * itemsPerPage >= products.length - 1) {
+        setCurrentPage((prev) => Math.max(prev - 1, 1));
+      }
     } catch {
       toast.error("Delete failed!");
     }
+  }
+
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const paginatedProducts = products.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const paginationItems = [];
+  const delta = 1;
+  const rangeStart = Math.max(1, currentPage - delta);
+  const rangeEnd = Math.min(totalPages, currentPage + delta);
+
+  if (rangeStart > 1) {
+    paginationItems.push(
+      <Pagination.Item
+        key={1}
+        onClick={() => setCurrentPage(1)}
+        active={1 === currentPage}
+      >
+        1
+      </Pagination.Item>
+    );
+    if (rangeStart > 2) {
+      paginationItems.push(
+        <Pagination.Ellipsis key="start-ellipsis" disabled />
+      );
+    }
+  }
+  for (let i = rangeStart; i <= rangeEnd; i++) {
+    paginationItems.push(
+      <Pagination.Item
+        key={i}
+        onClick={() => setCurrentPage(i)}
+        active={i === currentPage}
+      >
+        {i}
+      </Pagination.Item>
+    );
+  }
+  if (rangeEnd < totalPages) {
+    if (rangeEnd < totalPages - 1) {
+      paginationItems.push(<Pagination.Ellipsis key="end-ellipsis" disabled />);
+    }
+    paginationItems.push(
+      <Pagination.Item
+        key={totalPages}
+        onClick={() => setCurrentPage(totalPages)}
+        active={totalPages === currentPage}
+      >
+        {totalPages}
+      </Pagination.Item>
+    );
   }
 
   return (
@@ -204,74 +265,96 @@ const Products: React.FC = () => {
             <Spinner animation="border" style={{ color: "#9d8764" }} />
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <Table
-              bordered
-              hover
-              responsive
-              style={{
-                background: "#fff9f3",
-                borderRadius: "16px",
-                fontSize: "1.04em",
-              }}
-            >
-              <thead style={{ background: "#ebdfd1" }}>
-                <tr>
-                  <th>#</th>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Price ($)</th>
-                  <th>Stock</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
-                {products.length > 0 ? (
-                  products.map((product, index) => (
-                    <tr key={product.id}>
-                      <td style={{ fontWeight: 600, color: "#998068" }}>
-                        {index + 1}
-                      </td>
-                      <td>
-                        <ProductImg src={product.imageUrl} alt={product.name} />
-                      </td>
-                      <td style={{ fontWeight: 500 }}>{product.name}</td>
-                      <td style={{ color: "#b08d6c" }}>{product.category}</td>
-                      <td>
-                        <span style={{ color: "#987549" }}>
-                          ${product.price}
-                        </span>
-                      </td>
-                      <td>{product.stock}</td>
-                      <td>
-                        <Button
-                          variant="outline-warning"
-                          size="sm"
-                          style={{ minWidth: 56, marginRight: 7 }}
-                          onClick={() => openModal(product)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          style={{ minWidth: 56 }}
-                          onClick={() => handleDelete(product.id)}
-                        >
-                          Delete
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
+          <>
+            <div style={{ overflowX: "auto" }}>
+              <Table
+                bordered
+                hover
+                responsive
+                style={{
+                  background: "#fff9f3",
+                  borderRadius: "16px",
+                  fontSize: "1.04em",
+                }}
+              >
+                <thead style={{ background: "#ebdfd1" }}>
                   <tr>
-                    <td colSpan={7}>No products found.</td>
+                    <th>#</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price ($)</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
                   </tr>
-                )}
-              </tbody>
-            </Table>
-          </div>
+                </thead>
+                <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
+                  {paginatedProducts.length > 0 ? (
+                    paginatedProducts.map((product, index) => (
+                      <tr key={product.id}>
+                        <td style={{ fontWeight: 600, color: "#998068" }}>
+                          {(currentPage - 1) * itemsPerPage + index + 1}
+                        </td>
+                        <td>
+                          <ProductImg
+                            src={product.imageUrl}
+                            alt={product.name}
+                          />
+                        </td>
+                        <td style={{ fontWeight: 500 }}>{product.name}</td>
+                        <td style={{ color: "#b08d6c" }}>{product.category}</td>
+                        <td>
+                          <span style={{ color: "#987549" }}>
+                            ${product.price}
+                          </span>
+                        </td>
+                        <td>{product.stock}</td>
+                        <td>
+                          <Button
+                            variant="outline-warning"
+                            size="sm"
+                            style={{ minWidth: 56, marginRight: 7 }}
+                            onClick={() => openModal(product)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            style={{ minWidth: 56 }}
+                            onClick={() => handleDelete(product.id)}
+                          >
+                            Delete
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7}>No products found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+            <Pagination
+              className="justify-content-center mt-4"
+              style={{ userSelect: "none" }}
+              size="sm"
+            >
+              <Pagination.Prev
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              />
+              {paginationItems}
+              <Pagination.Next
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages || totalPages === 0}
+              />
+            </Pagination>
+          </>
         )}
         <Modal show={modalOpen} onHide={() => setModalOpen(false)} centered>
           <Modal.Header closeButton>
