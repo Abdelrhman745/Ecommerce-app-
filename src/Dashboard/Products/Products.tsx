@@ -25,10 +25,10 @@ interface Product {
 }
 
 const Card = styled.div`
-  background: #f9f8f6;
-  border-radius: 14px;
-  box-shadow: 0 8px 40px #e8e5df33;
-  padding: 32px 22px 32px 22px;
+  background: #f9f8f7;
+  border-radius: 15px;
+  box-shadow: 0px 6px 38px #f0ebdacc;
+  padding: 32px 28px;
   max-width: 1240px;
   margin: 0 auto;
 `;
@@ -36,21 +36,24 @@ const Card = styled.div`
 const PageTitle = styled.h2`
   font-family: "Montserrat", serif;
   font-weight: 700;
-  color: #483B32;
+  color: #a39173;
   letter-spacing: 0.01em;
-  font-size: 2.15rem;
+  font-size: 2.2rem;
 `;
 
 const AddBtn = styled(Button)`
-  background: #483B32;
+  background: #d6cfc1;
+  color: #6a573e;
   border: none;
   font-weight: 600;
-  padding: 0.65em 2em;
+  padding: 0.68em 2em;
   border-radius: 9px;
-  font-size: 1.09em;
-  transition: background 0.2s;
-  &:hover {
-    background: #7c6f63;
+  font-size: 1.12em;
+  box-shadow: 0 2px 10px #e4dbcaaa;
+  &:hover,
+  &:focus {
+    background: #ebe4d9;
+    color: #8d7e5b;
   }
 `;
 
@@ -58,10 +61,41 @@ const ProductImg = styled(Image)`
   width: 65px;
   height: 65px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #ebe6df;
-  box-shadow: 0 4px 18px #e5e1d8;
+  border-radius: 9px;
+  border: 1px solid #e1d9c6;
+  box-shadow: 0 4px 18px #eae1cbbc;
 `;
+
+function paginationItemStyle(active: boolean, disabled?: boolean) {
+  if (disabled) {
+    return {
+      backgroundColor: "#f8f4e9",
+      color: "#cbbfae",
+      border: "1.1px solid #e4dbca",
+      minWidth: 38,
+      height: 44,
+      borderRadius: 9,
+      fontWeight: 600,
+      boxShadow: "none",
+      cursor: "not-allowed",
+    };
+  }
+  return {
+    backgroundColor: active ? "#d6cfc1" : "#fff",
+    color: active ? "#564d3b" : "#a39173",
+    border: "1.5px solid #e4dbca",
+    minWidth: 38,
+    height: 44,
+    borderRadius: 9,
+    fontWeight: active ? 700 : 500,
+    fontSize: "1.07em",
+    boxShadow: active ? "0 6px 0 0 #ebe4d9" : "none",
+    cursor: "pointer",
+    transition: "background .16s, color .13s, box-shadow .15s",
+    outline: "none",
+    margin: "0 5px",
+  };
+}
 
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -185,7 +219,6 @@ const Products: React.FC = () => {
       await axios.delete(`${API}/${id}`);
       setProducts(products.filter((p) => p.id !== id));
       toast.success("Product deleted.");
-      // Adjust current page if needed
       if ((currentPage - 1) * itemsPerPage >= products.length - 1) {
         setCurrentPage((prev) => Math.max(prev - 1, 1));
       }
@@ -211,13 +244,18 @@ const Products: React.FC = () => {
         key={1}
         onClick={() => setCurrentPage(1)}
         active={1 === currentPage}
+        style={paginationItemStyle(1 === currentPage)}
       >
         1
       </Pagination.Item>
     );
     if (rangeStart > 2) {
       paginationItems.push(
-        <Pagination.Ellipsis key="start-ellipsis" disabled />
+        <Pagination.Ellipsis
+          key="start-ellipsis"
+          disabled
+          style={paginationItemStyle(false, true)}
+        />
       );
     }
   }
@@ -227,6 +265,7 @@ const Products: React.FC = () => {
         key={i}
         onClick={() => setCurrentPage(i)}
         active={i === currentPage}
+        style={paginationItemStyle(i === currentPage)}
       >
         {i}
       </Pagination.Item>
@@ -234,13 +273,20 @@ const Products: React.FC = () => {
   }
   if (rangeEnd < totalPages) {
     if (rangeEnd < totalPages - 1) {
-      paginationItems.push(<Pagination.Ellipsis key="end-ellipsis" disabled />);
+      paginationItems.push(
+        <Pagination.Ellipsis
+          key="end-ellipsis"
+          disabled
+          style={paginationItemStyle(false, true)}
+        />
+      );
     }
     paginationItems.push(
       <Pagination.Item
         key={totalPages}
         onClick={() => setCurrentPage(totalPages)}
         active={totalPages === currentPage}
+        style={paginationItemStyle(totalPages === currentPage)}
       >
         {totalPages}
       </Pagination.Item>
@@ -248,7 +294,8 @@ const Products: React.FC = () => {
   }
 
   return (
-    <div className="mt-3"
+    <div
+      style={{ background: "#fffdfb", minHeight: "100vh", padding: "40px 0" }}
     >
       <Card>
         <Row className="mb-4 align-items-center">
@@ -261,7 +308,7 @@ const Products: React.FC = () => {
         </Row>
         {loading ? (
           <div className="text-center py-5">
-            <Spinner animation="border" style={{ color: "#9d8764" }} />
+            <Spinner animation="border" style={{ color: "#d7c8b2" }} />
           </div>
         ) : (
           <>
@@ -271,27 +318,35 @@ const Products: React.FC = () => {
                 hover
                 responsive
                 style={{
-                  background: "#fff9f3",
+                  background: "#fffefc",
                   borderRadius: "16px",
-                  fontSize: "1.04em",
+                  fontSize: "1.06em",
+                  border: "none",
+                  boxShadow: "0 2px 12px #f0e9db8a",
                 }}
               >
-                <thead style={{ background: "#ebdfd1" }}>
+                <thead style={{ background: "#f7f2e8" }}>
                   <tr>
-                    <th>#</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Price ($)</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>#</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Image</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Name</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>
+                      Category
+                    </th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>
+                      Price ($)
+                    </th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Stock</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
                   {paginatedProducts.length > 0 ? (
                     paginatedProducts.map((product, index) => (
                       <tr key={product.id}>
-                        <td style={{ fontWeight: 600, color: "#998068" }}>
+                        <td style={{ fontWeight: 600, color: "#cdbf9c" }}>
                           {(currentPage - 1) * itemsPerPage + index + 1}
                         </td>
                         <td>
@@ -300,19 +355,25 @@ const Products: React.FC = () => {
                             alt={product.name}
                           />
                         </td>
-                        <td style={{ fontWeight: 500 }}>{product.name}</td>
-                        <td style={{ color: "#b08d6c" }}>{product.category}</td>
+                        <td style={{ fontWeight: 500, color: "#a6977f" }}>
+                          {product.name}
+                        </td>
+                        <td style={{ color: "#c7b998" }}>{product.category}</td>
                         <td>
-                          <span style={{ color: "#987549" }}>
+                          <span style={{ color: "#c7b998" }}>
                             ${product.price}
                           </span>
                         </td>
-                        <td>{product.stock}</td>
+                        <td style={{ color: "#c7b998" }}>{product.stock}</td>
                         <td>
                           <Button
                             variant="outline-warning"
                             size="sm"
-                            style={{ minWidth: 56, marginRight: 7 }}
+                            style={{
+                              minWidth: 56,
+                              marginRight: 7,
+                              fontWeight: 600,
+                            }}
                             onClick={() => openModal(product)}
                           >
                             Edit
@@ -320,7 +381,10 @@ const Products: React.FC = () => {
                           <Button
                             variant="outline-danger"
                             size="sm"
-                            style={{ minWidth: 56 }}
+                            style={{
+                              minWidth: 56,
+                              fontWeight: 600,
+                            }}
                             onClick={() => handleDelete(product.id)}
                           >
                             Delete
@@ -338,12 +402,21 @@ const Products: React.FC = () => {
             </div>
             <Pagination
               className="justify-content-center mt-4"
-              style={{ userSelect: "none" }}
+              style={{
+                userSelect: "none",
+                backgroundColor: "#f7f2e8",
+                borderRadius: 13,
+                padding: "12px 20px",
+                boxShadow: "0 4px 20px #dbc9a542",
+                border: "none",
+                margin: "0 auto",
+              }}
               size="sm"
             >
               <Pagination.Prev
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
+                style={paginationItemStyle(false, currentPage === 1)}
               />
               {paginationItems}
               <Pagination.Next
@@ -351,20 +424,26 @@ const Products: React.FC = () => {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages || totalPages === 0}
+                style={paginationItemStyle(
+                  false,
+                  currentPage === totalPages || totalPages === 0
+                )}
               />
             </Pagination>
           </>
         )}
         <Modal show={modalOpen} onHide={() => setModalOpen(false)} centered>
           <Modal.Header closeButton>
-            <Modal.Title style={{ color: "#96764d" }}>
+            <Modal.Title style={{ color: "#c7b998" }}>
               {selectedProduct ? "Edit Product" : "Add Product"}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
               <Form.Group className="mb-3">
-                <Form.Label>Product Name</Form.Label>
+                <Form.Label style={{ color: "#b2a68b" }}>
+                  Product Name
+                </Form.Label>
                 <Form.Control
                   name="name"
                   value={formValues.name}
@@ -376,12 +455,12 @@ const Products: React.FC = () => {
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label>Category</Form.Label>
+                <Form.Label style={{ color: "#b2a68b" }}>Category</Form.Label>
                 <Form.Control
                   name="category"
                   value={formValues.category}
                   onChange={handleChange}
-                  placeholder="e.g. Serum, Cleanser"
+                  placeholder="e.g. Latte, Espresso"
                   maxLength={30}
                   required
                 />
@@ -389,7 +468,9 @@ const Products: React.FC = () => {
               <Row>
                 <Col>
                   <Form.Group className="mb-3">
-                    <Form.Label>Price ($)</Form.Label>
+                    <Form.Label style={{ color: "#b2a68b" }}>
+                      Price ($)
+                    </Form.Label>
                     <Form.Control
                       name="price"
                       type="number"
@@ -402,7 +483,7 @@ const Products: React.FC = () => {
                 </Col>
                 <Col>
                   <Form.Group className="mb-3">
-                    <Form.Label>Stock</Form.Label>
+                    <Form.Label style={{ color: "#b2a68b" }}>Stock</Form.Label>
                     <Form.Control
                       name="stock"
                       type="number"
@@ -415,7 +496,7 @@ const Products: React.FC = () => {
                 </Col>
               </Row>
               <Form.Group className="mb-3">
-                <Form.Label>Image URL</Form.Label>
+                <Form.Label style={{ color: "#b2a68b" }}>Image URL</Form.Label>
                 <InputGroup>
                   <Form.Control
                     name="imageUrl"
@@ -429,7 +510,12 @@ const Products: React.FC = () => {
                         src={formValues.imageUrl}
                         alt="Preview"
                         thumbnail
-                        style={{ width: 38, height: 38, objectFit: "cover" }}
+                        style={{
+                          width: 38,
+                          height: 38,
+                          objectFit: "cover",
+                          border: "none",
+                        }}
                       />
                     </InputGroup.Text>
                   )}
