@@ -19,6 +19,7 @@ import ChartsAndReports from "./Dashboard/Main/ChartsAndReports";
 import Orders from "./Dashboard/Orders/Orders";
 import Products from "./Dashboard/Products/Products";
 import DashboardLayout from "./Dashboard/DashBoardLayout/DashBoardLayout";
+import AdminMessages from "./Dashboard/Contact/AdminMessages";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -205,6 +206,7 @@ const router = createBrowserRouter([
       { path: "products", element: <Products /> },
       { path: "orders", element: <Orders /> },
       { path: "user", element: <Users /> },
+      { path: "contact", element: <AdminMessages/> },
     ],
   },
 ]);
