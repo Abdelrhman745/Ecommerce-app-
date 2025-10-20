@@ -228,7 +228,6 @@ const fetchOrdersDataFromAPI = async () => {
 
 const DashboardContainer = styled.div`
   padding: 20px 30px 30px; 
-  background-color: #f4f7f9;
   min-height: calc(100vh - 80px);
 `;
 

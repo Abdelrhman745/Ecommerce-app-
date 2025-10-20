@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   Pagination,
+  Card,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Redux/Store";
@@ -79,6 +80,7 @@ export default function Orders() {
       try {
         await dispatch(updateOrderAsync(updatedOrder)).unwrap();
         setShowModal(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         alert(err);
       }
@@ -121,13 +123,12 @@ export default function Orders() {
   if (error) return <p className="text-danger m-4">{error}</p>;
 
   return (
-    <div className="orders-dashboard container-fluid py-4">
-      {/* Title */}
-      <h2 className="text-center mb-4 fw-bold text-uppercase dashboard-title">
+        <Card className=" shadow-sm mt-0" style={{ backgroundColor: "#ffffff", borderRadius: "12px"}}>
+    <div className=" py-4">
+      <h2 className="text-center mb-4 dashboard-title" style={{color:'#483B32'}}>
         Orders
       </h2>
 
-      {/* Filters Row */}
       <Row className="filter-row justify-content-center mb-4">
         <Col md={3} sm={12} className="mb-2">
           <Form.Select
@@ -307,5 +308,6 @@ export default function Orders() {
         </Pagination>
       </div>
     </div>
+    </Card>
   );
 }
