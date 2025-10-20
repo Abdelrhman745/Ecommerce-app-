@@ -36,13 +36,13 @@ const Card = styled.div`
 const PageTitle = styled.h2`
   font-family: "Montserrat", serif;
   font-weight: 700;
-  color: #826d58;
+  color: #483B32;
   letter-spacing: 0.01em;
   font-size: 2.15rem;
 `;
 
 const AddBtn = styled(Button)`
-  background: #9d8764;
+  background: #483B32;
   border: none;
   font-weight: 600;
   padding: 0.65em 2em;
@@ -248,8 +248,7 @@ const Products: React.FC = () => {
   }
 
   return (
-    <div
-      style={{ background: "#f6f3ee", minHeight: "100vh", padding: "40px 0" }}
+    <div className="mt-3"
     >
       <Card>
         <Row className="mb-4 align-items-center">

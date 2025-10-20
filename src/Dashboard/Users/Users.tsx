@@ -7,6 +7,7 @@ import {
   Table,
   Spinner,
   Pagination,
+  Card,
 } from "react-bootstrap";
 import toast from "react-hot-toast";
 import * as Yup from "yup";
@@ -189,15 +190,16 @@ const Users: React.FC = () => {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   return (
-    <div className="container py-4">
-      <h2 className="text-center mb-4">Users Management</h2>
+    <Card className=" shadow-sm container mx-3 mt-0" style={{ backgroundColor: "#ffffff", borderRadius: "12px"}}>
+    <div className="container py-4 ">
+      <h2 className="text-center mb-4" style={{color:'#483B32'}}>Users Management</h2>
 
       {/* 🔍 Search & Filter */}
       <div className="d-flex flex-wrap gap-2 mb-3 justify-content-between align-items-center">
         <div className="d-flex gap-2">
           <Form.Control
             type="text"
-            placeholder="Search by name or email..."
+            placeholder=" 🔍 Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ minWidth: "250px" }}
@@ -221,7 +223,8 @@ const Users: React.FC = () => {
         </div>
       ) : (
         <>
-          <Table striped bordered hover responsive>
+          <Table  striped bordered hover responsive className="orders-table text-center align-middl px-4"
+ >
             <thead className="table-dark">
               <tr>
                 <th>#</th>
@@ -294,6 +297,7 @@ const Users: React.FC = () => {
       {/* Add, Edit, Delete, and Orders Modals remain unchanged */}
       {/* ... نفس المودالات اللي عندك فوق بالظبط بدون أي تعديل */}
     </div>
+    </Card>
   );
 };
 
