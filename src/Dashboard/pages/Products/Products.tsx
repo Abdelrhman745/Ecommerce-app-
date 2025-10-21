@@ -78,6 +78,7 @@ function paginationItemStyle(active: boolean, disabled?: boolean) {
       fontWeight: 600,
       boxShadow: "none",
       cursor: "not-allowed",
+      pointerEvents: "none",
     };
   }
   return {
@@ -295,7 +296,14 @@ const Products: React.FC = () => {
 
   return (
     <div
-      style={{ background: "#fffdfb", minHeight: "100vh", padding: "40px 0" }}
+      style={{
+        background: "#fffdfb",
+        minHeight: "100vh",
+        padding: "40px 0",
+        paddingBottom: "80px",
+        boxSizing: "border-box",
+        position: "relative",
+      }}
     >
       <Card>
         <Row className="mb-4 align-items-center">
@@ -381,10 +389,7 @@ const Products: React.FC = () => {
                           <Button
                             variant="outline-danger"
                             size="sm"
-                            style={{
-                              minWidth: 56,
-                              fontWeight: 600,
-                            }}
+                            style={{ minWidth: 56, fontWeight: 600 }}
                             onClick={() => handleDelete(product.id)}
                           >
                             Delete
@@ -400,36 +405,40 @@ const Products: React.FC = () => {
                 </tbody>
               </Table>
             </div>
-            <Pagination
-              className="justify-content-center mt-4"
+            <div
               style={{
-                userSelect: "none",
+                display: "flex",
+                justifyContent: "center",
+                paddingTop: 20,
+                paddingBottom: 10,
                 backgroundColor: "#f7f2e8",
                 borderRadius: 13,
-                padding: "12px 20px",
                 boxShadow: "0 4px 20px #dbc9a542",
-                border: "none",
-                margin: "0 auto",
+                margin: "20px auto 0 auto",
+                maxWidth: "fit-content",
               }}
-              size="sm"
             >
-              <Pagination.Prev
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                style={paginationItemStyle(false, currentPage === 1)}
-              />
-              {paginationItems}
-              <Pagination.Next
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages || totalPages === 0}
-                style={paginationItemStyle(
-                  false,
-                  currentPage === totalPages || totalPages === 0
-                )}
-              />
-            </Pagination>
+              <Pagination size="sm" className="mb-0">
+                <Pagination.Prev
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  style={paginationItemStyle(false, currentPage === 1)}
+                />
+                {paginationItems}
+                <Pagination.Next
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  style={paginationItemStyle(
+                    false,
+                    currentPage === totalPages || totalPages === 0
+                  )}
+                />
+              </Pagination>
+            </div>
           </>
         )}
         <Modal show={modalOpen} onHide={() => setModalOpen(false)} centered>
