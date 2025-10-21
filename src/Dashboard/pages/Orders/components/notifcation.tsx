@@ -47,7 +47,7 @@ const NotificationBell = () => {
   return (
     <div className="notification-bell" style={{ position: "relative" }}>
       <button className="bell-button" onClick={handleBellClick}>
-        <i className="bi bi-bell-fill"></i>
+        <i className="bi bi-bell-fill" style={{color:"#483B32"}}></i>
         {hasNewOrder && <span className="badge-dot"></span>}
       </button>
 

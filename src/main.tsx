@@ -20,6 +20,7 @@ import Orders from "./Dashboard/pages/Orders/Orders";
 import Products from "./Dashboard/pages/Products/Products";
 import DashboardLayout from "./Dashboard/DashBoardLayout/DashBoardLayout";
 import AdminMessages from "./Dashboard/pages/Contact/AdminMessages";
+import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -71,10 +72,11 @@ const LoadingFallback: React.FC<{ message?: string }> = ({ message }) => (
 );
 
 const router = createBrowserRouter([
+
   {
     path: "/",
     element: (
-      <Suspense fallback={<LoadingFallback message="Loading layout..." />}>
+      <Suspense fallback={<LoadingScreen/>}>
         <Layout />
       </Suspense>
     ),
@@ -82,9 +84,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <Suspense fallback={<LoadingFallback message="Loading home..." />}>
             <HomePage />
-          </Suspense>
         ),
       },
       {
