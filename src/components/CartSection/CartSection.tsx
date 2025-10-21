@@ -190,31 +190,43 @@ const CartSection: React.FC = () => {
   const navigate = useNavigate();
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  const [exceedsStock, setExceedsStock] = useState(false);
+  const [productsStock, setProductsStock] = useState<{ [key: string]: number }>(
+    {}
+  );
 
   useEffect(() => {
-    const exceeds = cartItems.some(
-      (item: any) => item.quantity > (item.maxStock ?? Infinity)
-    );
-    setExceedsStock(exceeds);
-  }, [cartItems]);
+    const fetchStock = async () => {
+      try {
+        const res = await fetch(
+          "https://68f278b4b36f9750deecbed2.mockapi.io/data/api/products"
+        );
+        const data = await res.json();
+        const stockMap: { [key: string]: number } = {};
+        data.forEach((product: any) => {
+          stockMap[product.id] = product.stock;
+        });
+        setProductsStock(stockMap);
+      } catch (err) {
+        console.error("Failed to fetch stock", err);
+      }
+    };
+    fetchStock();
+  }, []);
 
   const handleRemove = (id: number) => {
     dispatch(removeFromCart(id));
   };
 
-  const handleQuantityChange = (
-    id: number,
-    quantity: number,
-    maxStock?: number
-  ) => {
+  const handleQuantityChange = (id: number, quantity: number) => {
     if (quantity < 1) return;
+
+    const maxStock = productsStock[id];
     if (maxStock !== undefined && quantity > maxStock) {
       toast.error(`Only ${maxStock} items in stock.`);
-      // ضبط الكمية على الحد الأعلى مباشرة
       dispatch(changeCartQuantity({ id, quantity: maxStock }));
       return;
     }
+
     dispatch(changeCartQuantity({ id, quantity }));
   };
 
@@ -225,14 +237,16 @@ const CartSection: React.FC = () => {
 
   const handleCheckout = () => {
     const hasExceeds = cartItems.some(
-      (item: any) => item.quantity > (item.maxStock ?? Infinity)
+      (item: any) => item.quantity > (productsStock[item.id] ?? Infinity)
     );
+
     if (hasExceeds) {
       toast.error(
         "Some items exceed available stock. Please adjust quantities."
       );
       return;
     }
+
     navigate("/checkout");
   };
 
@@ -276,11 +290,7 @@ const CartSection: React.FC = () => {
                     min="1"
                     value={item.quantity}
                     onChange={(e) =>
-                      handleQuantityChange(
-                        item.id,
-                        Number(e.target.value),
-                        item.maxStock
-                      )
+                      handleQuantityChange(item.id, Number(e.target.value))
                     }
                   />
                   <Button onClick={() => handleRemove(item.id)}>Remove</Button>
@@ -303,15 +313,8 @@ const CartSection: React.FC = () => {
               <TotalValue>${totalPrice.toFixed(2)}</TotalValue>
             </TotalSection>
 
-            {exceedsStock && (
-              <WarningMessage>
-                Some items exceed available stock. Please adjust your cart
-                before proceeding.
-              </WarningMessage>
-            )}
-
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <CheckoutButton onClick={handleCheckout} disabled={exceedsStock}>
+              <CheckoutButton onClick={handleCheckout}>
                 Proceed to Checkout
               </CheckoutButton>
             </div>
