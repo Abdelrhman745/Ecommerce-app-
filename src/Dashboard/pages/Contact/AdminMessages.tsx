@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Button, Modal, Form, Spinner, Badge } from "react-bootstrap";
+import { Table, Button, Modal, Form, Spinner, Badge, Card } from "react-bootstrap";
 import toast from "react-hot-toast";
 
 interface Message {
@@ -71,6 +71,8 @@ const AdminMessages: React.FC = () => {
   };
 
   return (
+        <Card className=" shadow-sm container mt-3" style={{ backgroundColor: "#ffffff", borderRadius: "12px"}}>
+    
     <div className="container py-4">
       <h2 className="text-center mb-4 fw-bold text-dark">Messages Management</h2>
 
@@ -169,6 +171,7 @@ const AdminMessages: React.FC = () => {
         </Modal.Footer>
       </Modal>
     </div>
+    </Card>
   );
 };
 
