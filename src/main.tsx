@@ -119,7 +119,10 @@ const router = createBrowserRouter([
           <Suspense
             fallback={<LoadingFallback message="Loading product details..." />}
           >
+            <ProtectedRoute>
             <ProductDetailsPage />
+            </ProtectedRoute>
+
           </Suspense>
         ),
       },

@@ -28,7 +28,7 @@ const Card = styled.div`
   background: #f9f8f7;
   border-radius: 15px;
   box-shadow: 0px 6px 38px #f0ebdacc;
-  padding: 32px 28px;
+  padding: 32px 10px;
   max-width: 1240px;
   margin: 0 auto;
 `;

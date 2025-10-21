@@ -164,7 +164,7 @@ export default function Orders() {
       </Row>
 
       {/* Table */}
-      <div className="table-container px-5">
+      <div className="table-container px-2">
         <Table
           responsive
           bordered
