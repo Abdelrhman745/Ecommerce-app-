@@ -12,13 +12,13 @@ import {
   Card,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../Redux/Store";
+import { AppDispatch, RootState } from "../../../Redux/Store";
 import {
   deleteOrderAsync,
   fetchOrdersAsync,
   Order,
   updateOrderAsync,
-} from "../../Redux/OrderSlice";
+} from "../../../Redux/OrderSlice";
 import "./orders.css";
 import Swal from "sweetalert2";
 import { AnimatePresence } from "framer-motion";
