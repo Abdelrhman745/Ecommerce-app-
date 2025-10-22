@@ -5,40 +5,56 @@ import MainNavbar from "../components/NavBar";
 
 export default function DashboardLayout() {
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#F9F6F2" }}>
-      <div className="d-flex" style={{ minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#F9F6F2" }}>
+      <div className="d-none d-md-block">
         <SideBar />
+      </div>
+
+      <div className="d-block d-md-none">
+        <SideBar />
+      </div>
+
+      <div
+        className="d-flex flex-column"
+        style={{
+          marginLeft: "260px",
+          minHeight: "100vh",
+          backgroundColor: "#FDFBF6",
+        }}
+      >
+        <style>
+          {`
+            @media (max-width: 768px) {
+              .d-flex.flex-column {
+                margin-left: 0 !important;
+              }
+            }
+          `}
+        </style>
+
+        <MainNavbar />
 
         <div
-          className="d-flex flex-column flex-grow-1"
-          style={{ minHeight: "100vh", backgroundColor: "#FDFBF6" }}
+          style={{
+            flexGrow: 1,
+            padding: "30px 25px",
+            backgroundColor: "#FAF8F5",
+            borderTopLeftRadius: "20px",
+            borderTopRightRadius: "20px",
+            overflowY: "auto",
+            height: "calc(100vh - 80px)",
+          }}
         >
-          <MainNavbar />
-
           <div
-            className="flex-grow-1 d-flex justify-content-center"
             style={{
-              padding: "30px 25px",
-              backgroundColor: "#FAF8F5",
-              boxShadow: "inset 0 0 30px rgba(0,0,0,0.02)",
-              borderTopLeftRadius: "20px",
-              borderTopRightRadius: "20px",
-              overflowY: "auto",
-              minHeight: "calc(100vh - 80px)",
+              width: "100%",
+              padding: "20px",
+              backgroundColor: "white",
+              borderRadius: "14px",
+              boxShadow: "0 4px 20px rgb(200 190 170 / 0.3)",
             }}
           >
-            <div
-              style={{
-                width: "100%",
-                maxWidth: "1200px",
-                padding: "20px",
-                backgroundColor: "white",
-                borderRadius: "14px",
-                boxShadow: "0 4px 20px rgb(200 190 170 / 0.3)",
-              }}
-            >
-              <Outlet />
-            </div>
+            <Outlet />
           </div>
         </div>
       </div>
