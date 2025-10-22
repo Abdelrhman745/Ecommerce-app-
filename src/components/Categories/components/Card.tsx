@@ -1,5 +1,4 @@
 import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
 
 interface CardUIProps {
   title: string;
@@ -51,28 +50,7 @@ export default function CardUI({ title, img }: CardUIProps) {
         <Card.Title style={{ fontSize: "20px", fontWeight: "lighter" }}>
           {title}
         </Card.Title>
-        <Button
-          variant="light"
-          style={{
-            padding: "6px 16px",
-            borderRadius: "20px",
-            fontSize: "14px",
-            fontWeight: "500",
-            border: "none",
-            color: "#333",
-            transition: "all 0.3s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#333";
-            e.currentTarget.style.color = "#fff";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#fff";
-            e.currentTarget.style.color = "#333";
-          }}
-        >
-          Shop Now
-        </Button>
+       
       </Card.Body>
     </Card>
   );

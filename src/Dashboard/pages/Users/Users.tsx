@@ -190,7 +190,7 @@ const Users: React.FC = () => {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   return (
-    <Card className=" shadow-sm container mx-3 mt-0" style={{ backgroundColor: "#ffffff", borderRadius: "12px"}}>
+    <Card className=" shadow-sm container mt-3" style={{ backgroundColor: "#ffffff", borderRadius: "12px"}}>
     <div className="container py-4 ">
       <h2 className="text-center mb-4" style={{color:'#483B32'}}>Users Management</h2>
 

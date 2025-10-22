@@ -1,23 +1,45 @@
-import React, { useState, useMemo, } from "react";
+import React, { useState, useMemo } from "react";
 import styled, { createGlobalStyle } from "styled-components";
-import * as yup from 'yup';
+import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../Redux/Store"; 
-import { CartItem, clearCartState } from "../../Redux/CartSlice"; 
+import { AppDispatch, RootState } from "../../Redux/Store";
+import { CartItem, clearCartState } from "../../Redux/CartSlice";
 
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { addOrderAsync } from "../../Redux/OrderSlice";
+
 const validationSchema = yup.object().shape({
-    firstName: yup.string().required("First Name is required").min(3, "Name too short"),
-    lastName: yup.string().required("Last Name is required").min(3, "Name too short"),
-    email: yup.string().email("Invalid email address").required("Email is required"),
-    phone: yup.string().required("Phone number is required").matches(/^[0-9\-\(\)\s\+]+$/, "Invalid phone number"),
-    mailingAddress: yup.string().required("Address is required").min(5, "Address too short"),
-    city: yup.string().required("City is required"),
-    postCode: yup.string().required("Post code is required").matches(/^[0-9]{5}$|^[0-9]{5}-[0-9]{4}$/, "Invalid postal code (e.g. 12345 or 12345-6789)"),
-    country: yup.string().required("Country is required"),
+  firstName: yup
+    .string()
+    .required("First Name is required")
+    .min(3, "Name too short"),
+  lastName: yup
+    .string()
+    .required("Last Name is required")
+    .min(3, "Name too short"),
+  email: yup
+    .string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  phone: yup
+    .string()
+    .required("Phone number is required")
+    .matches(/^[0-9\-\(\)\s\+]+$/, "Invalid phone number"),
+  mailingAddress: yup
+    .string()
+    .required("Address is required")
+    .min(5, "Address too short"),
+  city: yup.string().required("City is required"),
+  postCode: yup
+    .string()
+    .required("Post code is required")
+    .matches(
+      /^[0-9]{5}$|^[0-9]{5}-[0-9]{4}$/,
+      "Invalid postal code (e.g. 12345 or 12345-6789)"
+    ),
+  country: yup.string().required("Country is required"),
 });
 
 const GlobalStyle = createGlobalStyle`
@@ -36,21 +58,21 @@ const PageContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 100px 20px 40px 20px; 
+  padding: 100px 20px 40px 20px;
   min-height: 100vh;
-  background-color: #b8afa6;
+  background-color: #f7f8fa;
 `;
 
 const CheckoutWrapper = styled.div`
   display: flex;
   width: 100%;
-  max-width: 1100px; 
+  max-width: 1100px;
   background-color: transparent;
   gap: 20px;
   flex-direction: row;
 
   @media (max-width: 992px) {
-    flex-direction: column; 
+    flex-direction: column;
     gap: 40px;
   }
 `;
@@ -66,9 +88,9 @@ const RightColumn = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100%; 
+  height: 100%;
   gap: 20px;
-  min-width: 350px; 
+  min-width: 350px;
 `;
 
 const Card = styled.div`
@@ -81,7 +103,7 @@ const Card = styled.div`
 
 const ShoppingCartCard = styled(Card)`
   padding: 25px 25px 30px 25px;
-  flex-grow: 1; 
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
 `;
@@ -149,7 +171,7 @@ const ItemPrice = styled.p`
 const TotalsContainer = styled.div`
   padding: 20px 0;
   border-top: 1px solid #eef0f3;
-  margin-top: auto; 
+  margin-top: auto;
 `;
 
 const TotalRow = styled.div<{ $isTotal?: boolean }>`
@@ -169,18 +191,11 @@ const PlaceOrderButton = styled.button`
   width: 100%;
   padding: 15px;
   border: none;
-  border-radius: 8px;
-  background-color: #7c6f63; 
-  color: white;
-  font-size: 1.15rem;
+  font-size: 1.12rem;
+  background: linear-gradient(95deg, #e6e6e6 10%, #fcfcfc 90%);
+  color: #000;
+  border-radius: 12px;
   font-weight: 600;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #947a62ff;
-  }
 `;
 
 const PrivacyText = styled.p`
@@ -217,7 +232,7 @@ const TitleText = styled.h3`
 `;
 
 const SectionContent = styled.div<{ $isOpen: boolean }>`
-  max-height: 1000px; 
+  max-height: 1000px;
   overflow: visible;
 `;
 
@@ -262,28 +277,28 @@ const InputField = styled.input<{ $hasError?: boolean }>`
 `;
 
 const ErrorMessage = styled.p`
-    color: #e74c3c;
-    font-size: 0.8rem;
-    margin-top: 5px;
-    margin-bottom: 0;
-    font-weight: 500;
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  margin-bottom: 0;
+  font-weight: 500;
 `;
 
 const saveOrderAndClearCart = (
-  dispatch:any,
+  dispatch: any,
   userId: string,
   cartItems: CartItem[],
   total: number,
-  userName:string,
+  userName: string
 ) => {
   const users = JSON.parse(localStorage.getItem("users") || "[]");
   const userIndex = users.findIndex((u: any) => u.id === userId);
 
   if (userIndex >= 0) {
     const newOrder = {
-   id: Date.now().toString(),
+      id: Date.now().toString(),
       userId,
-      userName,           
+      userName,
       items: cartItems.map((item) => ({
         id: item.id,
         name: item.name,
@@ -296,7 +311,7 @@ const saveOrderAndClearCart = (
     };
     users[userIndex].orders = [...(users[userIndex].orders || []), newOrder];
     users[userIndex].cart = [];
-    
+
     localStorage.setItem("users", JSON.stringify(users));
 
     return true;
@@ -306,116 +321,64 @@ const saveOrderAndClearCart = (
 
 const CheckoutPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const cartItems: CartItem[] = useSelector((state: RootState) => state.cart.items); 
+  const cartItems: CartItem[] = useSelector(
+    (state: RootState) => state.cart.items
+  );
   const navigate = useNavigate();
 
-  const currentUserId = localStorage.getItem("userToken") || "guest"; 
-  
-  const BASE_SHIPPING = 10.85; 
+  const currentUserId = localStorage.getItem("userToken") || "guest";
+
+  const BASE_SHIPPING = 10.85;
 
   const [isPersonalDetailsOpen] = useState(true);
-  
+
   const [formData, setFormData] = useState({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      mailingAddress: '',
-      city: '',
-      postCode: '',
-      country: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    mailingAddress: "",
+    city: "",
+    postCode: "",
+    country: "",
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { id, value } = e.target;
-      setFormData(prev => ({ ...prev, [id]: value }));
-      
-      if (errors[id]) {
-        setErrors(prev => {
-            const newErrors = { ...prev };
-            delete newErrors[id];
-            return newErrors;
-        });
-      }
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+
+    if (errors[id]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[id];
+        return newErrors;
+      });
+    }
   };
 
-
-  const totalItems = cartItems.reduce((count, item) => count + item.quantity, 0);
+  const totalItems = cartItems.reduce(
+    (count, item) => count + item.quantity,
+    0
+  );
 
   const { subtotal, shippingCost, totalPayable } = useMemo(() => {
     const calculatedSubtotal = cartItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-    
-    const calculatedShippingCost = BASE_SHIPPING; 
-    
-    const calculatedTotalPayable = calculatedSubtotal + calculatedShippingCost; 
-    
+
+    const calculatedShippingCost = BASE_SHIPPING;
+
+    const calculatedTotalPayable = calculatedSubtotal + calculatedShippingCost;
+
     return {
       subtotal: calculatedSubtotal,
       shippingCost: calculatedShippingCost,
       totalPayable: calculatedTotalPayable,
     };
-  }, [cartItems]); 
-
-  // const handlePlaceOrder = async () => {
-    
-  //   if (cartItems.length === 0) {
-  //      Swal.fire('Cart Empty', 'Please add items to your cart before placing an order.', 'warning');
-  //      return;
-  //   }
-    
-  //   try {
-  //       await validationSchema.validate(formData, { abortEarly: false });
-        
-  //       setErrors({}); 
-
-  //       const orderSaved = saveOrderAndClearCart(
-  //         dispatch,
-  //           currentUserId, 
-  //           cartItems, 
-  //           totalPayable,
-  //           formData.firstName + " " + formData.lastName
-  //       );
-
-  //       if (orderSaved) {
-  //           dispatch(clearCartState());
-
-
-  //           Swal.fire({
-  //             title: "Order Placed! 🎉",
-  //             text: `Your order for $${totalPayable.toFixed(
-  //               2
-  //             )} has been submitted successfully.`,
-  //             icon: "success",
-  //             confirmButtonColor: "#4A80E1",
-  //           });
-  //                 navigate("/home");
-
-  //       } else {
-  //            Swal.fire('Error', 'Could not save the order. Please check your user session.', 'error');
-  //       }
-        
-  //   } catch (err) {
-  //       if (err instanceof yup.ValidationError) {
-  //           const validationErrors: { [key: string]: string } = {};
-  //           err.inner.forEach(error => {
-  //               if (error.path) {
-  //                   validationErrors[error.path] = error.message;
-  //               }
-  //           });
-  //           setErrors(validationErrors);
-            
-  //           Swal.fire('Missing Data', 'Please fill in all required fields.', 'error');
-            
-  //           window.scrollTo({ top: 0, behavior: 'smooth' });
-  //       }
-  //   }
-  // };
-
+  }, [cartItems]);
 
   const handlePlaceOrder = async () => {
     if (cartItems.length === 0) {
@@ -448,29 +411,40 @@ const CheckoutPage: React.FC = () => {
         const users = JSON.parse(localStorage.getItem("users") || "[]");
         const userIndex = users.findIndex((u: any) => u.id === currentUserId);
         if (userIndex >= 0) {
-          users[userIndex].orders = [...(users[userIndex].orders || []), resultAction.payload];
+          users[userIndex].orders = [
+            ...(users[userIndex].orders || []),
+            resultAction.payload,
+          ];
           users[userIndex].cart = [];
           localStorage.setItem("users", JSON.stringify(users));
         }
 
         dispatch(clearCartState());
 
-        Swal.fire("Order Placed!", `Your order for $${totalPayable.toFixed(2)} has been submitted.`, "success");
+        Swal.fire(
+          "Order Placed!",
+          `Your order for $${totalPayable.toFixed(2)} has been submitted.`,
+          "success"
+        );
         navigate("/home");
       } else {
-        Swal.fire("Error"," No Enough Stock ", "error");
+        Swal.fire("Error", " No Enough Stock ", "error");
       }
     } catch (err: any) {
       if (err.inner) {
         const validationErrors: { [key: string]: string } = {};
-        err.inner.forEach((e: any) => { if (e.path) validationErrors[e.path] = e.message; });
+        err.inner.forEach((e: any) => {
+          if (e.path) validationErrors[e.path] = e.message;
+        });
         setErrors(validationErrors);
-        Swal.fire("Missing Data", "Please fill in all required fields.", "error");
+        Swal.fire(
+          "Missing Data",
+          "Please fill in all required fields.",
+          "error"
+        );
       }
     }
   };
-
-
 
   const renderCartItems = () => (
     <CartItemsScrollArea>
@@ -481,8 +455,8 @@ const CheckoutPage: React.FC = () => {
             <ItemName>{item.name}</ItemName>
             <ItemDescription>Quantity: {item.quantity}</ItemDescription>
           </ItemDetails>
-          <div style={{textAlign:'right'}}>
-              <ItemPrice>${(item.price * item.quantity).toFixed(2)}</ItemPrice>
+          <div style={{ textAlign: "right" }}>
+            <ItemPrice>${(item.price * item.quantity).toFixed(2)}</ItemPrice>
           </div>
         </CartItemContainer>
       ))}
@@ -491,136 +465,176 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <>
-        <Helmet>
-                  <meta charSet="utf-8" />
-              <title> Checkout </title>
-        </Helmet>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title> Checkout </title>
+      </Helmet>
       <GlobalStyle />
       <PageContainer>
         <CheckoutWrapper>
-          
           <LeftColumn>
             <FormSectionCard>
               <SectionTitle>
                 <TitleText>Your Personal Details & Shipping</TitleText>
               </SectionTitle>
               <SectionContent $isOpen={isPersonalDetailsOpen}>
-                
                 <div>
-                <InputGroup>
-                  <div>
-                    <Label htmlFor="firstName">First Name</Label>
-                    <InputField 
-                        id="firstName" 
-                        placeholder="First Name" 
+                  <InputGroup>
+                    <div>
+                      <Label htmlFor="firstName">First Name</Label>
+                      <InputField
+                        id="firstName"
+                        placeholder="First Name"
                         value={formData.firstName}
                         onChange={handleChange}
                         $hasError={!!errors.firstName}
-                    />
-                    {errors.firstName && <ErrorMessage>{errors.firstName}</ErrorMessage>}
-                  </div>
-                  <div>
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <InputField 
-                        id="lastName" 
-                        placeholder="Last Name" 
+                      />
+                      {errors.firstName && (
+                        <ErrorMessage>{errors.firstName}</ErrorMessage>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <InputField
+                        id="lastName"
+                        placeholder="Last Name"
                         value={formData.lastName}
                         onChange={handleChange}
                         $hasError={!!errors.lastName}
-                    />
-                    {errors.lastName && <ErrorMessage>{errors.lastName}</ErrorMessage>}
-                  </div>
-                </InputGroup>
-                <InputGroup>
-                  <div>
-                    <Label htmlFor="email">Email Address</Label>
-                    <InputField 
-                        id="email" 
-                        placeholder="Email Address" 
-                        type="email" 
+                      />
+                      {errors.lastName && (
+                        <ErrorMessage>{errors.lastName}</ErrorMessage>
+                      )}
+                    </div>
+                  </InputGroup>
+                  <InputGroup>
+                    <div>
+                      <Label htmlFor="email">Email Address</Label>
+                      <InputField
+                        id="email"
+                        placeholder="Email Address"
+                        type="email"
                         value={formData.email}
                         onChange={handleChange}
                         $hasError={!!errors.email}
-                    />
-                    {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone</Label>
-                    <InputField 
-                        id="phone" 
-                        placeholder="Enter your Phone" 
-                        type="tel" 
+                      />
+                      {errors.email && (
+                        <ErrorMessage>{errors.email}</ErrorMessage>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="phone">Phone</Label>
+                      <InputField
+                        id="phone"
+                        placeholder="Enter your Phone"
+                        type="tel"
                         value={formData.phone}
                         onChange={handleChange}
                         $hasError={!!errors.phone}
-                    />
-                    {errors.phone && <ErrorMessage>{errors.phone}</ErrorMessage>}
-                  </div>
-                </InputGroup>
-                <div style={{ marginBottom: "15px" }}>
-                  <Label htmlFor="mailingAddress">Street Address</Label>
-                  <InputField 
-                      id="mailingAddress" 
-                      placeholder="Mailing/Shipping Address" 
+                      />
+                      {errors.phone && (
+                        <ErrorMessage>{errors.phone}</ErrorMessage>
+                      )}
+                    </div>
+                  </InputGroup>
+                  <div style={{ marginBottom: "15px" }}>
+                    <Label htmlFor="mailingAddress">Street Address</Label>
+                    <InputField
+                      id="mailingAddress"
+                      placeholder="Mailing/Shipping Address"
                       value={formData.mailingAddress}
                       onChange={handleChange}
                       $hasError={!!errors.mailingAddress}
-                  />
-                  {errors.mailingAddress && <ErrorMessage>{errors.mailingAddress}</ErrorMessage>}
-                </div>
-                <InputGroup>
-                  <div>
-                    <Label htmlFor="city">City</Label>
-                    <InputField 
-                        id="city" 
-                        placeholder="City" 
+                    />
+                    {errors.mailingAddress && (
+                      <ErrorMessage>{errors.mailingAddress}</ErrorMessage>
+                    )}
+                  </div>
+                  <InputGroup>
+                    <div>
+                      <Label htmlFor="city">City</Label>
+                      <InputField
+                        id="city"
+                        placeholder="City"
                         value={formData.city}
                         onChange={handleChange}
                         $hasError={!!errors.city}
-                    />
-                    {errors.city && <ErrorMessage>{errors.city}</ErrorMessage>}
-                  </div>
-                  <div>
-                    <Label htmlFor="postCode">Post Code</Label>
-                    <InputField 
-                        id="postCode" 
-                        placeholder="Post Code" 
+                      />
+                      {errors.city && (
+                        <ErrorMessage>{errors.city}</ErrorMessage>
+                      )}
+                    </div>
+                    <div>
+                      <Label htmlFor="postCode">Post Code</Label>
+                      <InputField
+                        id="postCode"
+                        placeholder="Post Code"
                         value={formData.postCode}
                         onChange={handleChange}
                         $hasError={!!errors.postCode}
-                    />
-                    {errors.postCode && <ErrorMessage>{errors.postCode}</ErrorMessage>}
-                  </div>
-                </InputGroup>
-                <InputGroup>
-                  <div style={{ flex: '0 0 100%' }}>
-                    <Label htmlFor="country">Country</Label>
-                    <InputField 
-                        id="country" 
-                        placeholder="Country" 
+                      />
+                      {errors.postCode && (
+                        <ErrorMessage>{errors.postCode}</ErrorMessage>
+                      )}
+                    </div>
+                  </InputGroup>
+                  <InputGroup>
+                    <div style={{ flex: "0 0 100%" }}>
+                      <Label htmlFor="country">Country</Label>
+                      <InputField
+                        id="country"
+                        placeholder="Country"
                         value={formData.country}
                         onChange={handleChange}
                         $hasError={!!errors.country}
-                    />
-                    {errors.country && <ErrorMessage>{errors.country}</ErrorMessage>}
-                  </div>
-                </InputGroup>
+                      />
+                      {errors.country && (
+                        <ErrorMessage>{errors.country}</ErrorMessage>
+                      )}
+                    </div>
+                  </InputGroup>
                 </div>
               </SectionContent>
             </FormSectionCard>
           </LeftColumn>
-          
+
           <RightColumn>
             <ShoppingCartCard>
               <CartHeader>Shopping Cart</CartHeader>
-              <p style={{ fontSize: "0.95rem", color: "#5d6d7e", marginTop: "-10px" }}>
+              <p
+                style={{
+                  fontSize: "0.95rem",
+                  color: "#5d6d7e",
+                  marginTop: "-10px",
+                }}
+              >
                 You have {totalItems} items in your cart
               </p>
 
-              <div style={{ padding: "10px 0", flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                 {cartItems.length > 0 ? renderCartItems() : (
-                    <p style={{color: '#8892a7', textAlign: 'center', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>Your cart is empty.</p>
-                 )}
+              <div
+                style={{
+                  padding: "10px 0",
+                  flexGrow: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {cartItems.length > 0 ? (
+                  renderCartItems()
+                ) : (
+                  <p
+                    style={{
+                      color: "#8892a7",
+                      textAlign: "center",
+                      flexGrow: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    Your cart is empty.
+                  </p>
+                )}
               </div>
 
               <TotalsContainer>
@@ -637,7 +651,7 @@ const CheckoutPage: React.FC = () => {
                   <span>${totalPayable.toFixed(2)}</span>
                 </TotalRow>
               </TotalsContainer>
-              
+
               <PlaceOrderButton onClick={handlePlaceOrder}>
                 Place Order
               </PlaceOrderButton>

@@ -12,14 +12,15 @@ import { login } from "./Redux/Authosclice";
 import { setCart } from "./Redux/CartSlice";
 import { setFavorites } from "./Redux/FavSlice";
 import { HelmetProvider } from "react-helmet-async";
-import Users from "./Dashboard/Users/Users";
+import Users from "./Dashboard/pages/Users/Users";
 import ProtectedRoute from "./components/Protectedroute/Protectedroute";
 import styled, { keyframes } from "styled-components";
-import ChartsAndReports from "./Dashboard/Main/ChartsAndReports";
-import Orders from "./Dashboard/Orders/Orders";
-import Products from "./Dashboard/Products/Products";
+import ChartsAndReports from "./Dashboard/pages/Main/ChartsAndReports";
+import Orders from "./Dashboard/pages/Orders/Orders";
+import Products from "./Dashboard/pages/Products/Products";
 import DashboardLayout from "./Dashboard/DashBoardLayout/DashBoardLayout";
-import AdminMessages from "./Dashboard/Contact/AdminMessages";
+import AdminMessages from "./Dashboard/pages/Contact/AdminMessages";
+import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -71,10 +72,11 @@ const LoadingFallback: React.FC<{ message?: string }> = ({ message }) => (
 );
 
 const router = createBrowserRouter([
+
   {
     path: "/",
     element: (
-      <Suspense fallback={<LoadingFallback message="Loading layout..." />}>
+      <Suspense fallback={<LoadingScreen/>}>
         <Layout />
       </Suspense>
     ),
@@ -82,9 +84,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <Suspense fallback={<LoadingFallback message="Loading home..." />}>
             <HomePage />
-          </Suspense>
         ),
       },
       {
@@ -119,7 +119,10 @@ const router = createBrowserRouter([
           <Suspense
             fallback={<LoadingFallback message="Loading product details..." />}
           >
+            <ProtectedRoute>
             <ProductDetailsPage />
+            </ProtectedRoute>
+
           </Suspense>
         ),
       },
