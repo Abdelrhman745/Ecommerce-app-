@@ -21,6 +21,7 @@ import Products from "./Dashboard/pages/Products/Products";
 import DashboardLayout from "./Dashboard/DashBoardLayout/DashBoardLayout";
 import AdminMessages from "./Dashboard/pages/Contact/AdminMessages";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
+import ReportsPage from "./Dashboard/pages/Reports/ReportsPage";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -210,6 +211,7 @@ const router = createBrowserRouter([
       { path: "orders", element: <Orders /> },
       { path: "user", element: <Users /> },
       { path: "contact", element: <AdminMessages/> },
+      { path: "reports", element: <ReportsPage/> },
     ],
   },
 ]);

@@ -12,8 +12,8 @@ export default function SideBar() {
     { Label: "Products", icon: "bi-tags-fill", path: "/dashboard/products" },
       { Label: "Orders", icon: "bi-bag-fill", path: "/dashboard/orders" },
   { Label: "Users", icon: "bi-person-fill", path: "/dashboard/user" },
-  { Label: "Messages", icon: "bi-chat-dots-fill", path: "/dashboard/contact" },   
-  { Label: "Reports", icon: "bi-file-earmark-bar-graph-fill", path: "" }, 
+  { Label: "Messages", icon: "bi-chat-dots-fill", path: "/dashboard/contact" },
+  { Label: "Reports", icon: "bi-file-earmark-bar-graph-fill", path: "/dashboard/reports" },
   { Label: "Logout", icon: "bi-box-arrow-right", path: "/login" }
 ];
 
