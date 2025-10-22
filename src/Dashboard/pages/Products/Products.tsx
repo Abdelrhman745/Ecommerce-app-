@@ -39,6 +39,7 @@ const PageTitle = styled.h2`
   color: #a39173;
   letter-spacing: 0.01em;
   font-size: 2.2rem;
+  margin-bottom: 12px;
 `;
 
 const AddBtn = styled(Button)`
@@ -47,6 +48,7 @@ const AddBtn = styled(Button)`
   border: none;
   font-weight: 600;
   padding: 0.68em 2em;
+  margin-bottom: 25px;
   border-radius: 9px;
   font-size: 1.12em;
   box-shadow: 0 2px 10px #e4dbcaaa;
@@ -64,6 +66,28 @@ const ProductImg = styled(Image)`
   border-radius: 9px;
   border: 1px solid #e1d9c6;
   box-shadow: 0 4px 18px #eae1cbbc;
+`;
+
+const SearchBar = styled(InputGroup)`
+  max-width: 400px;
+  margin-top: 6px;
+  margin-bottom: 30px;
+  input {
+    border-radius: 9px !important;
+    border: 1.5px solid #e2dccd;
+    box-shadow: 0 3px 10px rgba(226, 220, 195, 0.25);
+    font-size: 1.05rem;
+    padding: 11px 14px;
+    color: #5c5343;
+    &::placeholder {
+      color: #b2a68b;
+    }
+    &:focus {
+      border-color: #d6cfc1;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(214, 207, 193, 0.25);
+    }
+  }
 `;
 
 function paginationItemStyle(active: boolean, disabled?: boolean) {
@@ -93,7 +117,6 @@ function paginationItemStyle(active: boolean, disabled?: boolean) {
     boxShadow: active ? "0 6px 0 0 #ebe4d9" : "none",
     cursor: "pointer",
     transition: "background .16s, color .13s, box-shadow .15s",
-    outline: "none",
     margin: "0 5px",
   };
 }
@@ -111,6 +134,7 @@ const Products: React.FC = () => {
     imageUrl: "",
   });
   const [saving, setSaving] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
@@ -122,7 +146,7 @@ const Products: React.FC = () => {
       setLoading(true);
       const { data } = await axios.get(API);
       setProducts(data);
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch products!");
     } finally {
       setLoading(false);
@@ -179,6 +203,7 @@ const Products: React.FC = () => {
       toast.error("Enter valid stock!");
       return;
     }
+
     setSaving(true);
     try {
       if (selectedProduct) {
@@ -220,79 +245,24 @@ const Products: React.FC = () => {
       await axios.delete(`${API}/${id}`);
       setProducts(products.filter((p) => p.id !== id));
       toast.success("Product deleted.");
-      if ((currentPage - 1) * itemsPerPage >= products.length - 1) {
-        setCurrentPage((prev) => Math.max(prev - 1, 1));
-      }
     } catch {
       toast.error("Delete failed!");
     }
   }
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const paginatedProducts = products.slice(
+  const filteredProducts = products.filter((p) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      p.name.toLowerCase().includes(term) ||
+      p.category.toLowerCase().includes(term)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  const paginationItems = [];
-  const delta = 1;
-  const rangeStart = Math.max(1, currentPage - delta);
-  const rangeEnd = Math.min(totalPages, currentPage + delta);
-
-  if (rangeStart > 1) {
-    paginationItems.push(
-      <Pagination.Item
-        key={1}
-        onClick={() => setCurrentPage(1)}
-        active={1 === currentPage}
-        style={paginationItemStyle(1 === currentPage)}
-      >
-        1
-      </Pagination.Item>
-    );
-    if (rangeStart > 2) {
-      paginationItems.push(
-        <Pagination.Ellipsis
-          key="start-ellipsis"
-          disabled
-          style={paginationItemStyle(false, true)}
-        />
-      );
-    }
-  }
-  for (let i = rangeStart; i <= rangeEnd; i++) {
-    paginationItems.push(
-      <Pagination.Item
-        key={i}
-        onClick={() => setCurrentPage(i)}
-        active={i === currentPage}
-        style={paginationItemStyle(i === currentPage)}
-      >
-        {i}
-      </Pagination.Item>
-    );
-  }
-  if (rangeEnd < totalPages) {
-    if (rangeEnd < totalPages - 1) {
-      paginationItems.push(
-        <Pagination.Ellipsis
-          key="end-ellipsis"
-          disabled
-          style={paginationItemStyle(false, true)}
-        />
-      );
-    }
-    paginationItems.push(
-      <Pagination.Item
-        key={totalPages}
-        onClick={() => setCurrentPage(totalPages)}
-        active={totalPages === currentPage}
-        style={paginationItemStyle(totalPages === currentPage)}
-      >
-        {totalPages}
-      </Pagination.Item>
-    );
-  }
 
   return (
     <div
@@ -301,19 +271,28 @@ const Products: React.FC = () => {
         minHeight: "100vh",
         padding: "40px 0",
         paddingBottom: "80px",
-        boxSizing: "border-box",
-        position: "relative",
       }}
     >
       <Card>
-        <Row className="mb-4 align-items-center">
+        <Row className="mb-1 align-items-end">
           <Col md={7}>
             <PageTitle>Products Management</PageTitle>
+            <SearchBar>
+              <Form.Control
+                placeholder="Search by name or category..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </SearchBar>
           </Col>
           <Col md={5} className="text-md-end mt-2 mt-md-0">
             <AddBtn onClick={() => openModal()}>+ Add Product</AddBtn>
           </Col>
         </Row>
+
         {loading ? (
           <div className="text-center py-5">
             <Spinner animation="border" style={{ color: "#d7c8b2" }} />
@@ -410,7 +389,6 @@ const Products: React.FC = () => {
                 display: "flex",
                 justifyContent: "center",
                 paddingTop: 20,
-                paddingBottom: 10,
                 backgroundColor: "#f7f2e8",
                 borderRadius: 13,
                 boxShadow: "0 4px 20px #dbc9a542",
@@ -420,16 +398,23 @@ const Products: React.FC = () => {
             >
               <Pagination size="sm" className="mb-0">
                 <Pagination.Prev
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                   disabled={currentPage === 1}
                   style={paginationItemStyle(false, currentPage === 1)}
                 />
-                {paginationItems}
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <Pagination.Item
+                    key={i + 1}
+                    active={currentPage === i + 1}
+                    onClick={() => setCurrentPage(i + 1)}
+                    style={paginationItemStyle(currentPage === i + 1)}
+                  >
+                    {i + 1}
+                  </Pagination.Item>
+                ))}
                 <Pagination.Next
                   onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    setCurrentPage((p) => Math.min(p + 1, totalPages))
                   }
                   disabled={currentPage === totalPages || totalPages === 0}
                   style={paginationItemStyle(
@@ -441,94 +426,69 @@ const Products: React.FC = () => {
             </div>
           </>
         )}
+
+        {/* Add/Edit Product Modal */}
         <Modal show={modalOpen} onHide={() => setModalOpen(false)} centered>
           <Modal.Header closeButton>
-            <Modal.Title style={{ color: "#c7b998" }}>
+            <Modal.Title>
               {selectedProduct ? "Edit Product" : "Add Product"}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
               <Form.Group className="mb-3">
-                <Form.Label style={{ color: "#b2a68b" }}>
-                  Product Name
-                </Form.Label>
+                <Form.Label>Name</Form.Label>
                 <Form.Control
+                  type="text"
                   name="name"
                   value={formValues.name}
                   onChange={handleChange}
-                  placeholder="Enter name"
-                  maxLength={50}
-                  autoFocus
-                  required
+                  placeholder="Enter product name"
                 />
               </Form.Group>
+
               <Form.Group className="mb-3">
-                <Form.Label style={{ color: "#b2a68b" }}>Category</Form.Label>
+                <Form.Label>Price ($)</Form.Label>
                 <Form.Control
+                  type="number"
+                  name="price"
+                  value={formValues.price}
+                  onChange={handleChange}
+                  placeholder="Enter price"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Category</Form.Label>
+                <Form.Control
+                  type="text"
                   name="category"
                   value={formValues.category}
                   onChange={handleChange}
-                  placeholder="e.g. Latte, Espresso"
-                  maxLength={30}
-                  required
+                  placeholder="Enter category"
                 />
               </Form.Group>
-              <Row>
-                <Col>
-                  <Form.Group className="mb-3">
-                    <Form.Label style={{ color: "#b2a68b" }}>
-                      Price ($)
-                    </Form.Label>
-                    <Form.Control
-                      name="price"
-                      type="number"
-                      value={formValues.price}
-                      onChange={handleChange}
-                      min={0}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group className="mb-3">
-                    <Form.Label style={{ color: "#b2a68b" }}>Stock</Form.Label>
-                    <Form.Control
-                      name="stock"
-                      type="number"
-                      value={formValues.stock}
-                      onChange={handleChange}
-                      min={0}
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
+
               <Form.Group className="mb-3">
-                <Form.Label style={{ color: "#b2a68b" }}>Image URL</Form.Label>
-                <InputGroup>
-                  <Form.Control
-                    name="imageUrl"
-                    value={formValues.imageUrl}
-                    onChange={handleChange}
-                    placeholder="Paste image link"
-                  />
-                  {formValues.imageUrl && (
-                    <InputGroup.Text>
-                      <Image
-                        src={formValues.imageUrl}
-                        alt="Preview"
-                        thumbnail
-                        style={{
-                          width: 38,
-                          height: 38,
-                          objectFit: "cover",
-                          border: "none",
-                        }}
-                      />
-                    </InputGroup.Text>
-                  )}
-                </InputGroup>
+                <Form.Label>Stock</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="stock"
+                  value={formValues.stock}
+                  onChange={handleChange}
+                  placeholder="Enter stock quantity"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Image URL</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="imageUrl"
+                  value={formValues.imageUrl}
+                  onChange={handleChange}
+                  placeholder="Enter image URL"
+                />
               </Form.Group>
             </Form>
           </Modal.Body>
@@ -536,8 +496,26 @@ const Products: React.FC = () => {
             <Button variant="secondary" onClick={() => setModalOpen(false)}>
               Cancel
             </Button>
-            <Button variant="success" onClick={handleSave} disabled={saving}>
-              {saving ? <Spinner animation="border" size="sm" /> : "Save"}
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              disabled={saving}
+              style={{
+                background: "#d6cfc1",
+                color: "#564d3b",
+                border: "none",
+                fontWeight: 600,
+              }}
+            >
+              {saving ? (
+                <>
+                  <Spinner size="sm" animation="border" /> Saving...
+                </>
+              ) : selectedProduct ? (
+                "Update"
+              ) : (
+                "Save"
+              )}
             </Button>
           </Modal.Footer>
         </Modal>
