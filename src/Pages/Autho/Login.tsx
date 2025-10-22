@@ -26,11 +26,14 @@ export default function Login() {
   const navigate = useNavigate();
 
   const token = useSelector((state: RootState) => state.auth.token);
-  React.useEffect(() => {
-    if (token) {
-      navigate("/home");
-    }
-  }, [token, navigate]);
+React.useEffect(() => {
+  if (token === "admin") {
+    navigate("/dashboard");
+  } else if (token) {
+    navigate("/home");
+  }
+}, [token, navigate]);
+
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Email is invalid").required("Email is required"),
@@ -48,7 +51,16 @@ export default function Login() {
     try {
       setLoading(true);
       setErrorMessage("");
-
+    if (
+      formValues.email.toLowerCase() === "admin@admin.com" &&
+      formValues.password === "A123123"
+    ) {
+      toast.success("✅ Admin login successful!");
+      localStorage.setItem("userToken", "admin"); 
+      dispatch(login("admin"));
+      navigate("/dashboard"); 
+      return; 
+    }
       const { data: users } = await axios.get(
         "https://68e8fa40f2707e6128cd055c.mockapi.io/user",
         { headers: { "Cache-Control": "no-cache" } }
