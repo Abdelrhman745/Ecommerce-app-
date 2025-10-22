@@ -177,7 +177,7 @@ const fetchOrdersDataFromAPI = async () => {
 
                 return {
                     name: formattedLabel, 
-                    'Daily Sales (EGP)': total 
+                    'Daily Sales ($)': total // تم التعديل هنا: EGP -> $
                 };
             });
 
@@ -401,10 +401,10 @@ const TopProductsTable: React.FC<{ products: TopProduct[] }> = ({ products }) =>
               Sales Count
             </th>
             <th className="text-end" style={{ color: '#7c6f63' }}>
-              Price (EGP)
+              Price ($) {/* تم التعديل هنا: EGP -> $ */}
             </th>
             <th className="text-end" style={{ color: '#7c6f63' }}>
-              Total (EGP)
+              Total ($) {/* تم التعديل هنا: EGP -> $ */}
             </th>
           </tr>
         </thead>
@@ -451,7 +451,7 @@ const TopCategoryRevenueBarChart: React.FC<{ data: CategoryRevenueData[] }> = ({
                       <XAxis dataKey="name" />
                       <YAxis tickFormatter={(value: number) => `${(value / 1000).toFixed(0)}K`} />
                       <Tooltip 
-                          formatter={(value: number) => [`EGP ${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 'Revenue']}
+                          formatter={(value: number) => [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 'Revenue']} // تم التعديل هنا: EGP -> $
                       />
                       <Legend />
                       <Bar
@@ -600,7 +600,7 @@ const ChartsAndReports: React.FC = () => {
         <Col md={6} lg={3}>
           <StatisticCard
             title="Total Revenue"
-            value={`EGP ${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+            value={`$${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} // تم التعديل هنا: إضافة $
             icon="bi-wallet-fill"
             color="#dc3545"
           />
