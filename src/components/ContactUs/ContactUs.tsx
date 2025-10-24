@@ -21,7 +21,6 @@ const ContactUs: React.FC = () => {
     e.preventDefault();
     setLoading(true);
 
-    // ✅ Validation
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill out all fields.");
       setLoading(false);
@@ -46,39 +45,52 @@ const ContactUs: React.FC = () => {
   return (
     <section
       style={{
-        backgroundColor: "#f6f6f1",
+        background: "linear-gradient(180deg, #f9f8f7 0%, #f2ece6 100%)",
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "2rem",
+        padding: "3rem 1.5rem",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
     >
       <Toaster position="top-center" reverseOrder={false} />
       <div
         style={{
-          backgroundColor: "#fff",
-          borderRadius: "16px",
-          padding: "2rem 3rem",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-          maxWidth: "600px",
+          backgroundColor: "#ffffff",
+          borderRadius: "18px",
+          padding: "2.8rem 3rem",
+          maxWidth: "560px",
           width: "100%",
+          boxShadow: "0 8px 28px rgba(170, 150, 130, 0.22)",
+          border: "1px solid #eee2d5",
         }}
       >
         <h2
           style={{
+            color: "#7c6f63",
             textAlign: "center",
-            color: "#3c2f2f",
-            marginBottom: "1.5rem",
-            fontWeight: "600",
-            letterSpacing: "1px",
+            marginBottom: "0.4rem",
+            fontWeight: "700",
+            letterSpacing: "0.04em",
           }}
         >
-          Contact Us
+          Get in Touch{" "}
         </h2>
+        <p
+          style={{
+            textAlign: "center",
+            color: "#aa9c8d",
+            marginBottom: "2rem",
+            fontSize: "0.95rem",
+          }}
+        >
+          We'd love to hear from you! Fill out the form below and we’ll reach
+          out soon.
+        </p>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: "1rem" }}>
+          <div style={{ marginBottom: "1.3rem" }}>
             <label style={labelStyle}>Name</label>
             <input
               type="text"
@@ -86,12 +98,12 @@ const ContactUs: React.FC = () => {
               required
               value={formData.name}
               onChange={handleChange}
+              placeholder="Your full name"
               style={inputStyle}
-              placeholder="Enter your name"
             />
           </div>
 
-          <div style={{ marginBottom: "1rem" }}>
+          <div style={{ marginBottom: "1.3rem" }}>
             <label style={labelStyle}>Email</label>
             <input
               type="email"
@@ -99,20 +111,20 @@ const ContactUs: React.FC = () => {
               required
               value={formData.email}
               onChange={handleChange}
+              placeholder="you@example.com"
               style={inputStyle}
-              placeholder="Enter your email"
             />
           </div>
 
-          <div style={{ marginBottom: "1rem" }}>
+          <div style={{ marginBottom: "1.5rem" }}>
             <label style={labelStyle}>Message</label>
             <textarea
               name="message"
               required
               value={formData.message}
               onChange={handleChange}
-              style={{ ...inputStyle, height: "120px", resize: "none" }}
-              placeholder="Write your message..."
+              placeholder="Write your message here..."
+              style={{ ...inputStyle, height: "130px", resize: "none" }}
             />
           </div>
 
@@ -120,21 +132,23 @@ const ContactUs: React.FC = () => {
             type="submit"
             disabled={loading}
             style={{
-              backgroundColor: "#3c2f2f",
+              backgroundColor: "#7c6f63",
               color: "#fff",
               border: "none",
-              borderRadius: "8px",
-              padding: "0.8rem 1.5rem",
-              cursor: "pointer",
+              borderRadius: "10px",
+              padding: "0.9rem 0",
               width: "100%",
-              fontWeight: "500",
-              transition: "0.3s",
+              fontWeight: "600",
+              letterSpacing: "0.02em",
+              cursor: "pointer",
+              fontSize: "1.05rem",
+              transition: "background-color 0.25s ease",
             }}
             onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#2e2323")
+              !loading && (e.currentTarget.style.backgroundColor = "#8e8377")
             }
             onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "#3c2f2f")
+              !loading && (e.currentTarget.style.backgroundColor = "#7c6f63")
             }
           >
             {loading ? "Sending..." : "Send Message"}
@@ -145,22 +159,26 @@ const ContactUs: React.FC = () => {
   );
 };
 
-// ====== Styles ======
 const labelStyle: React.CSSProperties = {
   display: "block",
-  marginBottom: "0.5rem",
-  color: "#3c2f2f",
-  fontWeight: "500",
+  marginBottom: "0.55rem",
+  fontWeight: 600,
+  color: "#7c6f63",
+  fontSize: "1rem",
+  letterSpacing: "0.02em",
 };
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
-  padding: "0.8rem",
+  padding: "0.85rem 1rem",
   borderRadius: "8px",
-  border: "1px solid #ccc",
+  border: "1.4px solid #d9cfc3",
   outline: "none",
-  fontSize: "1rem",
-  fontFamily: "inherit",
+  backgroundColor: "#fafaf8",
+  fontSize: "0.98rem",
+  color: "#3c2f2f",
+  transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
 };
 
 export default ContactUs;
