@@ -62,7 +62,7 @@ const AdminMessages: React.FC = () => {
       case "Pending":
         return "warning";
       case "In Progress":
-        return "primary";
+        return "warning";
       case "Resolved":
         return "success";
       default:

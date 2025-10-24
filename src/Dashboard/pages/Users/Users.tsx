@@ -407,6 +407,7 @@ const Users: React.FC = () => {
           show={showActionsModal}
           onHide={() => setShowActionsModal(false)}
           fullscreen="sm-down"
+          centered
         >
           <Modal.Header closeButton>
             <Modal.Title>Actions</Modal.Title>
@@ -450,6 +451,7 @@ const Users: React.FC = () => {
           show={showDeleteModal}
           onHide={() => setShowDeleteModal(false)}
           fullscreen="sm-down"
+          centered
         >
           <Modal.Header closeButton>
             <Modal.Title>Delete User</Modal.Title>
@@ -474,6 +476,7 @@ const Users: React.FC = () => {
           onHide={() => setShowOrdersModal(false)}
           size="lg"
           fullscreen="sm-down"
+          centered
         >
           <Modal.Header closeButton>
             <Modal.Title>Orders</Modal.Title>

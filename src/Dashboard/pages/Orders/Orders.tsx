@@ -39,6 +39,8 @@ export default function Orders() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [newStatus, setNewStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showActionsModal, setShowActionsModal] = useState(false);
+  
   const itemsPerPage = 5;
   const handleEditClick = (order: Order) => {
     setSelectedOrder(order);
@@ -206,25 +208,20 @@ export default function Orders() {
                     {order.status.toUpperCase()}
                   </Badge>
                 </td>
+                 <td>
+                    <Button
+  variant="light"
+  size="sm"
+  onClick={() => {
+    setSelectedOrder(order); 
+    setShowActionsModal(true);
+  }}
+>
+  <i className="bi bi-three-dots-vertical fs-5"></i>
+</Button>
 
-                <td>
-                  <Button
-                    variant="outline-warning"
-                    size="sm"
-                    style={{ minWidth: 56, marginRight: 7 }}
-                    onClick={() => handleEditClick(order)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    style={{ minWidth: 56 }}
-                    onClick={() => handleDeleteOrder(order)}
-                  >
-                    Delete
-                  </Button>
-                </td>
+
+                                      </td>
               </tr>
             ))}
           </tbody>
@@ -270,6 +267,47 @@ export default function Orders() {
           </Button>
         </Modal.Footer>
       </Modal>
+      {/* Actions Modal */}
+<Modal show={showActionsModal} onHide={() => setShowActionsModal(false)} centered>
+  <Modal.Header closeButton className="border-0">
+    <Modal.Title className="fw-bold text-center w-100" style={{
+      color:"#a6977f"
+    }}>
+       Order Actions
+    </Modal.Title>
+  </Modal.Header>
+  <Modal.Body className="text-center py-2">
+    <p className="text-muted mb-4" style={{
+      color:'#a6977f'
+    }}>Choose what you’d like to do with this order</p>
+    
+    <div className="d-flex justify-content-center align-items-center gap-3 pb-3">
+      <Button
+        className="action-btn w-75 py-2"
+        variant="outline-primary"
+        onClick={() => {
+          setShowActionsModal(false);
+          handleEditClick(selectedOrder!);
+        }}
+      >
+        ✏️ Edit Order
+      </Button>
+
+      <Button
+        className="action-btn w-75 py-2"
+        variant="outline-danger"
+        onClick={() => {
+          setShowActionsModal(false);
+          handleDeleteOrder(selectedOrder!);
+        }}
+      >
+        🗑️ Delete Order
+      </Button>
+    </div>
+  </Modal.Body>
+</Modal>
+
+      
 
       {/* Pagination */}
       <div className="d-flex justify-content-center mt-3">
