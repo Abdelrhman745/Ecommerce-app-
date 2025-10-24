@@ -9,7 +9,7 @@ import { RootState } from "../../Redux/Store";
 import FavoritesModal from "../FavoriteModal/FavoriteModal";
 import { clearCartState } from "../../Redux/CartSlice";
 import { clearFavoritesState } from "../../Redux/FavSlice";
-import { setUser } from "../../Redux/userSlice"; 
+import { setUser } from "../../Redux/userSlice";
 import axios from "axios";
 
 const Navbar: React.FC = () => {
@@ -23,7 +23,6 @@ const Navbar: React.FC = () => {
   );
   const [showFav, setShowFav] = useState(false);
 
-  // ✅ استرجاع بيانات المستخدم عند وجود token (بعد refresh)
   useEffect(() => {
     const fetchUserData = async () => {
       if (token && token !== "admin") {
@@ -130,71 +129,85 @@ const Navbar: React.FC = () => {
                 </Link>
               )}
 
-              <Link
-                to="/profile"
-                className="d-flex align-items-center text-theme-muted position-relative"
-                aria-label="User Profile"
-                style={{ gap: "8px", textDecoration: "none" }}
-              >
-                {token && user?.name ? (
-                  <>
-                    <img
-                      src={
-                        user.image ||
-                        "https://cdn-icons-png.flaticon.com/512/847/847969.png"
-                      }
-                      alt="User"
-                      style={{
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                      }}
-                    />
+              {token === "admin" ? (
+                <button
+                  className="btn btn-outline-theme px-3 py-1 fw-semibold"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  Dashboard
+                </button>
+              ) : (
+                <>
+                  {/* Profile */}
+                  <Link
+                    to="/profile"
+                    className="d-flex align-items-center text-theme-muted position-relative"
+                    aria-label="User Profile"
+                    style={{ gap: "8px", textDecoration: "none" }}
+                  >
+                    {token && user?.name ? (
+                      <>
+                        <img
+                          src={
+                            user.image ||
+                            "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                          }
+                          alt="User"
+                          style={{
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <span
+                          style={{
+                            color: "#7c6f63",
+                            fontWeight: 600,
+                            fontSize: "0.9rem",
+                          }}
+                        >
+                          {user.name}
+                        </span>
+                      </>
+                    ) : (
+                      <FaUser size={20} className="cursor-pointer" />
+                    )}
+                  </Link>
+
+                  {/* Favorites */}
+                  <div
+                    onClick={() => setShowFav(true)}
+                    className="position-relative d-flex align-items-center cursor-pointer text-theme-muted"
+                    aria-label="Favorites"
+                    role="button"
+                  >
                     <span
-                      style={{
-                        color: "#7c6f63",
-                        fontWeight: 600,
-                        fontSize: "0.9rem",
-                      }}
+                      className="badge bg-theme-badge position-absolute top-0 start-100 translate-middle rounded-pill"
+                      style={{ fontSize: 11 }}
                     >
-                      {user.name}
+                      {favorites.length}
                     </span>
-                  </>
-                ) : (
-                  <FaUser size={20} className="cursor-pointer" />
-                )}
-              </Link>
+                    <FaHeart size={20} className="ms-3" />
+                  </div>
 
-              <div
-                onClick={() => setShowFav(true)}
-                className="position-relative d-flex align-items-center cursor-pointer text-theme-muted"
-                aria-label="Favorites"
-                role="button"
-              >
-                <span
-                  className="badge bg-theme-badge position-absolute top-0 start-100 translate-middle rounded-pill"
-                  style={{ fontSize: 11 }}
-                >
-                  {favorites.length}
-                </span>
-                <FaHeart size={20} className="ms-3" />
-              </div>
-
-              <div
-                onClick={handleCartClick}
-                className="position-relative d-flex align-items-center cursor-pointer text-theme-muted"
-                aria-label="Cart"
-                role="button"
-              >
-                <span
-                  className="badge bg-theme-badge position-absolute top-0 start-100 translate-middle rounded-pill"
-                  style={{ fontSize: 11 }}
-                >
-                  {cartItems.length}
-                </span>
-                <FaShoppingBag size={20} className="ms-3" />
-              </div>
+                  {/* Cart */}
+                  <div
+                    onClick={handleCartClick}
+                    className="position-relative d-flex align-items-center cursor-pointer text-theme-muted"
+                    aria-label="Cart"
+                    role="button"
+                  >
+                    <span
+                      className="badge bg-theme-badge position-absolute top-0 start-100 translate-middle rounded-pill"
+                      style={{ fontSize: 11 }}
+                    >
+                      {cartItems.length}
+                    </span>
+                    <FaShoppingBag size={20} className="ms-3" />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
