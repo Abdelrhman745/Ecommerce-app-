@@ -14,6 +14,9 @@ import {
   Bar,      
 } from 'recharts';
 
+// تم استيراد المكون من ملفه الجديد
+import StatisticCard from './StatisticCard'; 
+
 interface User {
   id: string;
   name: string;
@@ -174,7 +177,7 @@ const fetchOrdersDataFromAPI = async () => {
 
                 return {
                     name: formattedLabel, 
-                    'Daily Sales (EGP)': total 
+                    'Daily Sales ($)': total // تم التعديل هنا: EGP -> $
                 };
             });
 
@@ -246,45 +249,6 @@ const PlaceholderHeader = styled.div`
   display: none; 
 `;
 
-const CustomStatCard = styled(Card)`
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-  }
-`;
-
-const StatIconContainer = styled.div<{ $color: string }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px; 
-  height: 50px;
-  border-radius: 50%;
-  background-color: ${(props) => props.$color + '15'};
-  color: ${(props) => props.$color};
-  font-size: 1.8rem;
-  flex-shrink: 0;
-`;
-
-const StatTitle = styled(Card.Title)`
-  font-size: 0.9rem;
-  color: #6c757d;
-  margin-bottom: 0.1rem;
-  font-weight: 500;
-`;
-
-const StatValue = styled(Card.Text)`
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #343a40;
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-`;
 
 const ChartCard = styled(Card)`
   border: none;
@@ -329,33 +293,8 @@ const StatusBadge = styled.span<{ status: string }>`
 `;
 
 
-interface StatCardProps {
-  title: string;
-  value: string;
-  icon: string;
-  color: string;
-  isClickable?: boolean;
-  isActive?: boolean;
-  onClick?: () => void;
-}
+// تم حذف: interface StatCardProps والمكون StatisticCard
 
-const StatisticCard: React.FC<StatCardProps> = ({ title, value, icon, color, isClickable = false, isActive = false, onClick }) => (
-  <CustomStatCard
-    className={`mb-4 ${isClickable ? 'cursor-pointer' : ''}`}
-    style={isActive ? { borderLeft: `5px solid ${color}`, backgroundColor: `${color}10`, transform: 'translateY(-3px)' } : {}}
-    onClick={onClick}
-  >
-    <Card.Body className="d-flex align-items-center p-3">
-      <StatIconContainer $color={color} className="me-3">
-        <i className={`bi ${icon}`}></i>
-      </StatIconContainer>
-      <div>
-        <StatTitle>{title}</StatTitle>
-        <StatValue>{value}</StatValue>
-      </div>
-    </Card.Body>
-  </CustomStatCard>
-);
 
 interface OrderReportProps {
   statusCounts: { [key: string]: number };
@@ -462,10 +401,10 @@ const TopProductsTable: React.FC<{ products: TopProduct[] }> = ({ products }) =>
               Sales Count
             </th>
             <th className="text-end" style={{ color: '#7c6f63' }}>
-              Price (EGP)
+              Price ($) {/* تم التعديل هنا: EGP -> $ */}
             </th>
             <th className="text-end" style={{ color: '#7c6f63' }}>
-              Total (EGP)
+              Total ($) {/* تم التعديل هنا: EGP -> $ */}
             </th>
           </tr>
         </thead>
@@ -512,7 +451,7 @@ const TopCategoryRevenueBarChart: React.FC<{ data: CategoryRevenueData[] }> = ({
                       <XAxis dataKey="name" />
                       <YAxis tickFormatter={(value: number) => `${(value / 1000).toFixed(0)}K`} />
                       <Tooltip 
-                          formatter={(value: number) => [`EGP ${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 'Revenue']}
+                          formatter={(value: number) => [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 'Revenue']} // تم التعديل هنا: EGP -> $
                       />
                       <Legend />
                       <Bar
@@ -661,7 +600,7 @@ const ChartsAndReports: React.FC = () => {
         <Col md={6} lg={3}>
           <StatisticCard
             title="Total Revenue"
-            value={`EGP ${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+            value={`$${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} // تم التعديل هنا: إضافة $
             icon="bi-wallet-fill"
             color="#dc3545"
           />
