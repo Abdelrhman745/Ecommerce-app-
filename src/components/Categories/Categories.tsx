@@ -12,8 +12,8 @@ import { useNavigate } from "react-router-dom";
 
 
 const images: string[] = [
-  "https://i.pinimg.com/1200x/70/2b/42/702b429b494edfac66cc49b4c6d03600.jpg",
   "https://i.pinimg.com/736x/bb/c0/ea/bbc0ea4cd37abf4731a157910dcd023f.jpg",
+  "https://i.pinimg.com/1200x/70/2b/42/702b429b494edfac66cc49b4c6d03600.jpg",
   "https://i.pinimg.com/1200x/5f/c1/93/5fc19362442557efc3e529b552e3442b.jpg",
   "https://i.pinimg.com/1200x/e3/fd/8c/e3fd8ca682c3330377f24129d1daa8b2.jpg"
 ];
