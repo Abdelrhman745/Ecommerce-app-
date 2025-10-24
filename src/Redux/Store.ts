@@ -3,13 +3,14 @@ import authReducer from "./Authosclice";
 import cartReducer from "./CartSlice";
 import favoritesReducer from "./FavSlice"
 import ordersReducer from "./OrderSlice"
+import userReducer from "./userSlice";
 const store = configureStore({
   reducer: {
     auth: authReducer,
     cart: cartReducer,
     favorites: favoritesReducer,
-    orders:ordersReducer
-
+    orders:ordersReducer,
+    user: userReducer
   },
 });
 

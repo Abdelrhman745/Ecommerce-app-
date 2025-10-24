@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { FaUser, FaShoppingBag, FaHeart } from "react-icons/fa";
@@ -9,23 +9,49 @@ import { RootState } from "../../Redux/Store";
 import FavoritesModal from "../FavoriteModal/FavoriteModal";
 import { clearCartState } from "../../Redux/CartSlice";
 import { clearFavoritesState } from "../../Redux/FavSlice";
+import { setUser } from "../../Redux/userSlice"; 
+import axios from "axios";
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.user);
   const token = useSelector((state: RootState) => state.auth.token);
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const [showFav, setShowFav] = useState(false);
   const favorites = useSelector(
     (state: RootState) => state.favorites?.items || []
   );
+  const [showFav, setShowFav] = useState(false);
+
+  // ✅ استرجاع بيانات المستخدم عند وجود token (بعد refresh)
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (token && token !== "admin") {
+        try {
+          const { data } = await axios.get(
+            `https://68e8fa40f2707e6128cd055c.mockapi.io/user/${token}`
+          );
+          dispatch(
+            setUser({
+              name: data.name,
+              email: data.email,
+              image: data.image,
+            })
+          );
+        } catch (error) {
+          console.error("❌ Failed to fetch user data:", error);
+        }
+      }
+    };
+    fetchUserData();
+  }, [token, dispatch]);
 
   const handleLogout = () => {
-     dispatch(logout());
-     dispatch(clearCartState());
-     dispatch(clearFavoritesState());
-     localStorage.removeItem("userToken");
-     navigate("/login");
+    dispatch(logout());
+    dispatch(clearCartState());
+    dispatch(clearFavoritesState());
+    localStorage.removeItem("userToken");
+    navigate("/login");
   };
 
   const handleCartClick = () => {
@@ -106,10 +132,38 @@ const Navbar: React.FC = () => {
 
               <Link
                 to="/profile"
-                className="text-theme-muted position-relative"
+                className="d-flex align-items-center text-theme-muted position-relative"
                 aria-label="User Profile"
+                style={{ gap: "8px", textDecoration: "none" }}
               >
-                <FaUser size={20} className="cursor-pointer" />
+                {token && user?.name ? (
+                  <>
+                    <img
+                      src={
+                        user.image ||
+                        "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                      }
+                      alt="User"
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <span
+                      style={{
+                        color: "#7c6f63",
+                        fontWeight: 600,
+                        fontSize: "0.9rem",
+                      }}
+                    >
+                      {user.name}
+                    </span>
+                  </>
+                ) : (
+                  <FaUser size={20} className="cursor-pointer" />
+                )}
               </Link>
 
               <div
@@ -209,7 +263,7 @@ const Navbar: React.FC = () => {
           }
 
           body {
-            padding-top: 80px; /* prevent content from hiding behind navbar */
+            padding-top: 80px;
           }
         `}</style>
       </nav>

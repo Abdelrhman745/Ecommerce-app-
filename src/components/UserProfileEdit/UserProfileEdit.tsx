@@ -5,6 +5,8 @@ import * as Yup from "yup";
 import { Helmet } from "react-helmet-async";
 import toast from "react-hot-toast";
 import UserMessages from "../UserMessages/UserMessages";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../Redux/userSlice";
 const Container = styled.section`
   min-height: 100vh;
   background: linear-gradient(135deg, #b8afa6 0%, #b8afa6 100%);
@@ -223,7 +225,6 @@ const MenuContainer = styled.div`
   }
 `;
 
-
 const validationSchema = Yup.object({
   name: Yup.string().min(3).max(10).required("Name is required"),
   email: Yup.string()
@@ -237,9 +238,10 @@ const validationSchema = Yup.object({
   ),
 });
 
-
 const UserProfile: React.FC = () => {
-  const [mode, setMode] = useState<"menu" | "edit" | "orders" | "messages">("menu");
+  const [mode, setMode] = useState<"menu" | "edit" | "orders" | "messages">(
+    "menu"
+  );
   const [orders, setOrders] = useState<any[]>([]);
   const [data, setData] = useState<any>({
     id: "",
@@ -253,6 +255,7 @@ const UserProfile: React.FC = () => {
   });
   const [originalData, setOriginalData] = useState({ name: "", email: "" });
   const [error, setError] = useState("");
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [requirePassword, setRequirePassword] = useState(false);
@@ -297,7 +300,7 @@ const UserProfile: React.FC = () => {
     }
   }, [mode, data.id]);
   const [currentPage, setCurrentPage] = useState(1);
-   const itemsPerPage = 5; 
+  const itemsPerPage = 5;
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -357,6 +360,21 @@ const UserProfile: React.FC = () => {
         }
       );
       toast.success("✅ Profile updated successfully!");
+      dispatch(
+        updateUser({
+          name: data.name,
+          email: data.email,
+          image: data.image,
+        })
+      );
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          name: data.name,
+          email: data.email,
+          image: data.image,
+        })
+      );
       setIsChangingPassword(false);
       setMode("menu");
     } catch {
@@ -422,7 +440,6 @@ const UserProfile: React.FC = () => {
                       </div>
                     ))}
 
-                  
                   <div
                     style={{
                       display: "flex",
@@ -503,29 +520,28 @@ const UserProfile: React.FC = () => {
           <button onClick={() => setMode("orders")}>My Orders</button>
           <button onClick={() => setMode("messages")}>My Messages</button>
         </MenuContainer>
-
       </Container>
     );
   }
   if (mode === "messages") {
-  return (
-    <Container>
-      <Helmet>
-        <title>My Messages</title>
-      </Helmet>
-      <div>
-        <BackButton onClick={() => setMode("menu")}>← Back</BackButton>
-        <Card>
-          <RightPanel>
-            <Title>My Messages</Title>
-            <Subtitle>Check replies from the admin</Subtitle>
-            <UserMessages userEmail={data.email} />
-          </RightPanel>
-        </Card>
-      </div>
-    </Container>
-  );
-}
+    return (
+      <Container>
+        <Helmet>
+          <title>My Messages</title>
+        </Helmet>
+        <div>
+          <BackButton onClick={() => setMode("menu")}>← Back</BackButton>
+          <Card>
+            <RightPanel>
+              <Title>My Messages</Title>
+              <Subtitle>Check replies from the admin</Subtitle>
+              <UserMessages userEmail={data.email} />
+            </RightPanel>
+          </Card>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container>

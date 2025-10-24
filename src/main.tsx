@@ -22,6 +22,8 @@ import AdminMessages from "./Dashboard/Contact/AdminMessages";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import ReportsPage from "./Dashboard/pages/Reports/ReportsPage";
 import DashboardLayout from "./Dashboard/DashBoardLayout/DashBoardLayout";
+import AdminRoute from "./components/Protectedroute/AdminRoute";
+
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -73,20 +75,17 @@ const LoadingFallback: React.FC<{ message?: string }> = ({ message }) => (
 );
 
 const router = createBrowserRouter([
-
   {
     path: "/",
     element: (
-      <Suspense fallback={<LoadingScreen/>}>
+      <Suspense fallback={<LoadingScreen />}>
         <Layout />
       </Suspense>
     ),
     children: [
       {
         index: true,
-        element: (
-            <HomePage />
-        ),
+        element: <HomePage />,
       },
       {
         path: "about",
@@ -121,9 +120,8 @@ const router = createBrowserRouter([
             fallback={<LoadingFallback message="Loading product details..." />}
           >
             <ProtectedRoute>
-            <ProductDetailsPage />
+              <ProductDetailsPage />
             </ProtectedRoute>
-
           </Suspense>
         ),
       },
@@ -195,24 +193,24 @@ const router = createBrowserRouter([
       { path: "orders", element: <Orders /> },
       { path: "dashboard/products", element: <Products /> },
       { path: "dashboard/charts", element: <ChartsAndReports /> },
-      { path: "dashboard/AdminMessages", element: <AdminMessages/> },
-
-       
-  
-
+      { path: "dashboard/AdminMessages", element: <AdminMessages /> },
     ],
   },
 
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <AdminRoute>
+        <DashboardLayout />
+      </AdminRoute>
+    ),
     children: [
       { index: true, element: <ChartsAndReports /> },
       { path: "products", element: <Products /> },
       { path: "orders", element: <Orders /> },
       { path: "user", element: <Users /> },
-      { path: "contact", element: <AdminMessages/> },
-      { path: "reports", element: <ReportsPage/> },
+      { path: "contact", element: <AdminMessages /> },
+      { path: "reports", element: <ReportsPage /> },
     ],
   },
 ]);
