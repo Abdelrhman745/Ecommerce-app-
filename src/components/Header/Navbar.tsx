@@ -9,7 +9,7 @@ import { RootState } from "../../Redux/Store";
 import FavoritesModal from "../FavoriteModal/FavoriteModal";
 import { clearCartState } from "../../Redux/CartSlice";
 import { clearFavoritesState } from "../../Redux/FavSlice";
-import { setUser } from "../../Redux/userSlice"; 
+import { setUser } from "../../Redux/userSlice";
 import axios from "axios";
 
 const Navbar: React.FC = () => {
@@ -23,7 +23,6 @@ const Navbar: React.FC = () => {
   );
   const [showFav, setShowFav] = useState(false);
 
-  // ✅ استرجاع بيانات المستخدم عند وجود token (بعد refresh)
   useEffect(() => {
     const fetchUserData = async () => {
       if (token && token !== "admin") {
@@ -136,7 +135,7 @@ const Navbar: React.FC = () => {
                 aria-label="User Profile"
                 style={{ gap: "8px", textDecoration: "none" }}
               >
-                {token && user?.name ? (
+                {token && token !== "admin" && user?.name ? (
                   <>
                     <img
                       src={
@@ -161,9 +160,9 @@ const Navbar: React.FC = () => {
                       {user.name}
                     </span>
                   </>
-                ) : (
+                ) : token !== "admin" ? (
                   <FaUser size={20} className="cursor-pointer" />
-                )}
+                ) : null}
               </Link>
 
               <div
