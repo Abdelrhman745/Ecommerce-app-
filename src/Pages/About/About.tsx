@@ -50,35 +50,65 @@ We simply <br /> need to observe and tap into its <br /> inherent brilliance.</h
         </Row> */}
         <TextSec/>
 <Row className="g-0 mb-0 justify-content-evenly last-section">
-          <Col md={4} className="about-image left-image d-flex align-items-center p-0 m-0">
-            <div className="overlay-content">
-              <h3>Quality & Efficacy</h3>
-              <p>
-                For those serious about skin health, trust someone dedicated since 1986.
-                With over 35 years of crafting certified natural cosmetics.
-              </p>
-              <Button variant="outline-light" onClick={() => window.location.href="https://curology.com/blog/tag/serum/"}>Discover More <i className="bi bi-arrow-right"></i></Button>
-            </div>
-          </Col>
-<Col md={4} className="about-image center-image d-flex align-items-center p-0 m-0">
-            <div className="overlay-content">
-              <h3>High Tech Cleanser</h3>
-              <p>
-                We build our formulas on nature’s most precious raw materials, refined with modern technologies.
-              </p>
-              <Button variant="outline-light" onClick={() => window.location.href="https://www.tru-skin.com/blog/must-have-ingredients-in-facial-cleansers-for-great-skin/"}>Discover More <i className="bi bi-arrow-right"></i></Button>
-            </div>
-          </Col>
-          <Col md={4} className="about-image right-image d-flex align-items-center p-0 m-0">
-            <div className="overlay-content">
-              <h3>High Tech Natural Skin Care</h3>
-              <p>
-                We build our formulas on nature’s most precious raw materials, refined with modern technologies.
-              </p>
-              <Button variant="outline-light" onClick={() => window.location.href="https://www.o3plus.com/blogs/moisturizers?srsltid=AfmBOooS-rDx6E67TQPBSKAd6nIlWSZ7-4JjQL0pok7eAIDx7AwX9Aic/"}>Discover More <i className="bi bi-arrow-right"></i></Button>
-            </div>
-          </Col>
-        </Row>
+  <Col md={4} className="about-image left-image d-flex align-items-center p-0 m-0">
+    <div className="overlay-content">
+      <h3>Quality & Efficacy</h3>
+      <p>
+        For those serious about skin health, trust someone dedicated since 1986.
+        With over 35 years of crafting certified natural cosmetics.
+      </p>
+      <Button
+        variant="outline-light"
+        onClick={() =>
+          window.open("https://curology.com/blog/tag/serum/", "_blank")
+        }
+      >
+        Discover More <i className="bi bi-arrow-right"></i>
+      </Button>
+    </div>
+  </Col>
+
+  <Col md={4} className="about-image center-image d-flex align-items-center p-0 m-0">
+    <div className="overlay-content">
+      <h3>High Tech Cleanser</h3>
+      <p>
+        We build our formulas on nature’s most precious raw materials, refined with modern technologies.
+      </p>
+      <Button
+        variant="outline-light"
+        onClick={() =>
+          window.open(
+            "https://www.tru-skin.com/blog/must-have-ingredients-in-facial-cleansers-for-great-skin/",
+            "_blank"
+          )
+        }
+      >
+        Discover More <i className="bi bi-arrow-right"></i>
+      </Button>
+    </div>
+  </Col>
+
+  <Col md={4} className="about-image right-image d-flex align-items-center p-0 m-0">
+    <div className="overlay-content">
+      <h3>High Tech Natural Skin Care</h3>
+      <p>
+        We build our formulas on nature’s most precious raw materials, refined with modern technologies.
+      </p>
+      <Button
+        variant="outline-light"
+        onClick={() =>
+          window.open(
+            "https://www.o3plus.com/blogs/moisturizers?srsltid=AfmBOooS-rDx6E67TQPBSKAd6nIlWSZ7-4JjQL0pok7eAIDx7AwX9Aic/",
+            "_blank"
+          )
+        }
+      >
+        Discover More <i className="bi bi-arrow-right"></i>
+      </Button>
+    </div>
+  </Col>
+</Row>
+
     </Container>
 
     </>

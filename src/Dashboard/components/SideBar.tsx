@@ -107,11 +107,20 @@
 
 import React from "react";
 import { Nav, Card } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { logout } from "../../Redux/Authosclice";
 
 export default function SideBar() {
   const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem("userToken");
+    dispatch(logout());
+    navigate("/login");
+  };
   const menuItems = [
     { Label: "Dashboard", icon: "bi-speedometer2", path: "/dashboard" },
     { Label: "Products", icon: "bi-tags-fill", path: "/dashboard/products" },
@@ -119,7 +128,7 @@ export default function SideBar() {
     { Label: "Users", icon: "bi-person-fill", path: "/dashboard/user" },
     { Label: "Messages", icon: "bi-chat-dots-fill", path: "/dashboard/contact" },
     { Label: "Reports", icon: "bi-file-earmark-bar-graph-fill", path: "/dashboard/reports" },
-    { Label: "Logout", icon: "bi-box-arrow-right", path: "/login" },
+    // { Label: "Logout", icon: "bi-box-arrow-right", path: "/login" },
   ];
 
   return (
@@ -144,7 +153,7 @@ export default function SideBar() {
       >
         <Card.Body>
           <Card.Title className="fs-5">👤 Admin</Card.Title>
-          <Card.Text style={{ fontSize: "0.9rem" }}>admin@gmail.com</Card.Text>
+          <Card.Text style={{ fontSize: "0.9rem" }}>admin@admin.com</Card.Text>
         </Card.Body>
       </Card>
 
@@ -177,6 +186,26 @@ export default function SideBar() {
           </Nav.Link>
         ))}
       </Nav>
+      <Nav.Link
+          onClick={handleLogout}
+          className="d-flex align-items-center ms-3 fs-6 fw-normal rounded mt-2"
+          style={{
+            color: "#fff",
+            transition: "all 0.2s",
+          }}
+        >
+          <span
+            style={{
+              marginRight: "15px",
+              fontSize: "20px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <i className="bi bi-box-arrow-right"></i>
+          </span>
+          Logout
+        </Nav.Link>
 
       <style>
         {`

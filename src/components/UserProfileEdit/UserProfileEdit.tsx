@@ -5,10 +5,15 @@ import * as Yup from "yup";
 import { Helmet } from "react-helmet-async";
 import toast from "react-hot-toast";
 import UserMessages from "../UserMessages/UserMessages";
+
 const Container = styled.section`
   min-height: 100vh;
-  background: linear-gradient(135deg, #b8afa6 0%, #b8afa6 100%);
-  display: flex;
+background: linear-gradient(
+            120deg,
+            #f6f4ed 75%,
+            #e9e3da 100%
+          );
+            display: flex;
   justify-content: center;
   align-items: center;
   padding: 40px 20px;
@@ -181,6 +186,7 @@ const BackButton = styled.button`
 
 const MenuContainer = styled.div`
   background: #fff;
+  width: 50%;
   padding: 40px 50px;
   border-radius: 16px;
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.08);
@@ -213,7 +219,7 @@ const MenuContainer = styled.div`
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    width: 180px;
+    width: 200px;
     transition: 0.3s;
 
     &:hover {
@@ -222,7 +228,6 @@ const MenuContainer = styled.div`
     }
   }
 `;
-
 
 const validationSchema = Yup.object({
   name: Yup.string().min(3).max(10).required("Name is required"),
@@ -237,9 +242,10 @@ const validationSchema = Yup.object({
   ),
 });
 
-
 const UserProfile: React.FC = () => {
-  const [mode, setMode] = useState<"menu" | "edit" | "orders" | "messages">("menu");
+  const [mode, setMode] = useState<"menu" | "edit" | "orders" | "messages">(
+    "menu"
+  );
   const [orders, setOrders] = useState<any[]>([]);
   const [data, setData] = useState<any>({
     id: "",
@@ -297,7 +303,7 @@ const UserProfile: React.FC = () => {
     }
   }, [mode, data.id]);
   const [currentPage, setCurrentPage] = useState(1);
-   const itemsPerPage = 5; 
+  const itemsPerPage = 5;
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -372,6 +378,7 @@ const UserProfile: React.FC = () => {
         <Helmet>
           <title>My Orders</title>
         </Helmet>
+
         <div>
           <BackButton onClick={() => setMode("menu")}>← Back</BackButton>
           <Card>
@@ -381,48 +388,113 @@ const UserProfile: React.FC = () => {
 
               {orders.length > 0 ? (
                 <>
-                  {orders
-                    .slice(
-                      (currentPage - 1) * itemsPerPage,
-                      currentPage * itemsPerPage
-                    )
-                    .map((order) => (
-                      <div
-                        key={order.id}
-                        style={{
-                          background: "#f8f9fc",
-                          borderRadius: "10px",
-                          padding: "15px",
-                          marginBottom: "15px",
-                          boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-                        }}
-                      >
-                        <p>
-                          <strong>Order ID:</strong> {order.id}
-                        </p>
-                        <p>
-                          <strong>Order Name:</strong>{" "}
-                          {order.items
-                            .map((item: any) =>
-                              item.name.split(" ").slice(0, 2).join(" ")
-                            )
-                            .join(", ")}
-                        </p>
+                  <div style={{ overflowX: "auto" }}>
+                    <table
+                      style={{
+                        width: "100%",
+                        borderCollapse: "collapse",
+                        marginTop: "15px",
+                        background: "#fff",
+                        borderRadius: "10px",
+                        boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                      }}
+                    >
+                      <thead>
+                        <tr
+                          style={{
+                            backgroundColor: "#726255",
+                            color: "#fff",
+                            textAlign: "left",
+                          }}
+                        >
+                          <th style={{ padding: "12px 15px" }}>#</th>
+                          <th style={{ padding: "12px 15px" }}>Order ID</th>
+                          <th style={{ padding: "12px 15px" }}>Items</th>
+                          <th style={{ padding: "12px 15px" }}>Total</th>
+                          <th style={{ padding: "12px 15px" }}>Status</th>
+                          <th style={{ padding: "12px 15px" }}>Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {orders
+                          .slice(
+                            (currentPage - 1) * itemsPerPage,
+                            currentPage * itemsPerPage
+                          )
+                          .map((order, index) => (
+                            <tr
+                              key={order.id}
+                              style={{
+                                borderBottom: "1px solid #eee",
+                                transition: "background 0.2s",
+                              }}
+                              onMouseEnter={(e) =>
+                                (e.currentTarget.style.background = "#f9f9f9")
+                              }
+                              onMouseLeave={(e) =>
+                                (e.currentTarget.style.background =
+                                  "transparent")
+                              }
+                            >
+                              <td style={{ padding: "12px 15px" }}>
+                                {(currentPage - 1) * itemsPerPage + index + 1}
+                              </td>
+                              <td
+                                style={{
+                                  padding: "12px 15px",
+                                  color: "#483B32",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                {order.id}
+                              </td>
+                              <td style={{ padding: "12px 15px" }}>
+                                {order.items
+                                  .map((item: any) =>
+                                    item.name.split(" ").slice(0, 2).join(" ")
+                                  )
+                                  .join(", ")}
+                              </td>
+                              <td
+                                style={{
+                                  padding: "12px 15px",
+                                  color: "#7c6f63",
+                                }}
+                              >
+                                ${order.total}
+                              </td>
+                              <td style={{ textAlign: "center" }}>
+                                <span
+                                  style={{
+                                    fontWeight: 500,
+                                    color: "#fff",
+                                    borderRadius: "6px",
+                                    padding: "4px 10px",
+                                    backgroundColor:
+                                      order.status === "completed"
+                                        ? "green"
+                                        : order.status === "pending"
+                                        ? "#ffc107"
+                                        : "red",
+                                    display: "inline-block",
+                                    textTransform: "capitalize",
+                                  }}
+                                >
+                                  {order.status}
+                                </span>
+                              </td>
 
-                        <p>
-                          <strong>Total:</strong> ${order.total}
-                        </p>
-                        <p>
-                          <strong>Status:</strong> {order.status}
-                        </p>
-                        <p>
-                          <strong>Date:</strong>{" "}
-                          {new Date(order.date).toLocaleString()}
-                        </p>
-                      </div>
-                    ))}
+                              <td
+                                style={{ padding: "12px 15px", color: "#555" }}
+                              >
+                                {new Date(order.date).toLocaleDateString()}
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
 
-                  
                   <div
                     style={{
                       display: "flex",
@@ -503,29 +575,28 @@ const UserProfile: React.FC = () => {
           <button onClick={() => setMode("orders")}>My Orders</button>
           <button onClick={() => setMode("messages")}>My Messages</button>
         </MenuContainer>
-
       </Container>
     );
   }
   if (mode === "messages") {
-  return (
-    <Container>
-      <Helmet>
-        <title>My Messages</title>
-      </Helmet>
-      <div>
-        <BackButton onClick={() => setMode("menu")}>← Back</BackButton>
-        <Card>
-          <RightPanel>
-            <Title>My Messages</Title>
-            <Subtitle>Check replies from the admin</Subtitle>
-            <UserMessages userEmail={data.email} />
-          </RightPanel>
-        </Card>
-      </div>
-    </Container>
-  );
-}
+    return (
+      <Container>
+        <Helmet>
+          <title>My Messages</title>
+        </Helmet>
+        <div>
+          <BackButton onClick={() => setMode("menu")}>← Back</BackButton>
+          <Card>
+            <RightPanel>
+              <Title>My Messages</Title>
+              <Subtitle>Check replies from the admin</Subtitle>
+              <UserMessages userEmail={data.email} />
+            </RightPanel>
+          </Card>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container>

@@ -22,6 +22,7 @@ import DashboardLayout from "./Dashboard/DashBoardLayout/DashBoardLayout";
 import AdminMessages from "./Dashboard/pages/Contact/AdminMessages";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import ReportsPage from "./Dashboard/pages/Reports/ReportsPage";
+import NotFound from "./Pages/NotFound/NotFound";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -191,11 +192,9 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      // { path: "user", element: <Users /> },
-      // { path: "orders", element: <Orders /> },
-      // { path: "dashboard/products", element: <Products /> },
-      // { path: "dashboard/charts", element: <ChartsAndReports /> },
+            { path: "*", element: <NotFound /> },
 
+  
        
   
 
@@ -204,7 +203,11 @@ const router = createBrowserRouter([
 
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+       <ProtectedRoute >
+      <DashboardLayout />
+    </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <ChartsAndReports /> },
       { path: "products", element: <Products /> },
