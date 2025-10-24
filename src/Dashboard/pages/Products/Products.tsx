@@ -10,6 +10,7 @@ import {
   Col,
   InputGroup,
   Pagination,
+  Dropdown,
 } from "react-bootstrap";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -312,28 +313,22 @@ const Products: React.FC = () => {
                   boxShadow: "0 2px 12px #f0e9db8a",
                 }}
               >
-                <thead>
+                <thead style={{ background: "#f7f2e8" }}>
                   <tr>
-                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>#</th>
-                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Image</th>
-                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Name</th>
-                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>
-                      Category
-                    </th>
-                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>
-                      Price ($)
-                    </th>
-                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Stock</th>
-                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>
-                      Actions
-                    </th>
+                    <th>#</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price ($)</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
                   {paginatedProducts.length > 0 ? (
                     paginatedProducts.map((product, index) => (
                       <tr key={product.id}>
-                        <td style={{ fontWeight: 600, color: "#cdbf9c" }}>
+                        <td style={{ fontWeight: 600 }}>
                           {(currentPage - 1) * itemsPerPage + index + 1}
                         </td>
                         <td>
@@ -342,37 +337,30 @@ const Products: React.FC = () => {
                             alt={product.name}
                           />
                         </td>
-                        <td style={{ fontWeight: 500, color: "#a6977f" }}>
-                          {product.name}
-                        </td>
-                        <td style={{ color: "#c7b998" }}>{product.category}</td>
+                        <td>{product.name}</td>
+                        <td>{product.category}</td>
+                        <td>${product.price}</td>
+                        <td>{product.stock}</td>
                         <td>
-                          <span style={{ color: "#c7b998" }}>
-                            ${product.price}
-                          </span>
-                        </td>
-                        <td style={{ color: "#c7b998" }}>{product.stock}</td>
-                        <td>
-                          <Button
-                            variant="outline-warning"
-                            size="sm"
-                            style={{
-                              minWidth: 56,
-                              marginRight: 7,
-                              fontWeight: 600,
-                            }}
-                            onClick={() => openModal(product)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            style={{ minWidth: 56, fontWeight: 600 }}
-                            onClick={() => handleDelete(product.id)}
-                          >
-                            Delete
-                          </Button>
+                          <Dropdown align="end">
+                            <Dropdown.Toggle
+                              variant="light"
+                              id={`dropdown-${product.id}`}
+                              size="sm"
+                            >
+                              <i className="bi bi-three-dots-vertical"></i>
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item onClick={() => openModal(product)}>
+                                Edit
+                              </Dropdown.Item>
+                              <Dropdown.Item
+                                onClick={() => handleDelete(product.id)}
+                              >
+                                Delete
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
                         </td>
                       </tr>
                     ))
@@ -384,50 +372,31 @@ const Products: React.FC = () => {
                 </tbody>
               </Table>
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                paddingTop: 20,
-                backgroundColor: "#f7f2e8",
-                borderRadius: 13,
-                boxShadow: "0 4px 20px #dbc9a542",
-                margin: "20px auto 0 auto",
-                maxWidth: "fit-content",
-              }}
-            >
-              <Pagination size="sm" className="mb-0">
+            <div className="d-flex justify-content-center mt-3">
+              <Pagination>
                 <Pagination.Prev
-                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                   disabled={currentPage === 1}
-                  style={paginationItemStyle(false, currentPage === 1)}
+                  onClick={() => setCurrentPage(currentPage - 1)}
                 />
                 {Array.from({ length: totalPages }, (_, i) => (
                   <Pagination.Item
                     key={i + 1}
                     active={currentPage === i + 1}
                     onClick={() => setCurrentPage(i + 1)}
-                    style={paginationItemStyle(currentPage === i + 1)}
                   >
                     {i + 1}
                   </Pagination.Item>
                 ))}
                 <Pagination.Next
-                  onClick={() =>
-                    setCurrentPage((p) => Math.min(p + 1, totalPages))
-                  }
-                  disabled={currentPage === totalPages || totalPages === 0}
-                  style={paginationItemStyle(
-                    false,
-                    currentPage === totalPages || totalPages === 0
-                  )}
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
                 />
               </Pagination>
             </div>
           </>
         )}
 
-        {/* Add/Edit Product Modal */}
+        {/* Add/Edit Modal */}
         <Modal show={modalOpen} onHide={() => setModalOpen(false)} centered>
           <Modal.Header closeButton>
             <Modal.Title>
@@ -436,60 +405,26 @@ const Products: React.FC = () => {
           </Modal.Header>
           <Modal.Body>
             <Form>
-              <Form.Group className="mb-3">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="name"
-                  value={formValues.name}
-                  onChange={handleChange}
-                  placeholder="Enter product name"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Price ($)</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="price"
-                  value={formValues.price}
-                  onChange={handleChange}
-                  placeholder="Enter price"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Category</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="category"
-                  value={formValues.category}
-                  onChange={handleChange}
-                  placeholder="Enter category"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Stock</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="stock"
-                  value={formValues.stock}
-                  onChange={handleChange}
-                  placeholder="Enter stock quantity"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Image URL</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="imageUrl"
-                  value={formValues.imageUrl}
-                  onChange={handleChange}
-                  placeholder="Enter image URL"
-                />
-              </Form.Group>
+              {["name", "price", "category", "stock", "imageUrl"].map(
+                (field) => (
+                  <Form.Group key={field} className="mb-3">
+                    <Form.Label>
+                      {field.charAt(0).toUpperCase() + field.slice(1)}
+                    </Form.Label>
+                    <Form.Control
+                      type={
+                        field === "price" || field === "stock"
+                          ? "number"
+                          : "text"
+                      }
+                      name={field}
+                      placeholder={`Enter ${field}`}
+                      value={(formValues as any)[field]}
+                      onChange={handleChange}
+                    />
+                  </Form.Group>
+                )
+              )}
             </Form>
           </Modal.Body>
           <Modal.Footer>
