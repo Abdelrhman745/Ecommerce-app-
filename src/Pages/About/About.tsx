@@ -4,6 +4,7 @@ import "./about.css"
 import TextSec from '../../components/TextSection/TextSection'
 import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import {motion} from "framer-motion"
 export default function About() {
     const navigate =useNavigate();
   return (
@@ -15,10 +16,23 @@ export default function About() {
 
     </Helmet>
 <Container fluid className="p-0 mt-4">
-            <Row>
+            <motion.div
+  className="row align-items-center"
+  initial={{ opacity: 0, y: 80 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, ease: "easeOut" }}
+  viewport={{ once: true, amount: 0.3 }} 
+>
             <Col md={6} className="text-center p-0">
-            <img src={"https://i.pinimg.com/1200x/7b/8a/b8/7b8ab88c0bd32c6eb6452b5cea140c0e.jpg"} width={"500px"} height={"550px"} />
-            </Col>
+<motion.img
+              src="https://i.pinimg.com/1200x/7b/8a/b8/7b8ab88c0bd32c6eb6452b5cea140c0e.jpg"
+              width="450px"
+              height="450px"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 }}
+              viewport={{ once: true }}
+            />            </Col>
             <Col md={6} className='m-auto'>
             <h3>Our Story</h3>
             <p className="text-muted">Our line features meticulous skin, hair, and body care <br /> formulations, crafted with both 
@@ -30,10 +44,23 @@ export default function About() {
                  At our distinctive stores, knowledgeable <br /> consultants are eager to introduce you to the 
                  Aesop range and <br /> assist with your choices.</p>
             </Col>
-        </Row>
-         <Row className="flex-row-reverse my-5">
-            <Col md={6}  className="p-0">
-            <img src="https://i.pinimg.com/1200x/b4/3a/00/b43a004b97d785cfb87112df7278772b.jpg" width={"500px"} height={"500px"} />
+        </motion.div>
+<motion.div
+          className="flex-row-reverse my-5 row"
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true, amount: 0.3 }}
+        >            <Col md={6}  className="p-0">
+            <motion.img
+              src="https://i.pinimg.com/1200x/b4/3a/00/b43a004b97d785cfb87112df7278772b.jpg"
+              width="450px"
+              height="450px"
+              initial={{ scale: 0.9, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1 }}
+              viewport={{ once: true }}
+            />
             </Col>
             <Col md={6} className="text-center m-auto">
             <h3>Countless solutions have been <br />discovered in nature.
@@ -42,13 +69,16 @@ We simply <br /> need to observe and tap into its <br /> inherent brilliance.</h
 
         
             </Col>
-        </Row>
-        {/* <Row >
-          <img src={"https://www.tru-skin.com/getmedia/f997351b-2ea2-46ec-a570-62af1be71c89/Facial-Cleasner-Hero.jpg?width=720&height=400&ext=.jpg"} 
-          height={"400px"}
-          />
-        </Row> */}
-        <TextSec/>
+        </motion.div>
+     
+ <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <TextSec />
+        </motion.div>
 <Row className="g-0 mb-0 justify-content-evenly last-section">
   <Col md={4} className="about-image left-image d-flex align-items-center p-0 m-0">
     <div className="overlay-content">
