@@ -18,6 +18,7 @@ import styled, { keyframes } from "styled-components";
 import ChartsAndReports from "./Dashboard/Main/ChartsAndReports";
 import Orders from "./Dashboard/Orders/Orders";
 import Products from "./Dashboard/Products/Products";
+import AdminMessages from "./Dashboard/Contact/AdminMessages";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -189,6 +190,7 @@ const router = createBrowserRouter([
       { path: "orders", element: <Orders /> },
       { path: "dashboard/products", element: <Products /> },
       { path: "dashboard/charts", element: <ChartsAndReports /> },
+      { path: "dashboard/AdminMessages", element: <AdminMessages/> },
 
     ],
   },

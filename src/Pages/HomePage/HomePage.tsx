@@ -10,7 +10,7 @@ import CarouselSection from "../../components/CarouselSection/CarouselSection";
 import ProductBlockSection from "../../components/ProductBlockSection/ProductBlockSection";
 import SupremeSkinFortification from "../../components/productComponents/SupremeSkinFortification";
 import {Helmet} from "react-helmet-async";
-
+import ContactUs from "../../components/ContactUs/ContactUs";
 export default function HomePage() {
   const token = useSelector((state: RootState) => state.auth.token);
 
@@ -29,6 +29,7 @@ export default function HomePage() {
       <SupremeSkinFortification />
       <TextSec />
       <Gallery />
+      <ContactUs/>
     </>
   );
 }
