@@ -11,6 +11,7 @@ import { RootState } from "../../../Redux/Store";
 import toast, { Toaster } from "react-hot-toast";
 import { addToCart } from "../../../Redux/CartSlice";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 interface Props {
   setProduct: (product: Product | null) => void;
@@ -32,6 +33,7 @@ export default function ProductDetailsSection({ setProduct }: Props) {
   const favorites = useSelector((state: RootState) => state.favorites.items);
   const isFavorite = favorites.some((item) => item.id === data?.id);
   const cartItems = useSelector((state: RootState) => state.cart.items);
+  const user = useSelector((state: RootState) => state.auth.token);
 
   if (isLoading)
     return (
@@ -52,7 +54,15 @@ export default function ProductDetailsSection({ setProduct }: Props) {
 
   const handleFavoriteClick = () => {
     if (!data) return;
-
+    if (user ==="admin") {
+    Swal.fire({
+      title: "Access Denied",
+      text: "Admin accounts are not allowed to create orders from the shop interface.",
+      icon: "info",
+      confirmButtonText: "OK",
+      });
+      return;
+    }
     if (isFavorite) {
       dispatch(removeFromFavorite(data.id));
       toast.error("Removed from favorites 💔");
@@ -71,6 +81,15 @@ export default function ProductDetailsSection({ setProduct }: Props) {
 
   const addProductToCart = () => {
     if (!data) return;
+     if (user ==="admin") {
+    Swal.fire({
+      title: "Access Denied",
+      text: "Admin accounts are not allowed to create orders from the shop interface.",
+      icon: "info",
+      confirmButtonText: "OK",
+      });
+      return;
+    }
     const isInCart = cartItems.some((item) => item.id === data.id);
     if (isInCart) {
       toast.error(`${data.name} is already in your cart`, {

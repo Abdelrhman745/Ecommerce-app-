@@ -312,7 +312,7 @@ const Products: React.FC = () => {
                   boxShadow: "0 2px 12px #f0e9db8a",
                 }}
               >
-                <thead style={{ background: "#f7f2e8" }}>
+                <thead>
                   <tr>
                     <th style={{ color: "#d4c6ad", fontWeight: 700 }}>#</th>
                     <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Image</th>

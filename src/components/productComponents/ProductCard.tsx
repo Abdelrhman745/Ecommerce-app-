@@ -31,6 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   // };
 const user = useSelector((state:RootState) => state.auth.token);
 
+
   const handleCardClick = () => {
     if(!user){
       Swal.fire({
@@ -46,7 +47,7 @@ const user = useSelector((state:RootState) => state.auth.token);
                   navigate("/login");
         }
       })
-    }else{
+    } else{
   navigate(`/products/${product.id}`);
 
     }
@@ -70,7 +71,15 @@ const user = useSelector((state:RootState) => state.auth.token);
       }
     });
     return; 
-  }
+  }else if (user ==="admin") {
+    Swal.fire({
+      title: "Access Denied",
+      text: "Admin accounts are not allowed to create orders from the shop interface.",
+      icon: "info",
+      confirmButtonText: "OK",
+      });
+      return;
+    }
 
   if (isFavorite) {
     dispatch(removeFromFavorite(product.id));
@@ -106,7 +115,15 @@ const addProductToCart = (e: React.MouseEvent) => {
       }
     });
     return; 
-  }
+  }else if (user ==="admin") {
+    Swal.fire({
+      title: "Access Denied",
+      text: "Admin accounts are not allowed to create orders from the shop interface.",
+      icon: "info",
+      confirmButtonText: "OK",
+      });
+      return;
+    }
 
   const isInCart = cartItems.some((item) => item.id === product.id);
   if (isInCart) {
@@ -143,7 +160,7 @@ const addProductToCart = (e: React.MouseEvent) => {
         className={`product-card hover-card ${isMasque ? 'masque-card' : ''}`}
         style={{
           width: '331.75px',
-          height: '586px',
+          height: '500px',
           margin: 0,
           padding: 0,
           border: 'none',
@@ -248,6 +265,7 @@ const addProductToCart = (e: React.MouseEvent) => {
             className="product-price-section"
             style={{
               marginTop: '24px',
+              marginBottom:"10px",
               height: 'auto',
               width: '100%',
               display: 'flex',

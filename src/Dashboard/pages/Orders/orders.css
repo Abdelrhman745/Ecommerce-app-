@@ -2,6 +2,10 @@
   background-color: #483B32 !important;
   color: #fff !important;
 }
+.table tbody tr td{
+   font-weight: 600 !important;
+    color: #a6977f !important
+}
 .notification-bell {
   position: relative;
   display: inline-block;

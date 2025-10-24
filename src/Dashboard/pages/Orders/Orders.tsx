@@ -125,8 +125,8 @@ export default function Orders() {
   return (
         <Card className=" shadow-sm mt-0" style={{ backgroundColor: "#ffffff", borderRadius: "12px"}}>
     <div className=" py-4">
-      <h2 className="text-center mb-4 dashboard-title" style={{color:'#483B32'}}>
-        Orders
+      <h2 className="text-center mb-4 dashboard-title" style={{  color: '#a39173'}}>
+        Orders Management
       </h2>
 
       <Row className="filter-row justify-content-center mb-4">
@@ -183,7 +183,7 @@ export default function Orders() {
             </tr>
           </thead>
 
-          <tbody>
+                <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
             {paginatedOrders.map((order) => (
               <tr key={order.id}>
                 <td>{order.id}</td>

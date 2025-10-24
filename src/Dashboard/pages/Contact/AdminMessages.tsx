@@ -62,11 +62,11 @@ const AdminMessages: React.FC = () => {
       case "Pending":
         return "warning";
       case "In Progress":
-        return "info";
+        return "primary";
       case "Resolved":
         return "success";
       default:
-        return "secondary";
+        return "danger";
     }
   };
 
@@ -74,7 +74,9 @@ const AdminMessages: React.FC = () => {
         <Card className=" shadow-sm container mt-3" style={{ backgroundColor: "#ffffff", borderRadius: "12px"}}>
     
     <div className="container py-4">
-      <h2 className="text-center mb-4 fw-bold text-dark">Messages Management</h2>
+      <h2 className="text-center mb-4 fw-bold" style={{
+        color:'#a39173'
+      }}>Messages Management</h2>
 
       {loading ? (
         <div className="text-center">
@@ -112,7 +114,10 @@ const AdminMessages: React.FC = () => {
                 </td>
                 <td>
                   <Button
-                    variant="dark"
+                  style={{
+                    backgroundColor:'#a39173',
+                    border:"0px"
+                  }}
                     size="sm"
                     onClick={() => {
                       setSelectedMsg(msg);

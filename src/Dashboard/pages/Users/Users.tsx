@@ -205,7 +205,7 @@ const Users: React.FC = () => {
   return (
     <Card className="shadow-sm container mt-3" style={{ borderRadius: "12px" }}>
       <Container className="py-4">
-        <h2 className="text-center mb-4" style={{ color: "#483B32" }}>
+        <h2 className="text-center mb-4" style={{ color: "#a39173" }}>
           Users Management
         </h2>
 
@@ -240,7 +240,7 @@ const Users: React.FC = () => {
           </div>
         ) : (
           <div className="overflow-auto">
-            <Table striped bordered hover responsive className="text-center align-middle table-sm">
+            <Table  bordered hover responsive className="text-center align-middle table-sm">
               <thead className="table-dark">
                 <tr>
                   <th>#</th>
