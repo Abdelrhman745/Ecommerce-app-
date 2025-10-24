@@ -273,10 +273,13 @@ const calculateCategorySales = (orders: Order[], startDateStr: string, endDateSt
 };
 
 
+/**
+ * دالة حساب المخزون الحالي (تم تعديلها لتعرض فقط المنتجات الموجودة في API المنتجات)
+ */
 const calculateCurrentStock = (products: ProductDetails[], orders: Order[]): StockSummary[] => {
     const productStockMap: Record<string, { initialStock: number, totalSold: number }> = {};
 
-    // 1. تجميع المخزون الأولي
+    // 1. تجميع المخزون الأولي - فقط المنتجات الموجودة حاليًا في API المنتجات
     products.forEach(p => {
         if (p.name) {
             productStockMap[p.name] = { initialStock: p.stock || 0, totalSold: 0 };
@@ -290,10 +293,10 @@ const calculateCurrentStock = (products: ProductDetails[], orders: Order[]): Sto
                 const productName = item.name;
                 const quantity = item.quantity || 0;
 
-                if (productStockMap[productName]) {
+                // 💡 التعديل هنا: نجمع إجمالي المباع فقط للمنتجات
+                // التي تم إضافتها بالفعل إلى الخريطة في الخطوة 1 (المنتجات النشطة).
+                if (productStockMap[productName]) { 
                     productStockMap[productName].totalSold += quantity;
-                } else {
-                    productStockMap[productName] = { initialStock: 0, totalSold: quantity };
                 }
             });
         });
@@ -309,7 +312,12 @@ const calculateCurrentStock = (products: ProductDetails[], orders: Order[]): Sto
                 'CURRENT STOCK': stats.initialStock - stats.totalSold,
             };
         })
-        .sort((a, b) => a['PRODUCT NAME'].localeCompare(b['PRODUCT NAME']));
+       .sort((a, b) => {
+    const indexA = products.findIndex(p => p.name === a['PRODUCT NAME']);
+    const indexB = products.findIndex(p => p.name === b['PRODUCT NAME']);
+    return indexA - indexB;
+});
+
 };
 
 /**
@@ -450,14 +458,21 @@ const ReportsPage: React.FC = () => {
             setLoading(false);
         }
     }
-
- useEffect(() => {
-    fetchOrders().then(() => {
-        // ✅ أول ما تتحمل الطلبات أول مرة، خلي الحالة تعرض الكل
+useEffect(() => {
+    // 🔁 كل ما يتم حذف منتج من API، أو بعد فترة، نعيد تحميل المنتجات والتقارير
+    const refreshReports = async () => {
+        await fetchOrders();
         setAppliedStartDate("");
         setAppliedEndDate("");
-    });
+    };
+
+    refreshReports();
+
+    // إعادة التحديث كل دقيقة مثلاً لضمان مزامنة المخزن مع الـ API
+    const interval = setInterval(refreshReports, 60000);
+    return () => clearInterval(interval);
 }, []);
+
 
 
     // حساب التقارير: تعتمد على المتغيرات المطبقة فقط
