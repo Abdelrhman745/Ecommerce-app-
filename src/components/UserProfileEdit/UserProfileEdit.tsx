@@ -5,7 +5,8 @@ import * as Yup from "yup";
 import { Helmet } from "react-helmet-async";
 import toast from "react-hot-toast";
 import UserMessages from "../UserMessages/UserMessages";
-
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../Redux/userSlice";
 const Container = styled.section`
   min-height: 100vh;
 background: linear-gradient(
@@ -259,6 +260,7 @@ const UserProfile: React.FC = () => {
   });
   const [originalData, setOriginalData] = useState({ name: "", email: "" });
   const [error, setError] = useState("");
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [requirePassword, setRequirePassword] = useState(false);
@@ -363,6 +365,21 @@ const UserProfile: React.FC = () => {
         }
       );
       toast.success("✅ Profile updated successfully!");
+      dispatch(
+        updateUser({
+          name: data.name,
+          email: data.email,
+          image: data.image,
+        })
+      );
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          name: data.name,
+          email: data.email,
+          image: data.image,
+        })
+      );
       setIsChangingPassword(false);
       setMode("menu");
     } catch {
@@ -388,112 +405,46 @@ const UserProfile: React.FC = () => {
 
               {orders.length > 0 ? (
                 <>
-                  <div style={{ overflowX: "auto" }}>
-                    <table
-                      style={{
-                        width: "100%",
-                        borderCollapse: "collapse",
-                        marginTop: "15px",
-                        background: "#fff",
-                        borderRadius: "10px",
-                        boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-                      }}
-                    >
-                      <thead>
-                        <tr
-                          style={{
-                            backgroundColor: "#726255",
-                            color: "#fff",
-                            textAlign: "left",
-                          }}
-                        >
-                          <th style={{ padding: "12px 15px" }}>#</th>
-                          <th style={{ padding: "12px 15px" }}>Order ID</th>
-                          <th style={{ padding: "12px 15px" }}>Items</th>
-                          <th style={{ padding: "12px 15px" }}>Total</th>
-                          <th style={{ padding: "12px 15px" }}>Status</th>
-                          <th style={{ padding: "12px 15px" }}>Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {orders
-                          .slice(
-                            (currentPage - 1) * itemsPerPage,
-                            currentPage * itemsPerPage
-                          )
-                          .map((order, index) => (
-                            <tr
-                              key={order.id}
-                              style={{
-                                borderBottom: "1px solid #eee",
-                                transition: "background 0.2s",
-                              }}
-                              onMouseEnter={(e) =>
-                                (e.currentTarget.style.background = "#f9f9f9")
-                              }
-                              onMouseLeave={(e) =>
-                                (e.currentTarget.style.background =
-                                  "transparent")
-                              }
-                            >
-                              <td style={{ padding: "12px 15px" }}>
-                                {(currentPage - 1) * itemsPerPage + index + 1}
-                              </td>
-                              <td
-                                style={{
-                                  padding: "12px 15px",
-                                  color: "#483B32",
-                                  fontWeight: 600,
-                                }}
-                              >
-                                {order.id}
-                              </td>
-                              <td style={{ padding: "12px 15px" }}>
-                                {order.items
-                                  .map((item: any) =>
-                                    item.name.split(" ").slice(0, 2).join(" ")
-                                  )
-                                  .join(", ")}
-                              </td>
-                              <td
-                                style={{
-                                  padding: "12px 15px",
-                                  color: "#7c6f63",
-                                }}
-                              >
-                                ${order.total}
-                              </td>
-                              <td style={{ textAlign: "center" }}>
-                                <span
-                                  style={{
-                                    fontWeight: 500,
-                                    color: "#fff",
-                                    borderRadius: "6px",
-                                    padding: "4px 10px",
-                                    backgroundColor:
-                                      order.status === "completed"
-                                        ? "green"
-                                        : order.status === "pending"
-                                        ? "#ffc107"
-                                        : "red",
-                                    display: "inline-block",
-                                    textTransform: "capitalize",
-                                  }}
-                                >
-                                  {order.status}
-                                </span>
-                              </td>
+                  {orders
+                    .slice(
+                      (currentPage - 1) * itemsPerPage,
+                      currentPage * itemsPerPage
+                    )
+                    .map((order) => (
+                      <div
+                        key={order.id}
+                        style={{
+                          background: "#f8f9fc",
+                          borderRadius: "10px",
+                          padding: "15px",
+                          marginBottom: "15px",
+                          boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                        }}
+                      >
+                        <p>
+                          <strong>Order ID:</strong> {order.id}
+                        </p>
+                        <p>
+                          <strong>Order Name:</strong>{" "}
+                          {order.items
+                            .map((item: any) =>
+                              item.name.split(" ").slice(0, 2).join(" ")
+                            )
+                            .join(", ")}
+                        </p>
 
-                              <td
-                                style={{ padding: "12px 15px", color: "#555" }}
-                              >
-                                {new Date(order.date).toLocaleDateString()}
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        <p>
+                          <strong>Total:</strong> ${order.total}
+                        </p>
+                        <p>
+                          <strong>Status:</strong> {order.status}
+                        </p>
+                        <p>
+                          <strong>Date:</strong>{" "}
+                          {new Date(order.date).toLocaleString()}
+                        </p>
+                      </div>
+                    ))}
 
                   <div
                     style={{

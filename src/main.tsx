@@ -18,11 +18,12 @@ import styled, { keyframes } from "styled-components";
 import ChartsAndReports from "./Dashboard/pages/Main/ChartsAndReports";
 import Orders from "./Dashboard/pages/Orders/Orders";
 import Products from "./Dashboard/pages/Products/Products";
-import DashboardLayout from "./Dashboard/DashBoardLayout/DashBoardLayout";
-import AdminMessages from "./Dashboard/pages/Contact/AdminMessages";
+import AdminMessages from "./Dashboard/Contact/AdminMessages";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import ReportsPage from "./Dashboard/pages/Reports/ReportsPage";
-import NotFound from "./Pages/NotFound/NotFound";
+import DashboardLayout from "./Dashboard/DashBoardLayout/DashBoardLayout";
+import AdminRoute from "./components/Protectedroute/AdminRoute";
+
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -74,20 +75,17 @@ const LoadingFallback: React.FC<{ message?: string }> = ({ message }) => (
 );
 
 const router = createBrowserRouter([
-
   {
     path: "/",
     element: (
-      <Suspense fallback={<LoadingScreen/>}>
+      <Suspense fallback={<LoadingScreen />}>
         <Layout />
       </Suspense>
     ),
     children: [
       {
         index: true,
-        element: (
-            <HomePage />
-        ),
+        element: <HomePage />,
       },
       {
         path: "about",
@@ -122,9 +120,8 @@ const router = createBrowserRouter([
             fallback={<LoadingFallback message="Loading product details..." />}
           >
             <ProtectedRoute>
-            <ProductDetailsPage />
+              <ProductDetailsPage />
             </ProtectedRoute>
-
           </Suspense>
         ),
       },
@@ -192,29 +189,28 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-            { path: "*", element: <NotFound /> },
-
-  
-       
-  
-
+      { path: "user", element: <Users /> },
+      { path: "orders", element: <Orders /> },
+      { path: "dashboard/products", element: <Products /> },
+      { path: "dashboard/charts", element: <ChartsAndReports /> },
+      { path: "dashboard/AdminMessages", element: <AdminMessages /> },
     ],
   },
 
   {
     path: "/dashboard",
     element: (
-       <ProtectedRoute >
-      <DashboardLayout />
-    </ProtectedRoute>
+      <AdminRoute>
+        <DashboardLayout />
+      </AdminRoute>
     ),
     children: [
       { index: true, element: <ChartsAndReports /> },
       { path: "products", element: <Products /> },
       { path: "orders", element: <Orders /> },
       { path: "user", element: <Users /> },
-      { path: "contact", element: <AdminMessages/> },
-      { path: "reports", element: <ReportsPage/> },
+      { path: "contact", element: <AdminMessages /> },
+      { path: "reports", element: <ReportsPage /> },
     ],
   },
 ]);

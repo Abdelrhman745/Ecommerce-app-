@@ -21,7 +21,7 @@ const ContactUs: React.FC = () => {
     e.preventDefault();
     setLoading(true);
 
-
+    // ✅ Validation
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill out all fields.");
       setLoading(false);
@@ -145,7 +145,7 @@ const ContactUs: React.FC = () => {
   );
 };
 
-
+// ====== Styles ======
 const labelStyle: React.CSSProperties = {
   display: "block",
   marginBottom: "0.5rem",
