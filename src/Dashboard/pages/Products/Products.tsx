@@ -10,7 +10,6 @@ import {
   Col,
   InputGroup,
   Pagination,
-  Dropdown,
 } from "react-bootstrap";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -91,6 +90,94 @@ const SearchBar = styled(InputGroup)`
   }
 `;
 
+const StyledModal = styled(Modal)`
+  .modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(163, 145, 115, 0.25);
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #e8dfd1;
+    padding: 1.5rem 1.75rem;
+    background: linear-gradient(to bottom, #faf8f5, #ffffff);
+    border-radius: 16px 16px 0 0;
+
+    .modal-title {
+      color: #7c6f63;
+      font-weight: 700;
+      font-size: 1.35rem;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-close {
+      opacity: 0.6;
+      transition: opacity 0.2s ease;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 1.75rem;
+  }
+
+  .modal-footer {
+    border-top: 1px solid #e8dfd1;
+    padding: 1.25rem 1.75rem;
+    background: #faf8f5;
+    border-radius: 0 0 16px 16px;
+  }
+`;
+
+const ActionButton = styled(Button)`
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  font-weight: 600;
+  font-size: 1.05rem;
+  border: none;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const StyledFormLabel = styled(Form.Label)`
+  color: #6a573e;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+`;
+
+const StyledFormControl = styled(Form.Control)`
+  border: 1.5px solid #e2dccd;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: #5c5343;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: #d6cfc1;
+    box-shadow: 0 0 0 3px rgba(214, 207, 193, 0.25);
+  }
+
+  &::placeholder {
+    color: #b2a68b;
+  }
+`;
+
 function paginationItemStyle(active: boolean, disabled?: boolean) {
   if (disabled) {
     return {
@@ -103,7 +190,7 @@ function paginationItemStyle(active: boolean, disabled?: boolean) {
       fontWeight: 600,
       boxShadow: "none",
       cursor: "not-allowed",
-      pointerEvents: "none",
+      pointerEvents: "none" as const,
     };
   }
   return {
@@ -136,6 +223,11 @@ const Products: React.FC = () => {
   });
   const [saving, setSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Actions modal state
+  const [showActionsModal, setShowActionsModal] = useState(false);
+  const [selectedProductForActions, setSelectedProductForActions] =
+    useState<Product | null>(null);
 
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
@@ -315,20 +407,26 @@ const Products: React.FC = () => {
               >
                 <thead style={{ background: "#f7f2e8" }}>
                   <tr>
-                    <th>#</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Price ($)</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>#</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Image</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Name</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>
+                      Category
+                    </th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>
+                      Price ($)
+                    </th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>Stock</th>
+                    <th style={{ color: "#d4c6ad", fontWeight: 700 }}>
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
                   {paginatedProducts.length > 0 ? (
                     paginatedProducts.map((product, index) => (
                       <tr key={product.id}>
-                        <td style={{ fontWeight: 600 }}>
+                        <td style={{ fontWeight: 600, color: "#cdbf9c" }}>
                           {(currentPage - 1) * itemsPerPage + index + 1}
                         </td>
                         <td>
@@ -337,30 +435,35 @@ const Products: React.FC = () => {
                             alt={product.name}
                           />
                         </td>
-                        <td>{product.name}</td>
-                        <td>{product.category}</td>
-                        <td>${product.price}</td>
-                        <td>{product.stock}</td>
+                        <td style={{ fontWeight: 500, color: "#a6977f" }}>
+                          {product.name}
+                        </td>
+                        <td style={{ color: "#c7b998" }}>{product.category}</td>
                         <td>
-                          <Dropdown align="end">
-                            <Dropdown.Toggle
-                              variant="light"
-                              id={`dropdown-${product.id}`}
-                              size="sm"
-                            >
-                              <i className="bi bi-three-dots-vertical"></i>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                              <Dropdown.Item onClick={() => openModal(product)}>
-                                Edit
-                              </Dropdown.Item>
-                              <Dropdown.Item
-                                onClick={() => handleDelete(product.id)}
-                              >
-                                Delete
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
+                          <span style={{ color: "#c7b998" }}>
+                            ${product.price}
+                          </span>
+                        </td>
+                        <td style={{ color: "#c7b998" }}>{product.stock}</td>
+                        <td>
+                          <Button
+                            variant="light"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedProductForActions(product);
+                              setShowActionsModal(true);
+                            }}
+                            style={{
+                              border: "none",
+                              background: "transparent",
+                              padding: "0.25rem 0.5rem",
+                            }}
+                          >
+                            <i
+                              className="bi bi-three-dots-vertical fs-5"
+                              style={{ color: "#a39173" }}
+                            ></i>
+                          </Button>
                         </td>
                       </tr>
                     ))
@@ -372,32 +475,90 @@ const Products: React.FC = () => {
                 </tbody>
               </Table>
             </div>
-            <div className="d-flex justify-content-center mt-3">
-              <Pagination>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                paddingTop: 20,
+                backgroundColor: "#f7f2e8",
+                borderRadius: 13,
+                boxShadow: "0 4px 20px #dbc9a542",
+                margin: "20px auto 0 auto",
+                maxWidth: "fit-content",
+              }}
+            >
+              <Pagination size="sm" className="mb-0">
                 <Pagination.Prev
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                   disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(currentPage - 1)}
+                  style={paginationItemStyle(false, currentPage === 1)}
                 />
                 {Array.from({ length: totalPages }, (_, i) => (
                   <Pagination.Item
                     key={i + 1}
                     active={currentPage === i + 1}
                     onClick={() => setCurrentPage(i + 1)}
+                    style={paginationItemStyle(currentPage === i + 1)}
                   >
                     {i + 1}
                   </Pagination.Item>
                 ))}
                 <Pagination.Next
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(currentPage + 1)}
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(p + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  style={paginationItemStyle(
+                    false,
+                    currentPage === totalPages || totalPages === 0
+                  )}
                 />
               </Pagination>
             </div>
           </>
         )}
 
-        {/* Add/Edit Modal */}
-        <Modal show={modalOpen} onHide={() => setModalOpen(false)} centered>
+        {/* Actions Modal - Professional Styled */}
+        <StyledModal
+          show={showActionsModal}
+          onHide={() => setShowActionsModal(false)}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Actions</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="d-flex flex-column gap-3">
+              <ActionButton
+                variant="primary"
+                onClick={() => {
+                  if (selectedProductForActions)
+                    openModal(selectedProductForActions);
+                  setShowActionsModal(false);
+                }}
+              >
+                Edit
+              </ActionButton>
+              <ActionButton
+                variant="danger"
+                onClick={() => {
+                  if (selectedProductForActions)
+                    handleDelete(selectedProductForActions.id);
+                  setShowActionsModal(false);
+                }}
+              >
+                Delete
+              </ActionButton>
+            </div>
+          </Modal.Body>
+        </StyledModal>
+
+        {/* Add/Edit Product Modal - Professional Styled */}
+        <StyledModal
+          show={modalOpen}
+          onHide={() => setModalOpen(false)}
+          centered
+        >
           <Modal.Header closeButton>
             <Modal.Title>
               {selectedProduct ? "Edit Product" : "Add Product"}
@@ -405,30 +566,36 @@ const Products: React.FC = () => {
           </Modal.Header>
           <Modal.Body>
             <Form>
-              {["name", "price", "category", "stock", "imageUrl"].map(
-                (field) => (
-                  <Form.Group key={field} className="mb-3">
-                    <Form.Label>
-                      {field.charAt(0).toUpperCase() + field.slice(1)}
-                    </Form.Label>
-                    <Form.Control
-                      type={
-                        field === "price" || field === "stock"
-                          ? "number"
-                          : "text"
-                      }
-                      name={field}
-                      placeholder={`Enter ${field}`}
-                      value={(formValues as any)[field]}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
-                )
-              )}
+              {(
+                ["name", "price", "category", "stock", "imageUrl"] as const
+              ).map((field) => (
+                <Form.Group key={field} className="mb-3">
+                  <StyledFormLabel>
+                    {field.charAt(0).toUpperCase() + field.slice(1)}
+                  </StyledFormLabel>
+                  <StyledFormControl
+                    type={
+                      field === "price" || field === "stock" ? "number" : "text"
+                    }
+                    name={field}
+                    placeholder={`Enter ${field}`}
+                    value={formValues[field]}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              ))}
             </Form>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setModalOpen(false)}>
+            <Button
+              variant="secondary"
+              onClick={() => setModalOpen(false)}
+              style={{
+                borderRadius: "8px",
+                padding: "0.6rem 1.5rem",
+                fontWeight: 600,
+              }}
+            >
               Cancel
             </Button>
             <Button
@@ -440,6 +607,8 @@ const Products: React.FC = () => {
                 color: "#564d3b",
                 border: "none",
                 fontWeight: 600,
+                borderRadius: "8px",
+                padding: "0.6rem 1.5rem",
               }}
             >
               {saving ? (
@@ -453,7 +622,7 @@ const Products: React.FC = () => {
               )}
             </Button>
           </Modal.Footer>
-        </Modal>
+        </StyledModal>
       </Card>
     </div>
   );
