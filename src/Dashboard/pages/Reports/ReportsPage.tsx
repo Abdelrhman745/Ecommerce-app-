@@ -1181,77 +1181,8 @@ const categorySalesData = useMemo(() => {
 
                         <hr className="my-5" />
                         
-                        {/* 4. Order Status Revenue Report Table */}
-                        <>
-                            <h3 className="mt-4 mb-3" style={{ color: "#9d8764", fontWeight: 'bold' }}>
-                                📊 Order Status Revenue Report (Filtered by Date)
-                            </h3>
-                            <Table
-                                bordered
-                                hover
-                                responsive
-                                style={{ background: "#fff9f3", borderRadius: "16px", fontSize: "1.04em" }}
-                            >
-                                <thead style={{ background: "#ebdfd1" }}>
-                                    <tr>
-                                        <th style={{ background: "#7c6f63", color: "#fff", border: '1px solid #6b5c4f' }}>ORDER STATUS</th>
-                                        <th style={{ background: "#a39173", color: "#fff", border: '1px solid #8d7e5b' }}>TOTAL ORDERS</th>
-                                        <th style={{ background: "#88b0a2", color: "#fff", border: '1px solid #7a9c8f' }}>TOTAL REVENUE ($)</th>
-                                    </tr>
-                                </thead>
-                                <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
-                                    {paginatedStatusData.length > 0 ? (
-                                        paginatedStatusData.map((data, index) => (
-                                            <tr key={index}>
-                                                <td style={{ fontWeight: 600, color: "#998068", textAlign: 'left' }}>
-                                                    {data['ORDER STATUS']}
-                                                </td>
-                                                <td style={{ fontWeight: 600, color: "#987549" }}>
-                                                    {data['TOTAL ORDERS']}
-                                                </td>
-                                                <td style={{ fontWeight: 600, color: "#987549" }}>
-                                                    ${data['TOTAL REVENUE ($)'].toFixed(2)}
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan={3} className="text-center">
-                                                No status revenue data found based on the date filters.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </Table>
-                            {/* Pagination for Status Report */}
-                            {statusRevenueData.length > 0 && totalPagesStatus > 1 && (
-                                <Pagination
-                                    className="justify-content-center mt-4"
-                                    style={{ userSelect: "none" }}
-                                    size="sm"
-                                >
-                                    <Pagination.Prev
-                                        onClick={() => setCurrentPageStatus((prev) => Math.max(prev - 1, 1))}
-                                        disabled={currentPageStatus === 1}
-                                    />
-                                    {Array.from({ length: totalPagesStatus }, (_, i) => (
-                                        <Pagination.Item
-                                            key={`status-${i + 1}`}
-                                            active={i + 1 === currentPageStatus}
-                                            onClick={() => setCurrentPageStatus(i + 1)}
-                                        >
-                                            {i + 1}
-                                        </Pagination.Item>
-                                    ))}
-                                    <Pagination.Next
-                                        onClick={() => setCurrentPageStatus((prev) => Math.min(prev + 1, totalPagesStatus))}
-                                        disabled={currentPageStatus === totalPagesStatus || totalPagesStatus === 0}
-                                    />
-                                </Pagination>
-                            )}
-                        </>
+                    
 
-                        <hr className="my-5" />
 
                         {/* 2. Product Sales Report Table */}
                         <>
