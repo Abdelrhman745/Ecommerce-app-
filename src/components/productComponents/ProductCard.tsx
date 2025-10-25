@@ -55,6 +55,7 @@ const user = useSelector((state:RootState) => state.auth.token);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
   e.stopPropagation();
+  
 
   if (!user) {
     Swal.fire({
@@ -100,6 +101,14 @@ const user = useSelector((state:RootState) => state.auth.token);
 const addProductToCart = (e: React.MouseEvent) => {
   e.stopPropagation();
 
+  if (!product || product.stock === 0) {
+    toast.error("Out of Stock!", {
+      duration: 2000,
+      position: "top-center",
+    });
+    return;
+  }
+
   if (!user) {
     Swal.fire({
       title: "Login Required",
@@ -115,15 +124,17 @@ const addProductToCart = (e: React.MouseEvent) => {
       }
     });
     return; 
-  }else if (user ==="admin") {
+  }
+
+  if (user === "admin") {
     Swal.fire({
       title: "Access Denied",
       text: "Admin accounts are not allowed to create orders from the shop interface.",
       icon: "info",
       confirmButtonText: "OK",
-      });
-      return;
-    }
+    });
+    return;
+  }
 
   const isInCart = cartItems.some((item) => item.id === product.id);
   if (isInCart) {
@@ -133,8 +144,6 @@ const addProductToCart = (e: React.MouseEvent) => {
     });
     return;
   }
-
-  if (!product) return;
 
   dispatch(
     addToCart({
@@ -153,9 +162,15 @@ const addProductToCart = (e: React.MouseEvent) => {
 };
 
 
+
+
+
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster  toastOptions={{
+    duration: 2000,
+    style: { fontSize: "0.9rem" }
+  }}reverseOrder={false} />
       <Card
         className={`product-card hover-card ${isMasque ? 'masque-card' : ''}`}
         style={{
