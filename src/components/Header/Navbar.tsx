@@ -62,6 +62,7 @@ const Navbar: React.FC = () => {
     { text: "Shop", to: "/products" },
     { text: "About Us", to: "/about" },
     { text: "Blog", to: "/blog" },
+    { text: "Contact", to: "/contactus" },
   ];
 
   return (
