@@ -55,7 +55,7 @@ export default function Login() {
         formValues.email.toLowerCase() === "admin@admin.com" &&
         formValues.password === "A123123"
       ) {
-        toast.success("✅ Admin login successful!");
+        // toast.success("✅ Admin login successful!");
         localStorage.setItem("userToken", "admin");
         dispatch(login("admin"));
         navigate("/dashboard");
