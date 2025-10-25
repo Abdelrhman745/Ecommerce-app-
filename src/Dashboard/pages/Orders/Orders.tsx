@@ -273,7 +273,6 @@ export default function Orders() {
 <Modal show={showActionsModal} onHide={() => setShowActionsModal(false)} centered>
   <Modal.Header closeButton className="border-0">
     <Modal.Title className="fw-bold text-center w-100" style={{
-      color:"#a6977f"
     }}>
        Order Actions
     </Modal.Title>
@@ -283,27 +282,27 @@ export default function Orders() {
       color:'#a6977f'
     }}>Choose what you’d like to do with this order</p>
     
-    <div className="d-flex justify-content-center align-items-center gap-3 pb-3">
+    <div className="d-flex flex-column justify-content-center align-items-center gap-3 pb-3">
       <Button
         className="action-btn w-75 py-2"
-        variant="outline-primary"
+        variant="primary"
         onClick={() => {
           setShowActionsModal(false);
           handleEditClick(selectedOrder!);
         }}
       >
-        ✏️ Edit Order
+         Edit Order
       </Button>
 
       <Button
         className="action-btn w-75 py-2"
-        variant="outline-danger"
+        variant="danger"
         onClick={() => {
           setShowActionsModal(false);
           handleDeleteOrder(selectedOrder!);
         }}
       >
-        🗑️ Delete Order
+       Delete Order
       </Button>
     </div>
   </Modal.Body>
