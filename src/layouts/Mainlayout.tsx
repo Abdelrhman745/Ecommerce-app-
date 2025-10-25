@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Header/Navbar";
 import Footer from "../components/Footer/Footer";
-
+import JoinCommunity from "../components/Buttonforsignup/joinus";
 
 export default function Layout() {
   return (
@@ -15,6 +15,7 @@ export default function Layout() {
       </main>
 
     <Footer />
+    <JoinCommunity />
     </div>
   );
 }
