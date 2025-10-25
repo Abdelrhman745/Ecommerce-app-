@@ -178,37 +178,6 @@ const StyledFormControl = styled(Form.Control)`
   }
 `;
 
-function paginationItemStyle(active: boolean, disabled?: boolean) {
-  if (disabled) {
-    return {
-      backgroundColor: "#f8f4e9",
-      color: "#cbbfae",
-      border: "1.1px solid #e4dbca",
-      minWidth: 38,
-      height: 44,
-      borderRadius: 9,
-      fontWeight: 600,
-      boxShadow: "none",
-      cursor: "not-allowed",
-      pointerEvents: "none" as const,
-    };
-  }
-  return {
-    backgroundColor: active ? "#d6cfc1" : "#fff",
-    color: active ? "#564d3b" : "#a39173",
-    border: "1.5px solid #e4dbca",
-    minWidth: 38,
-    height: 44,
-    borderRadius: 9,
-    fontWeight: active ? 700 : 500,
-    fontSize: "1.07em",
-    boxShadow: active ? "0 6px 0 0 #ebe4d9" : "none",
-    cursor: "pointer",
-    transition: "background .16s, color .13s, box-shadow .15s",
-    margin: "0 5px",
-  };
-}
-
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -475,30 +444,19 @@ const Products: React.FC = () => {
                 </tbody>
               </Table>
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                paddingTop: 20,
-                backgroundColor: "#f7f2e8",
-                borderRadius: 13,
-                boxShadow: "0 4px 20px #dbc9a542",
-                margin: "20px auto 0 auto",
-                maxWidth: "fit-content",
-              }}
-            >
-              <Pagination size="sm" className="mb-0">
+
+            {/* Standard Bootstrap Pagination - Like Screenshot */}
+            <div className="d-flex justify-content-center mt-4">
+              <Pagination>
                 <Pagination.Prev
                   onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                   disabled={currentPage === 1}
-                  style={paginationItemStyle(false, currentPage === 1)}
                 />
                 {Array.from({ length: totalPages }, (_, i) => (
                   <Pagination.Item
                     key={i + 1}
                     active={currentPage === i + 1}
                     onClick={() => setCurrentPage(i + 1)}
-                    style={paginationItemStyle(currentPage === i + 1)}
                   >
                     {i + 1}
                   </Pagination.Item>
@@ -508,10 +466,6 @@ const Products: React.FC = () => {
                     setCurrentPage((p) => Math.min(p + 1, totalPages))
                   }
                   disabled={currentPage === totalPages || totalPages === 0}
-                  style={paginationItemStyle(
-                    false,
-                    currentPage === totalPages || totalPages === 0
-                  )}
                 />
               </Pagination>
             </div>
