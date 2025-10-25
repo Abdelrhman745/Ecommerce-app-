@@ -23,6 +23,7 @@ import AdminMessages from "./Dashboard/pages/Contact/AdminMessages";
 import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import ReportsPage from "./Dashboard/pages/Reports/ReportsPage";
 import NotFound from "./Pages/NotFound/NotFound";
+import Protectadmin from "./components/Protectedroute/Protectedadmin";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -204,9 +205,9 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-       <ProtectedRoute >
+       <Protectadmin >
       <DashboardLayout />
-    </ProtectedRoute>
+    </Protectadmin>
     ),
     children: [
       { index: true, element: <ChartsAndReports /> },
