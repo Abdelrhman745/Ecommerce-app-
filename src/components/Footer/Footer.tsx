@@ -1,14 +1,15 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-// import {  } from "module";
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-theme-dark text-theme-light pt-5 pb-4">
       <div className="container">
         <div className="row">
+          {/* ===== Left Section ===== */}
           <div className="col-12 col-md-3 mb-4">
             <h4
               className="mb-3 fw-extrabold"
@@ -27,27 +28,19 @@ const Footer: React.FC = () => {
               FOLLOW US
             </p>
             <div className="d-flex gap-3">
-              <a
-                href="#"
-                className="text-theme-light opacity-75 hover-opacity-100"
-              >
+              <a href="#" className="text-theme-light opacity-75 hover-opacity-100">
                 <i className="fab fa-twitter"></i>
               </a>
-              <a
-                href="#"
-                className="text-theme-light opacity-75 hover-opacity-100"
-              >
+              <a href="#" className="text-theme-light opacity-75 hover-opacity-100">
                 <i className="fab fa-instagram"></i>
               </a>
-              <a
-                href="#"
-                className="text-theme-light opacity-75 hover-opacity-100"
-              >
+              <a href="#" className="text-theme-light opacity-75 hover-opacity-100">
                 <i className="fab fa-facebook-f"></i>
               </a>
             </div>
           </div>
 
+          {/* ===== Desktop Sections ===== */}
           <div className="col-md-9 d-none d-md-flex justify-content-between">
             {[
               {
@@ -91,7 +84,17 @@ const Footer: React.FC = () => {
                         (e.currentTarget.style.color = "var(--theme-muted)")
                       }
                     >
-                      {item}
+                      {item === "Contact Us" ? (
+                        <Link
+                          to="/contactus"
+                          className="text-decoration-none"
+                          style={{ color: "inherit" }}
+                        >
+                          {item}
+                        </Link>
+                      ) : (
+                        item
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -99,6 +102,7 @@ const Footer: React.FC = () => {
             ))}
           </div>
 
+          {/* ===== Mobile Accordion ===== */}
           <div className="d-md-none col-12">
             <div className="accordion" id="footerAccordion">
               {[
@@ -152,7 +156,17 @@ const Footer: React.FC = () => {
                       >
                         {section.items.map((item, i) => (
                           <li key={i} className="mb-2">
-                            {item}
+                            {item === "Contact Us" ? (
+                              <Link
+                                to="/contact"
+                                className="text-decoration-none"
+                                style={{ color: "var(--theme-muted)" }}
+                              >
+                                {item}
+                              </Link>
+                            ) : (
+                              item
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -164,8 +178,10 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* ===== Divider ===== */}
         <hr className="border-theme-muted my-4" />
 
+        {/* ===== Bottom Links ===== */}
         <div className="row">
           <div className="col-12 col-md-8 mb-3 mb-md-0">
             <div
