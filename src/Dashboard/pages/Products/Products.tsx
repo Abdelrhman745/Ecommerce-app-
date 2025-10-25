@@ -445,7 +445,6 @@ const Products: React.FC = () => {
               </Table>
             </div>
 
-            {/* Standard Bootstrap Pagination - Like Screenshot */}
             <div className="d-flex justify-content-center mt-4">
               <Pagination>
                 <Pagination.Prev
@@ -472,7 +471,6 @@ const Products: React.FC = () => {
           </>
         )}
 
-        {/* Actions Modal - Professional Styled */}
         <StyledModal
           show={showActionsModal}
           onHide={() => setShowActionsModal(false)}
@@ -507,7 +505,6 @@ const Products: React.FC = () => {
           </Modal.Body>
         </StyledModal>
 
-        {/* Add/Edit Product Modal - Professional Styled */}
         <StyledModal
           show={modalOpen}
           onHide={() => setModalOpen(false)}
