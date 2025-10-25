@@ -73,9 +73,25 @@ interface StatusSummary {
     'TOTAL REVENUE ($)': number;
 }
 
+// 💡 NEW INTERFACE for User Status Report (using actual user count from API)
+interface UserSummary {
+    'USER TYPE': string;
+    'COUNT': number;
+}
+
+// Interface for User data fetched from the separate API
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+}
+
 
 const ORDERS_API = "https://68f278b4b36f9750deecbed2.mockapi.io/data/api/orders";
 const PRODUCTS_API = 'https://68f278b4b36f9750deecbed2.mockapi.io/data/api/products';
+// 💡 NEW API CONSTANT from Users.tsx
+const USERS_API = "https://68e8fa40f2707e6128cd055c.mockapi.io/user";
 
 
 // ----------------------
@@ -215,7 +231,9 @@ const calculateMonthlyIncome = (orders: Order[], startDateStr: string, endDateSt
 
 const calculateProductSales = (orders: Order[], startDateStr: string, endDateStr: string, status: string): ProductSalesSummary[] => {
     // نمرر الحالة 'completed' بشكل صريح لضمان التصفية الصحيحة للمبيعات
-    const filteredOrders = filterOrders(orders, startDateStr, endDateStr, "completed"); 
+const filteredOrders = !startDateStr && !endDateStr
+    ? orders.filter(o => o.status?.toLowerCase() === "completed")
+    : filterOrders(orders, startDateStr, endDateStr, "completed");
     const productSalesMap: { [key: string]: { quantity: number; revenue: number } } = {};
 
     filteredOrders.forEach(order => {
@@ -244,13 +262,18 @@ const calculateProductSales = (orders: Order[], startDateStr: string, endDateStr
 
 
 const calculateCategorySales = (orders: Order[], startDateStr: string, endDateStr: string, status: string): CategorySalesSummary[] => {
-     // نمرر الحالة 'completed' بشكل صريح لضمان التصفية الصحيحة للمبيعات
-    const filteredOrders = filterOrders(orders, startDateStr, endDateStr, "completed");
+    const filteredOrders = !startDateStr && !endDateStr
+        ? orders.filter(o => o.status?.toLowerCase() === "completed")
+        : filterOrders(orders, startDateStr, endDateStr, "completed");
+
     const categorySalesMap: { [key: string]: { quantity: number; revenue: number } } = {};
 
     filteredOrders.forEach(order => {
         order.items.forEach(item => {
-            const categoryName = item.category || 'Unknown Category';
+            // 🧩 تجاهل أي منتج بدون category
+            if (!item.category || item.category.trim() === "") return;
+
+            const categoryName = item.category;
             const quantity = item.quantity || 0;
             const price = item.price || 0;
 
@@ -369,6 +392,23 @@ const calculateStatusRevenue = (orders: Order[], startDateStr: string, endDateSt
         .sort((a, b) => b['TOTAL REVENUE ($)'] - a['TOTAL REVENUE ($)']);
 }
 
+// 🔁 Updated - Calculate actual Active vs Inactive users based on orders
+const calculateUserStatus = (users: User[], orders: Order[]): UserSummary[] => {
+    if (!users || users.length === 0) return [];
+
+    // نجيب IDs للمستخدمين اللي عملوا أوردر واحد على الأقل
+    const usersWithOrders = new Set(orders.map(order => order.userId));
+
+    const activeCount = users.filter(u => usersWithOrders.has(u.id)).length;
+    const inactiveCount = users.length - activeCount;
+
+    return [
+        { 'USER TYPE': 'Active Users', 'COUNT': activeCount },
+        { 'USER TYPE': 'Inactive Users', 'COUNT': inactiveCount },
+    ];
+};
+
+
 
 // ----------------------
 // Main Component
@@ -377,6 +417,7 @@ const calculateStatusRevenue = (orders: Order[], startDateStr: string, endDateSt
 const ReportsPage: React.FC = () => {
     const [allOrders, setAllOrders] = useState<Order[]>([]);
     const [allProducts, setAllProducts] = useState<ProductDetails[]>([]);
+    const [allUsers, setAllUsers] = useState<User[]>([]); // 💡 NEW State for Users
     const [loading, setLoading] = useState(true);
 
     // متغيرات لتخزين قيم حقول الإدخال المؤقتة
@@ -393,6 +434,9 @@ const ReportsPage: React.FC = () => {
     const [currentPageCategories, setCurrentPageCategories] = useState(1);
     const [currentPageStock, setCurrentPageStock] = useState(1);
     const [currentPageStatus, setCurrentPageStatus] = useState(1); 
+    const [currentPageUsers, setCurrentPageUsers] = useState(1); // 💡 NEW Page State
+    const [currentPageUserOrders, setCurrentPageUserOrders] = useState(1);
+
     const itemsPerPage = 5;
 
     async function fetchProductMap(): Promise<{ map: Record<string, string>, products: ProductDetails[] }> {
@@ -422,9 +466,30 @@ const ReportsPage: React.FC = () => {
         }
     }
 
+    // 💡 NEW - Function to fetch users data
+    async function fetchUsersData() {
+        console.log("🟡 Attempting to fetch users from:", USERS_API);
+        try {
+            const { data } = await axios.get(USERS_API);
+            if (Array.isArray(data)) {
+                setAllUsers(data as User[]);
+                console.log(`🟢 Successfully fetched ${data.length} users.`);
+            } else {
+                 console.error("🔴 Users API response is not an array:", data);
+            }
+        } catch (err) {
+            toast.error("Failed to fetch users data for reports!");
+            setAllUsers([]);
+        }
+    }
+
     async function fetchOrders() {
         setLoading(true);
-        const { map: productCategoryMap, products: fetchedProducts } = await fetchProductMap();
+        // Fetch products and users in parallel for efficiency
+        const [{ map: productCategoryMap, products: fetchedProducts }] = await Promise.all([
+             fetchProductMap(),
+             fetchUsersData() // 💡 Fetch users data here
+        ]);
         setAllProducts(fetchedProducts); 
         
         try {
@@ -435,16 +500,23 @@ const ReportsPage: React.FC = () => {
                 console.log(`🟢 Successfully fetched ${data.length} orders.`);
                 
                 const processedOrders: Order[] = (data as Order[]).map(order => ({
-                    ...order,
-                    items: order.items.map(item => {
-                        const categoryName = productCategoryMap[item.name] || 'Unknown Category';
-                        
-                        return {
-                            ...item,
-                            category: categoryName
-                        };
-                    })
-                }));
+    ...order,
+    items: order.items
+        .map((item): OrderItem | null => {
+            const categoryName = productCategoryMap[item.name];
+            
+            // 🧩 لو المنتج مالوش category نحذفه
+            if (!categoryName || categoryName.trim() === "") return null;
+
+            return {
+                ...item,
+                category: categoryName
+            };
+        })
+        // 🧹 نحذف العناصر اللي رجعت null
+        .filter((item): item is OrderItem => item !== null)
+}));
+
                 setAllOrders(processedOrders);
             } else {
                  console.error("🔴 Orders API response is not an array:", data);
@@ -459,7 +531,6 @@ const ReportsPage: React.FC = () => {
         }
     }
 useEffect(() => {
-    // 🔁 كل ما يتم حذف منتج من API، أو بعد فترة، نعيد تحميل المنتجات والتقارير
     const refreshReports = async () => {
         await fetchOrders();
         setAppliedStartDate("");
@@ -479,28 +550,39 @@ useEffect(() => {
     const monthlyIncomeData = useMemo(() => {
         return calculateMonthlyIncome(allOrders, appliedStartDate, appliedEndDate, "All");
     }, [allOrders, appliedStartDate, appliedEndDate]);
+const productSalesData = useMemo(() => {
+    // لو المستخدم لسه ما اختارش فلاتر
+    if (!appliedStartDate && !appliedEndDate) {
+        // نجيب كل الطلبات المكتملة بدون فلترة تاريخ
+        return calculateProductSales(allOrders, "", "", "completed");
+    }
+    // وإلا نفلتر بالتاريخ المحدد
+    return calculateProductSales(allOrders, appliedStartDate, appliedEndDate, "completed");
+}, [allOrders, appliedStartDate, appliedEndDate]);
 
-    const productSalesData = useMemo(() => {
-        return calculateProductSales(allOrders, appliedStartDate, appliedEndDate, "completed");
-    }, [allOrders, appliedStartDate, appliedEndDate]);
-
-    const categorySalesData = useMemo(() => {
-        return calculateCategorySales(allOrders, appliedStartDate, appliedEndDate, "completed");
-    }, [allOrders, appliedStartDate, appliedEndDate]);
-    
+// ✅ Category Sales Report: نفس المنطق
+const categorySalesData = useMemo(() => {
+    if (!appliedStartDate && !appliedEndDate) {
+        return calculateCategorySales(allOrders, "", "", "completed");
+    }
+    return calculateCategorySales(allOrders, appliedStartDate, appliedEndDate, "completed");
+}, [allOrders, appliedStartDate, appliedEndDate]);
     const currentStockData = useMemo(() => {
         return calculateCurrentStock(allProducts, allOrders);
     }, [allProducts, allOrders]);
     
    const statusRevenueData = useMemo(() => {
-    // ✅ لو مفيش فلاتر تاريخ لسه، اعرض كل الحالات لكل الطلبات
     if (!appliedStartDate && !appliedEndDate) {
         return calculateStatusRevenue(allOrders, "", "");
     }
-
-    // ✅ لو فيه فلاتر اتطبقت، اعرض بناءً على التاريخ
     return calculateStatusRevenue(allOrders, appliedStartDate, appliedEndDate);
 }, [allOrders, appliedStartDate, appliedEndDate]);
+
+   // 💡 NEW - Calculate User Status Data
+ const userStatusData = useMemo(() => {
+    return calculateUserStatus(allUsers, allOrders);
+}, [allUsers, allOrders]);
+
 
 
     // دوال التعامل مع الفلاتر
@@ -513,6 +595,7 @@ useEffect(() => {
         setCurrentPageProducts(1);
         setCurrentPageCategories(1);
         setCurrentPageStatus(1);
+        // لا نحتاج لتصفير صفحة المستخدمين لأنها لا تتبع فلتر التاريخ
         console.log(`\n🎉 APPLYING FILTERS: From=${tempStartDate}, To=${tempEndDate}\n`);
     };
 
@@ -528,6 +611,7 @@ useEffect(() => {
         setCurrentPageCategories(1);
         setCurrentPageStock(1);
         setCurrentPageStatus(1);
+        setCurrentPageUsers(1); // 💡 Reset users page
         console.log("\n🔄 RESETTING FILTERS. Displaying ALL data.\n");
     };
 
@@ -563,11 +647,18 @@ useEffect(() => {
         currentPageStatus * itemsPerPage
     );
 
+    // 💡 NEW - Pagination Logic for User Status Report
+    const totalPagesUsers = Math.ceil(userStatusData.length / itemsPerPage);
+    const paginatedUserData = userStatusData.slice(
+        (currentPageUsers - 1) * itemsPerPage,
+        currentPageUsers * itemsPerPage
+    );
+
 
     // دوال التصدير والطباعة
     const handleExportCSV = () => {
 
-        if (monthlyIncomeData.length === 0 && productSalesData.length === 0 && categorySalesData.length === 0 && currentStockData.length === 0 && statusRevenueData.length === 0) {
+        if (monthlyIncomeData.length === 0 && productSalesData.length === 0 && categorySalesData.length === 0 && currentStockData.length === 0 && statusRevenueData.length === 0 && userStatusData.length === 0) {
             toast.error("No data to export!");
             return;
         }
@@ -598,13 +689,19 @@ useEffect(() => {
             const wsStatus = XLSX.utils.json_to_sheet(statusRevenueData);
             XLSX.utils.book_append_sheet(wb, wsStatus, "Order Status Revenue");
         }
+        
+        // 💡 NEW - Export User Status Report
+        if (userStatusData.length > 0) {
+            const wsUsers = XLSX.utils.json_to_sheet(userStatusData);
+            XLSX.utils.book_append_sheet(wb, wsUsers, "User Status");
+        }
 
 
         XLSX.writeFile(wb, "Combined_Business_Report.xlsx");
         toast.success("Excel File Downloaded!");
     };
 
-    const buildReportHTML = (title: string, data: any[], type: 'income' | 'products' | 'category' | 'stock' | 'status'): string => {
+    const buildReportHTML = (title: string, data: any[], type: 'income' | 'products' | 'category' | 'stock' | 'status' | 'users'): string => {
         if (data.length === 0) {
             return `<div style="margin-bottom: 30px;"><h3 style="color: #9d8764; font-weight: bold; margin-top: 20px; text-align: center;">${title}</h3><p style="text-align: center;">No data found based on the filters.</p></div>`;
         }
@@ -665,7 +762,7 @@ useEffect(() => {
                     <td style="${baseStyle.replace('color: #998068', 'color: #987549')}">${d['CURRENT STOCK']}</td>
                 </tr>
             `).join('');
-        } else { // type === 'status'
+        } else if (type === 'status') {
              tableHeaders = `
                 <th style="background: #7c6f63; color: #fff; border: 1px solid #6b5c4f; padding: 10px;">ORDER STATUS</th>
                 <th style="background: #a39173; color: #fff; border: 1px solid #8d7e5b; padding: 10px;">TOTAL ORDERS</th>
@@ -678,8 +775,19 @@ useEffect(() => {
                     <td style="${baseStyle.replace('color: #998068', 'color: #987549')}">$${d['TOTAL REVENUE ($)'].toFixed(2)}</td>
                 </tr>
             `).join('');
+        } else if (type === 'users') { // 💡 NEW - User Status Report HTML
+             tableHeaders = `
+                <th style="background: #7c6f63; color: #fff; border: 1px solid #6b5c4f; padding: 10px;">USER TYPE</th>
+                <th style="background: #a39173; color: #fff; border: 1px solid #8d7e5b; padding: 10px;">COUNT</th>
+            `;
+            tableRows = data.map((d: UserSummary) => `
+                <tr>
+                    <td style="${baseStyle.replace('text-align: center', 'text-align: left')}">${d['USER TYPE']}</td>
+                    <td style="${baseStyle.replace('color: #998068', 'color: #987549')}">${d['COUNT']}</td>
+                </tr>
+            `).join('');
         }
-
+        
         return `
             <div style="margin-bottom: 30px; page-break-inside: avoid;">
                 <h3 style="color: #9d8764; font-weight: bold; margin-top: 20px; text-align: center;">${title}</h3>
@@ -695,7 +803,7 @@ useEffect(() => {
 
     const handlePrint = () => {
 
-        if (monthlyIncomeData.length === 0 && productSalesData.length === 0 && categorySalesData.length === 0 && currentStockData.length === 0 && statusRevenueData.length === 0) {
+        if (monthlyIncomeData.length === 0 && productSalesData.length === 0 && categorySalesData.length === 0 && currentStockData.length === 0 && statusRevenueData.length === 0 && userStatusData.length === 0) {
             toast.error("No data to print for any report!");
             return;
         }
@@ -705,6 +813,7 @@ useEffect(() => {
         const categoriesHtml = buildReportHTML("🏷️ Products by Category Report", categorySalesData, 'category');
         const stockHtml = buildReportHTML("📦 Current Product Stock Report", currentStockData, 'stock');
         const statusHtml = buildReportHTML("📊 Order Status Revenue Report", statusRevenueData, 'status'); 
+        const usersHtml = buildReportHTML("👤 Active vs Inactive Users Report", userStatusData, 'users'); // 💡 NEW - User Status HTML
 
         const printWindow = window.open('', '', 'height=600,width=800');
 
@@ -727,6 +836,7 @@ useEffect(() => {
         printWindow?.document.write(categoriesHtml);
         printWindow?.document.write(stockHtml);
         printWindow?.document.write(statusHtml);
+        printWindow?.document.write(usersHtml); // 💡 NEW - Include User Status Report in Print
 
         printWindow?.document.write('</body></html>');
         printWindow?.document.close();
@@ -798,6 +908,211 @@ useEffect(() => {
                 ) : (
                     <div style={{ overflowX: "auto" }}>
 
+                        {/* 💡 5. Active vs Inactive Users Report Table */}
+                        <>
+                          {/* 👥 Users Orders Report */}
+<>
+{/* 👥 Users Orders Report */}
+<>
+  <h3 className="mt-4 mb-3" style={{ color: "#9d8764", fontWeight: "bold" }}>
+    👥 Users Orders
+  </h3>
+
+  <Table
+    bordered
+    hover
+    responsive
+    style={{
+      background: "#fff9f3",
+      borderRadius: "16px",
+      fontSize: "1.04em",
+    }}
+  >
+    <thead style={{ background: "#ebdfd1" }}>
+      <tr>
+        <th style={{ background: "#7c6f63", color: "#fff" }}>Order ID</th>
+        <th style={{ background: "#a39173", color: "#fff" }}>User</th>
+        <th style={{ background: "#88b0a2", color: "#fff" }}>Date</th>
+        <th style={{ background: "#6c89a9", color: "#fff" }}>Items</th>
+        <th style={{ background: "#5a8a65", color: "#fff" }}>Total ($)</th>
+        <th style={{ background: "#a96c6c", color: "#fff" }}>Status</th>
+      </tr>
+    </thead>
+
+    <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
+      {(() => {
+        // ⚙️ فلترة حسب التاريخ
+        let filtered = allOrders;
+        if (appliedStartDate || appliedEndDate) {
+          filtered = allOrders.filter((order) => {
+            const date = new Date(order.date);
+            const start = appliedStartDate
+              ? new Date(appliedStartDate)
+              : new Date(0);
+            const end = appliedEndDate
+              ? new Date(appliedEndDate)
+              : new Date(8640000000000000);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
+            return date >= start && date <= end;
+          });
+        }
+
+        // 🧮 Pagination logic
+        const itemsPerPage = 5;
+        const totalPagesUserOrders = Math.ceil(filtered.length / itemsPerPage);
+        const paginatedOrders = filtered.slice(
+          (currentPageUserOrders - 1) * itemsPerPage,
+          currentPageUserOrders * itemsPerPage
+        );
+
+        if (filtered.length === 0) {
+          return (
+            <tr>
+              <td colSpan={6} className="text-center">
+                No orders found for the selected date range.
+              </td>
+            </tr>
+          );
+        }
+
+        return paginatedOrders.map((order) => (
+          <tr key={order.id}>
+            <td style={{ fontWeight: 600, color: "#998068" }}>{order.id}</td>
+            <td style={{ fontWeight: 600, color: "#987549" }}>
+              {order.userName}
+            </td>
+            <td style={{ fontWeight: 600, color: "#987549" }}>
+              {new Date(order.date).toLocaleDateString()}{" "}
+              {new Date(order.date).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </td>
+            <td style={{ textAlign: "left" }}>
+              {order.items.map((item, idx) => (
+                <div key={idx}>
+                  {item.name.split(" ").slice(0, 2).join(" ")} × {item.quantity}
+                </div>
+              ))}
+            </td>
+            <td style={{ fontWeight: 600, color: "#987549" }}>
+              ${order.total.toFixed(2)}
+            </td>
+            <td>
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "4px 10px",
+                  borderRadius: "8px",
+                  color: "#fff",
+                  backgroundColor:
+                    order.status === "completed"
+                      ? "#4a7555"
+                      : order.status === "pending"
+                      ? "#ccae62"
+                      : "#c65b5b",
+                  fontWeight: 600,
+                  textTransform: "capitalize",
+                }}
+              >
+                {order.status}
+              </span>
+            </td>
+          </tr>
+        ));
+      })()}
+    </tbody>
+  </Table>
+
+  {/* 🔁 Pagination for Users Orders */}
+  {(() => {
+    let filtered = allOrders;
+    if (appliedStartDate || appliedEndDate) {
+      filtered = allOrders.filter((order) => {
+        const date = new Date(order.date);
+        const start = appliedStartDate
+          ? new Date(appliedStartDate)
+          : new Date(0);
+        const end = appliedEndDate
+          ? new Date(appliedEndDate)
+          : new Date(8640000000000000);
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
+        return date >= start && date <= end;
+      });
+    }
+
+    const itemsPerPage = 5;
+    const totalPagesUserOrders = Math.ceil(filtered.length / itemsPerPage);
+
+    if (totalPagesUserOrders <= 1) return null;
+
+    return (
+      <Pagination className="justify-content-center mt-4" size="sm">
+        <Pagination.Prev
+          onClick={() =>
+            setCurrentPageUserOrders((prev) => Math.max(prev - 1, 1))
+          }
+          disabled={currentPageUserOrders === 1}
+        />
+        {Array.from({ length: totalPagesUserOrders }, (_, i) => (
+          <Pagination.Item
+            key={`orders-${i + 1}`}
+            active={i + 1 === currentPageUserOrders}
+            onClick={() => setCurrentPageUserOrders(i + 1)}
+          >
+            {i + 1}
+          </Pagination.Item>
+        ))}
+        <Pagination.Next
+          onClick={() =>
+            setCurrentPageUserOrders((prev) =>
+              Math.min(prev + 1, totalPagesUserOrders)
+            )
+          }
+          disabled={
+            currentPageUserOrders === totalPagesUserOrders ||
+            totalPagesUserOrders === 0
+          }
+        />
+      </Pagination>
+    );
+  })()}
+</>
+
+</>
+
+                            {/* Pagination for User Status Report */}
+                            {userStatusData.length > 0 && totalPagesUsers > 1 && (
+                                <Pagination
+                                    className="justify-content-center mt-4"
+                                    style={{ userSelect: "none" }}
+                                    size="sm"
+                                >
+                                    <Pagination.Prev
+                                        onClick={() => setCurrentPageUsers((prev) => Math.max(prev - 1, 1))}
+                                        disabled={currentPageUsers === 1}
+                                    />
+                                    {Array.from({ length: totalPagesUsers }, (_, i) => (
+                                        <Pagination.Item
+                                            key={`users-${i + 1}`}
+                                            active={i + 1 === currentPageUsers}
+                                            onClick={() => setCurrentPageUsers(i + 1)}
+                                        >
+                                            {i + 1}
+                                        </Pagination.Item>
+                                    ))}
+                                    <Pagination.Next
+                                        onClick={() => setCurrentPageUsers((prev) => Math.min(prev + 1, totalPagesUsers))}
+                                        disabled={currentPageUsers === totalPagesUsers || totalPagesUsers === 0}
+                                    />
+                                </Pagination>
+                            )}
+                        </>
+
+                        <hr className="my-5" />
+                        
                         {/* 1. Monthly Income Report Table */}
                         <>
                             <h3 className="mt-4 mb-3" style={{ color: "#9d8764", fontWeight: 'bold' }}>
@@ -866,7 +1181,7 @@ useEffect(() => {
 
                         <hr className="my-5" />
                         
-                        {/* 🆕 4. Order Status Revenue Report Table */}
+                        {/* 4. Order Status Revenue Report Table */}
                         <>
                             <h3 className="mt-4 mb-3" style={{ color: "#9d8764", fontWeight: 'bold' }}>
                                 📊 Order Status Revenue Report (Filtered by Date)
@@ -1079,6 +1394,38 @@ useEffect(() => {
                                 </Pagination>
                             )}
                         </>
+                                 {/* 👥 Active vs Inactive Users */}
+<h3 className="mt-5 mb-3" style={{ color: "#9d8764", fontWeight: "bold" }}>
+  👥 Active vs Inactive Users
+</h3>
+
+<Table
+  bordered
+  hover
+  responsive
+  style={{
+    background: "#fff9f3",
+    borderRadius: "16px",
+    fontSize: "1.04em",
+  }}
+>
+  <thead style={{ background: "#ebdfd1" }}>
+    <tr>
+      <th style={{ background: "#7c6f63", color: "#fff" }}>User Type</th>
+      <th style={{ background: "#a39173", color: "#fff" }}>Count</th>
+    </tr>
+  </thead>
+  <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
+    {userStatusData.map((row, index) => (
+      <tr key={index}>
+        <td style={{ fontWeight: 600, color: "#998068" }}>
+          {row["USER TYPE"]}
+        </td>
+        <td style={{ fontWeight: 600, color: "#987549" }}>{row["COUNT"]}</td>
+      </tr>
+    ))}
+  </tbody>
+</Table>
 
                         <hr className="my-5" />
 
