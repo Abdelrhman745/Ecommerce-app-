@@ -193,10 +193,12 @@ const Products: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Actions modal state
   const [showActionsModal, setShowActionsModal] = useState(false);
   const [selectedProductForActions, setSelectedProductForActions] =
     useState<Product | null>(null);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
 
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
@@ -302,7 +304,6 @@ const Products: React.FC = () => {
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Are you sure to delete this product?")) return;
     try {
       await axios.delete(`${API}/${id}`);
       setProducts(products.filter((p) => p.id !== id));
@@ -391,7 +392,9 @@ const Products: React.FC = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody style={{ verticalAlign: "middle", textAlign: "center" }}>
+                <tbody
+                  style={{ verticalAlign: "middle", textAlign: "center" }}
+                >
                   {paginatedProducts.length > 0 ? (
                     paginatedProducts.map((product, index) => (
                       <tr key={product.id}>
@@ -471,6 +474,7 @@ const Products: React.FC = () => {
           </>
         )}
 
+        {/* Actions Modal */}
         <StyledModal
           show={showActionsModal}
           onHide={() => setShowActionsModal(false)}
@@ -494,8 +498,10 @@ const Products: React.FC = () => {
               <ActionButton
                 variant="danger"
                 onClick={() => {
-                  if (selectedProductForActions)
-                    handleDelete(selectedProductForActions.id);
+                  if (selectedProductForActions) {
+                    setProductToDelete(selectedProductForActions);
+                    setShowDeleteModal(true);
+                  }
                   setShowActionsModal(false);
                 }}
               >
@@ -505,6 +511,39 @@ const Products: React.FC = () => {
           </Modal.Body>
         </StyledModal>
 
+        {/* Delete Confirmation Modal */}
+        <StyledModal
+          show={showDeleteModal}
+          onHide={() => setShowDeleteModal(false)}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Deletion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure you want to delete{" "}
+            <strong>{productToDelete?.name}</strong>?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => {
+                if (productToDelete) handleDelete(productToDelete.id);
+                setShowDeleteModal(false);
+              }}
+            >
+              Confirm
+            </Button>
+          </Modal.Footer>
+        </StyledModal>
+
+        {/* Add/Edit Modal */}
         <StyledModal
           show={modalOpen}
           onHide={() => setModalOpen(false)}
@@ -543,8 +582,8 @@ const Products: React.FC = () => {
               onClick={() => setModalOpen(false)}
               style={{
                 borderRadius: "8px",
-                padding: "0.6rem 1.5rem",
-                fontWeight: 600,
+                padding: "0.6rem 1.2rem",
+                fontWeight: 500,
               }}
             >
               Cancel
@@ -555,22 +594,14 @@ const Products: React.FC = () => {
               disabled={saving}
               style={{
                 background: "#d6cfc1",
-                color: "#564d3b",
                 border: "none",
+                color: "#5c4f3b",
                 fontWeight: 600,
                 borderRadius: "8px",
-                padding: "0.6rem 1.5rem",
+                padding: "0.6rem 1.4rem",
               }}
             >
-              {saving ? (
-                <>
-                  <Spinner size="sm" animation="border" /> Saving...
-                </>
-              ) : selectedProduct ? (
-                "Update"
-              ) : (
-                "Save"
-              )}
+              {saving ? "Saving..." : "Save"}
             </Button>
           </Modal.Footer>
         </StyledModal>
