@@ -24,6 +24,7 @@ import LoadingScreen from "./components/LoadingScreen/LoadingScreen";
 import ReportsPage from "./Dashboard/pages/Reports/ReportsPage";
 import NotFound from "./Pages/NotFound/NotFound";
 import Protectadmin from "./components/Protectedroute/Protectedadmin";
+import ContactUs from "./components/ContactUs/ContactUs";
 const Layout = lazy(() => import("./layouts/Mainlayout"));
 const HomePage = lazy(() => import("./Pages/HomePage/HomePage"));
 const SignUp = lazy(() => import("./Pages/Autho/Signup"));
@@ -196,8 +197,15 @@ const router = createBrowserRouter([
             { path: "*", element: <NotFound /> },
 
   
+       {path:"contactus",
+        element:(
+                  <Suspense fallback={<LoadingFallback message="Loading blog..." />}>
+             <ContactUs/>
+          </Suspense>  
+        )
+       },
        
-  
+ 
 
     ],
   },
