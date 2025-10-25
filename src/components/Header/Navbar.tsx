@@ -62,6 +62,7 @@ const Navbar: React.FC = () => {
     { text: "Shop", to: "/products" },
     { text: "About Us", to: "/about" },
     { text: "Blog", to: "/blog" },
+    { text: "Contact", to: "/contactus" },
   ];
 
   return (
@@ -95,7 +96,19 @@ const Navbar: React.FC = () => {
           </button>
 
           {/* Navbar Links */}
-          <div className="collapse navbar-collapse" id="navbarNav">
+          <div
+            className="collapse navbar-collapse"
+            id="navbarNav"
+            onClick={() => {
+              const nav = document.getElementById("navbarNav");
+              if (nav?.classList.contains("show")) {
+                const toggleButton = document.querySelector(
+                  ".navbar-toggler"
+                ) as HTMLElement;
+                toggleButton?.click();
+              }
+            }}
+          >
             <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-3">
               {navLinks.map((item, idx) => (
                 <li key={idx} className="nav-item">
