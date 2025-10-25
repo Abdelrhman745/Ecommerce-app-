@@ -5,6 +5,9 @@ import * as Yup from "yup";
 import { Helmet } from "react-helmet-async";
 import toast from "react-hot-toast";
 import UserMessages from "../UserMessages/UserMessages";
+import { setUser } from "../../Redux/userSlice";
+import { useDispatch } from "react-redux";
+
 
 const Container = styled.section`
   min-height: 100vh;
@@ -243,6 +246,7 @@ const validationSchema = Yup.object({
 });
 
 const UserProfile: React.FC = () => {
+  const dispatch = useDispatch();
   const [mode, setMode] = useState<"menu" | "edit" | "orders" | "messages">(
     "menu"
   );
@@ -362,6 +366,7 @@ const UserProfile: React.FC = () => {
           ...(isChangingPassword && { password: data.newPassword }),
         }
       );
+      dispatch(setUser({ name: data.name, email: data.email, image: data.image }));
       toast.success("✅ Profile updated successfully!");
       setIsChangingPassword(false);
       setMode("menu");
@@ -707,4 +712,6 @@ const UserProfile: React.FC = () => {
 
 export default UserProfile;
   
+
+
 
