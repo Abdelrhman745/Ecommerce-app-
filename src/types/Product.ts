@@ -11,5 +11,6 @@ export interface Product {
   isNightMasque?: boolean;
   imageUrl: string;
   rating?: number; 
+  stock:number
 
 }

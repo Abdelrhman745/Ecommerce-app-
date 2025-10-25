@@ -80,6 +80,13 @@ export default function ProductDetailsSection({ setProduct }: Props) {
   };
 
   const addProductToCart = () => {
+    if (!data || data.stock === 0) {
+    toast.error("Out of Stock!", {
+      duration: 2000,
+      position: "top-center",
+    });
+    return;
+  }
     if (!data) return;
      if (user ==="admin") {
     Swal.fire({

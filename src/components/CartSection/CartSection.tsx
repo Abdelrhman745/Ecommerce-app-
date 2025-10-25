@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,9 +41,9 @@ const CartHeading = styled.h1`
 `;
 
 const CartContainer = styled.div`
-  width: 100%;
+  width: 90%;
   max-width: 900px;
-  align-self: center;
+  margin: 0 auto;
   background: #ffffff;
   border-radius: 18px;
   border: 1px solid #f1ede6;
@@ -51,10 +52,26 @@ const CartContainer = styled.div`
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
-  @media (max-width: 640px) {
-    padding: 32px 7vw;
+
+  @media (max-width: 992px) {
+    max-width: 700px;
+    padding: 40px 32px;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 500px;
+    padding: 32px 24px;
+  }
+
+  @media (max-width: 480px) {
+    width: 95%;
+    max-width: 100%;
+    border-radius: 12px;
+    padding: 24px 16px;
+    box-shadow: 0 4px 14px rgba(218, 210, 198, 0.15);
   }
 `;
+
 
 const ImgBox = styled.div`
   display: flex;
@@ -138,17 +155,17 @@ const CheckoutButton = styled(Button)`
   font-weight: 600;
 `;
 
-const WarningMessage = styled.div`
-  color: #b91c1c;
-  background-color: #fee2e2;
-  border: 1px solid #fecaca;
-  border-radius: 10px;
-  padding: 10px 15px;
-  margin-bottom: 15px;
-  font-size: 0.95rem;
-  text-align: center;
-  font-weight: 500;
-`;
+// const WarningMessage = styled.div`
+//   color: #b91c1c;
+//   background-color: #fee2e2;
+//   border: 1px solid #fecaca;
+//   border-radius: 10px;
+//   padding: 10px 15px;
+//   margin-bottom: 15px;
+//   font-size: 0.95rem;
+//   text-align: center;
+//   font-weight: 500;
+// `;
 
 const TotalSection = styled.div`
   margin-top: 32px;
@@ -184,6 +201,45 @@ const EmptyCart = styled.div`
   font-size: 1.1rem;
   font-weight: 500;
 `;
+const CartItem = styled.div`
+  display: grid;
+  grid-template-columns: 96px 1fr 126px 104px;
+  gap: 28px;
+  align-items: center;
+  margin-bottom: 25px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 16px;
+
+    ${ImgBox} {
+      justify-content: center;
+    }
+
+    ${Details} {
+      .name {
+        font-size: 1rem;
+      }
+      .price {
+        font-size: 0.9rem;
+      }
+    }
+
+    ${QuantitySection} {
+      justify-content: center;
+      input {
+        width: 60px;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+`;
+
 
 const CartSection: React.FC = () => {
   const dispatch = useDispatch();
@@ -267,16 +323,7 @@ const CartSection: React.FC = () => {
         ) : (
           <>
             {cartItems.map((item: any) => (
-              <div
-                key={item.id}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "96px 1fr 126px 104px",
-                  gap: "28px",
-                  alignItems: "center",
-                  marginBottom: "25px",
-                }}
-              >
+             <CartItem key={item.id}>
                 <ImgBox>
                   <img src={item.image} alt={item.name} />
                 </ImgBox>
@@ -305,7 +352,7 @@ const CartSection: React.FC = () => {
                 >
                   ${(item.price * item.quantity).toFixed(2)}
                 </div>
-              </div>
+              </CartItem>
             ))}
 
             <TotalSection>

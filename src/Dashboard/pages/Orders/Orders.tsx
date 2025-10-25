@@ -121,7 +121,9 @@ export default function Orders() {
     const endIndex = startIndex + itemsPerPage;
     return filteredOrders.slice(startIndex, endIndex);
   }, [filteredOrders, currentPage]);
-  if (loading) return <Spinner animation="border" className="m-4" />;
+  if (loading) return <div className="text-center py-5">
+              <Spinner animation="border" style={{ color: "#d7c8b2" }} />
+            </div>;
   if (error) return <p className="text-danger m-4">{error}</p>;
 
   return (

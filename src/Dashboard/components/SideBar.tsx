@@ -92,6 +92,7 @@ export default function SideBar() {
               fontSize: "20px",
               display: "flex",
               alignItems: "center",
+              paddingBottom:'15px'
             }}
           >
             <i className="bi bi-box-arrow-right"></i>
