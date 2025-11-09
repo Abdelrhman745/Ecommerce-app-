@@ -47,7 +47,7 @@ const TIPS = [
 ];
 
 const BlogPage = () => {
-  const [revealed, setRevealed] = useState(null);
+  const [revealed, setRevealed] = useState<number | null>(null);
 
   return (
     <>
@@ -160,7 +160,7 @@ const BlogPage = () => {
         </section>
       </div>
 
-      <style jsx>{`
+      <style>{`
         :root {
           --color-primary: #7c6f63;
           --color-muted: #806c54;
